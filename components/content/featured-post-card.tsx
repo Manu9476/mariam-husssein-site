@@ -20,7 +20,7 @@ export function FeaturedPostCard({
   return (
     <FadeIn>
       <Card className="overflow-hidden p-5 md:p-6">
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div className="grid gap-5 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
           <Link
             href={`/blog/${post.slug}`}
             className="relative overflow-hidden rounded-md border border-border/80"
@@ -28,23 +28,24 @@ export function FeaturedPostCard({
             <ImageWrapper
               image={post.image}
               alt={post.title}
-              className="aspect-[5/4] transition duration-700 hover:scale-[1.02]"
+              className="aspect-[4/3] transition duration-700 hover:scale-[1.02]"
               priority
+              sizes="(min-width: 1024px) 26rem, 100vw"
             />
           </Link>
-          <div className="space-y-5">
+          <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-3">
               <Badge>{label}</Badge>
               {categoryLabels[0] ? <Badge variant="outline">{categoryLabels[0]}</Badge> : null}
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 {formatDate(post.date)} / {post.readingTime} min read
               </p>
-              <h3 className="text-[2.95rem] leading-[0.94] tracking-[-0.045em] md:text-[4.35rem]">
+              <h3 className="max-w-3xl text-[2.45rem] leading-[0.95] tracking-[-0.04em] md:text-[3.55rem]">
                 {post.title}
               </h3>
-              <p className="text-[1.06rem] leading-8 md:text-[1.12rem]">
+              <p className="max-w-2xl text-[1rem] leading-8 md:text-[1.06rem]">
                 {stripHtml(post.excerpt)}
               </p>
             </div>

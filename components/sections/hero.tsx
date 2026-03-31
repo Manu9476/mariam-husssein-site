@@ -24,7 +24,7 @@ export function Hero({
   const heroFacts = [
     {
       emoji: "👩‍💻",
-      text: "Writer, creator, and thoughtful storyteller with a soft spot for meaningful digital spaces.",
+      text: "Writer, creator, and thoughtful storyteller building a softer digital home.",
     },
     {
       emoji: "📍",
@@ -34,57 +34,57 @@ export function Hero({
     },
     {
       emoji: "💌",
-      text: "Sharing stories, letters, and gentle resources that feel personal, bright, and encouraging.",
+      text: "Sharing letters, stories, and gentle resources that feel personal and encouraging.",
     },
   ];
 
   return (
-    <section className="pb-14 pt-10 md:pb-20 md:pt-12">
+    <section className="pb-12 pt-8 md:pb-16 md:pt-10">
       <div className="container">
-        <div className="grid gap-10 border-b border-border/80 pb-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-14 lg:pb-16">
-          <FadeIn>
+        <div className="grid gap-8 border-b border-border/80 pb-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start lg:gap-12 lg:pb-14">
+          <FadeIn className="lg:max-w-md">
             {aboutPreview?.image ? (
               <div className="overflow-hidden rounded-md border border-border/90 bg-white shadow-sm">
                 <ImageWrapper
                   image={aboutPreview.image}
                   alt={aboutPreview.title}
-                  className="aspect-[4/5]"
+                  className="aspect-[5/6]"
                   priority
-                  sizes="(min-width: 1024px) 42vw, 100vw"
+                  sizes="(min-width: 1024px) 24rem, 100vw"
                 />
               </div>
             ) : (
-              <div className="flex aspect-[4/5] flex-col justify-end rounded-md border border-dashed border-border bg-muted p-8 md:p-10">
+              <div className="flex aspect-[5/6] flex-col justify-end rounded-md border border-dashed border-border bg-muted p-6 md:p-8">
                 <p className="eyebrow">Portrait</p>
-                <h2 className="mt-4 text-4xl leading-none">
-                  Add Mariam&apos;s portrait here ✨
+                <h2 className="mt-3 text-[2.2rem] leading-[0.98] tracking-[-0.03em]">
+                  Add Mariam&apos;s portrait here
                 </h2>
-                <p className="mt-4 text-base">
+                <p className="mt-3 text-sm leading-7">
                   Upload a featured image on the About page and this space will become the opening visual.
                 </p>
               </div>
             )}
           </FadeIn>
 
-          <FadeIn delay={0.08} className="space-y-7 lg:pt-3">
-            <div className="space-y-4">
+          <FadeIn delay={0.08} className="space-y-6 lg:pt-2">
+            <div className="space-y-3">
               {settings.hero.eyebrow ? <p className="eyebrow">{settings.hero.eyebrow}</p> : null}
-              <div className="space-y-3">
-                <h1 className="max-w-4xl text-[3.25rem] font-bold leading-[0.92] tracking-[-0.05em] md:text-[4.9rem] lg:text-[5.6rem]">
+              <div className="space-y-2">
+                <h1 className="max-w-4xl text-[3rem] font-bold leading-[0.92] tracking-[-0.05em] md:text-[4.35rem] lg:text-[4.95rem]">
                   Hello, I&apos;m Mariam. 👋
                 </h1>
-                <p className="max-w-3xl font-serif text-[1.8rem] leading-[1.05] tracking-[-0.03em] text-primary md:text-[2.8rem] lg:text-[3.35rem]">
+                <p className="max-w-3xl font-serif text-[1.55rem] leading-[1.06] tracking-[-0.03em] text-primary md:text-[2.25rem] lg:text-[2.7rem]">
                   {settings.hero.title}
                 </p>
               </div>
-              <p className="max-w-2xl text-[1.05rem] leading-8 md:text-[1.12rem]">
+              <p className="max-w-2xl text-[1rem] leading-8 md:text-[1.08rem]">
                 {introCopy}
               </p>
             </div>
 
-            <ul className="grid gap-3 rounded-2xl border border-border/80 bg-[#f8fcfa] p-5">
+            <ul className="grid max-w-2xl gap-3 rounded-2xl border border-border/80 bg-[#f8fcfa] p-4 md:p-5">
               {heroFacts.map((fact) => (
-                <li key={fact.text} className="flex items-start gap-3 text-[1.02rem] leading-7 text-foreground">
+                <li key={fact.text} className="flex items-start gap-3 text-[1rem] leading-7 text-foreground">
                   <span className="text-xl leading-none">{fact.emoji}</span>
                   <span>{fact.text}</span>
                 </li>
@@ -104,7 +104,7 @@ export function Hero({
               </Button>
             </div>
 
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-2">
               {quickLinks.map((item) => {
                 const external = item.url.startsWith("http");
 
@@ -114,7 +114,7 @@ export function Hero({
                     href={item.url}
                     target={external ? "_blank" : undefined}
                     rel={external ? "noreferrer" : undefined}
-                    className="nav-link rounded-full border border-border bg-white px-4 py-2"
+                    className="nav-link rounded-full border border-border bg-white px-3.5 py-2"
                   >
                     {item.label}
                   </Link>

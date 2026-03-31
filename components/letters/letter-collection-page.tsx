@@ -68,15 +68,15 @@ export function LetterCollectionPage({
 
   return (
     <>
-      <section className="section-space pb-8">
-        <div className="container space-y-8">
-          <div className="space-y-5 border-b border-border/70 pb-6 text-center">
-            <div className="space-y-3">
+      <section className="section-space pb-6">
+        <div className="container space-y-6">
+          <div className="space-y-4 border-b border-border/70 pb-5 text-center">
+            <div className="space-y-2">
               <p className="eyebrow">Letters to myself</p>
-              <h1 className="mx-auto max-w-5xl text-[3rem] leading-[0.94] tracking-[-0.045em] md:text-[4.45rem] lg:text-[5.2rem]">
+              <h1 className="mx-auto max-w-4xl text-[2.7rem] leading-[0.95] tracking-[-0.04em] md:text-[3.8rem] lg:text-[4.4rem]">
                 {introTitle}
               </h1>
-              <p className="mx-auto max-w-3xl text-[1rem] leading-8 text-foreground/80 md:text-[1.08rem]">
+              <p className="mx-auto max-w-[42rem] text-[1rem] leading-8 text-foreground/80 md:text-[1.06rem]">
                 {introCopy}
               </p>
             </div>
@@ -107,12 +107,12 @@ export function LetterCollectionPage({
       />
 
       <section className="section-space pt-0">
-        <div className="container grid gap-10 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="container grid gap-8 xl:grid-cols-[minmax(0,1fr)_20rem]">
           <div>
-            <div className="mb-4 flex items-end justify-between gap-4 border-b border-border/70 pb-5">
+            <div className="mb-4 flex items-end justify-between gap-4 border-b border-border/70 pb-4">
               <div>
                 <p className="eyebrow">Recent letters</p>
-                <h2 className="mt-2 text-[2.45rem] leading-[0.96] tracking-[-0.04em] md:text-[3.85rem]">
+                <h2 className="mt-2 max-w-3xl text-[2.15rem] leading-[0.98] tracking-[-0.035em] md:text-[3.05rem]">
                   Notes, reflections, and quieter truths.
                 </h2>
               </div>
@@ -142,8 +142,8 @@ export function LetterCollectionPage({
             ) : null}
           </div>
 
-          <aside className="space-y-5 xl:sticky xl:top-28">
-            <div className="editorial-panel space-y-4 p-6">
+          <aside className="space-y-4 xl:sticky xl:top-28">
+            <div className="editorial-panel space-y-4 p-5">
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 overflow-hidden rounded-full border border-border/70">
                   {profileImage ? (
@@ -169,17 +169,17 @@ export function LetterCollectionPage({
                 </div>
               </div>
 
-              <p className="text-[1.02rem] leading-8">{introCopy}</p>
+              <p className="text-[0.98rem] leading-8">{introCopy}</p>
 
               <Link href="/newsletter" className="soft-link">
                 Subscribe for new letters
               </Link>
             </div>
 
-            <div className="editorial-panel space-y-4 p-6">
+            <div className="editorial-panel space-y-4 p-5">
               <div className="space-y-2">
                 <p className="eyebrow">{settings.newsletter.eyebrow || "Stay close"}</p>
-                <h3 className="text-[2.25rem] leading-[0.98] tracking-[-0.035em]">
+                <h3 className="text-[1.95rem] leading-[1] tracking-[-0.03em]">
                   {settings.newsletter.title}
                 </h3>
                 <p>{settings.newsletter.description}</p>
@@ -190,7 +190,7 @@ export function LetterCollectionPage({
               />
             </div>
 
-            <div className="editorial-panel space-y-5 p-6">
+            <div className="editorial-panel space-y-5 p-5">
               <div>
                 <p className="eyebrow">Read next</p>
                 <div className="mt-4 flex flex-col gap-3">
@@ -198,7 +198,7 @@ export function LetterCollectionPage({
                     <Link
                       key={entry.slug}
                       href={entry.path}
-                      className="font-serif text-[1.55rem] leading-[1.08] tracking-[-0.02em] text-foreground transition hover:text-primary"
+                      className="font-serif text-[1.35rem] leading-[1.12] tracking-[-0.015em] text-foreground transition hover:text-primary"
                     >
                       {entry.title}
                     </Link>
