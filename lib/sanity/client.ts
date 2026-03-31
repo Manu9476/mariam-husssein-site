@@ -1,19 +1,22 @@
 import { createImageUrlBuilder } from "@sanity/image-url";
 import { createClient } from "next-sanity";
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET;
-const apiVersion = process.env.NEXT_PUBLIC_SANITY_API_VERSION || "2025-03-01";
+import {
+  hasValidSanityConfig,
+  sanityApiVersion,
+  sanityDataset,
+  sanityProjectId,
+} from "@/lib/sanity/env";
 
 export function isSanityConfigured() {
-  return Boolean(projectId && dataset);
+  return hasValidSanityConfig();
 }
 
 export const sanityClient = isSanityConfigured()
   ? createClient({
-      projectId: projectId!,
-      dataset: dataset!,
-      apiVersion,
+      projectId: sanityProjectId!,
+      dataset: sanityDataset,
+      apiVersion: sanityApiVersion,
       useCdn: true,
       perspective: "published",
     })
@@ -22,19 +25,19 @@ export const sanityClient = isSanityConfigured()
 export const sanityWriteClient =
   isSanityConfigured() && process.env.SANITY_API_WRITE_TOKEN
     ? createClient({
-        projectId: projectId!,
-        dataset: dataset!,
-        apiVersion,
+        projectId: sanityProjectId!,
+        dataset: sanityDataset,
+        apiVersion: sanityApiVersion,
         useCdn: false,
         token: process.env.SANITY_API_WRITE_TOKEN,
       })
     : null;
 
 const builder =
-  isSanityConfigured() && projectId && dataset
+  isSanityConfigured() && sanityProjectId
     ? createImageUrlBuilder({
-        projectId,
-        dataset,
+        projectId: sanityProjectId,
+        dataset: sanityDataset,
       })
     : null;
 
