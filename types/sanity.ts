@@ -1,0 +1,167 @@
+export interface SanityImageField {
+  alt?: string;
+  asset?: {
+    url?: string;
+    metadata?: {
+      dimensions?: {
+        width?: number;
+        height?: number;
+      };
+    };
+  };
+}
+
+export interface SanityMarkDefinition {
+  _key: string;
+  _type: string;
+  href?: string;
+}
+
+export interface SanitySpanNode {
+  _key?: string;
+  _type: "span";
+  marks?: string[];
+  text?: string;
+}
+
+export interface SanityBlockNode {
+  _key?: string;
+  _type: "block";
+  style?: string;
+  children?: SanitySpanNode[];
+  markDefs?: SanityMarkDefinition[];
+  listItem?: "bullet" | "number";
+  level?: number;
+}
+
+export interface SanityImageBlockNode {
+  _key?: string;
+  _type: "image";
+  url?: string;
+  alt?: string;
+  caption?: string;
+}
+
+export type SanityPortableNode = SanityBlockNode | SanityImageBlockNode;
+
+export interface SanitySeoField {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+export interface SanityCategoryDocument {
+  _id: string;
+  title: string;
+  slug: string;
+  description?: string;
+}
+
+export interface SanityPageDocument {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  body?: SanityPortableNode[];
+  featuredImage?: SanityImageField | null;
+  seo?: SanitySeoField;
+}
+
+export interface SanityPostDocument {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  body?: SanityPortableNode[];
+  publishedAt?: string;
+  updatedAt?: string;
+  authorName?: string;
+  categories?: SanityCategoryDocument[];
+  featuredImage?: SanityImageField | null;
+  seo?: SanitySeoField;
+  featuredOnHome?: boolean;
+}
+
+export interface SanityTestimonialDocument {
+  _id: string;
+  name: string;
+  slug: string;
+  quote?: string;
+  rating?: number;
+  image?: SanityImageField | null;
+  seo?: SanitySeoField;
+  approved?: boolean;
+}
+
+export interface SanityFaqDocument {
+  _id: string;
+  question: string;
+  slug: string;
+  answer?: SanityPortableNode[];
+}
+
+export interface SanityResourceDocument {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  body?: SanityPortableNode[];
+  ctaLabel?: string;
+  ctaUrl?: string;
+  highlight?: boolean;
+  featuredImage?: SanityImageField | null;
+  seo?: SanitySeoField;
+}
+
+export interface SanityMenuItem {
+  _key?: string;
+  title: string;
+  url: string;
+  target?: string;
+}
+
+export interface SanitySocialLink {
+  _key?: string;
+  label: string;
+  url: string;
+}
+
+export interface SanitySiteSettingsDocument {
+  siteTitle?: string;
+  siteDescription?: string;
+  siteUrl?: string;
+  logo?: SanityImageField | null;
+  logoAlt?: string;
+  primaryMenu?: SanityMenuItem[];
+  footerMenu?: SanityMenuItem[];
+  hero?: {
+    eyebrow?: string;
+    title?: string;
+    subtitle?: string;
+    primaryCtaLabel?: string;
+    primaryCtaUrl?: string;
+    secondaryCtaLabel?: string;
+    secondaryCtaUrl?: string;
+  };
+  newsletter?: {
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    placeholder?: string;
+    buttonLabel?: string;
+    disclaimer?: string;
+  };
+  contact?: {
+    email?: string;
+    phone?: string;
+    location?: string;
+    availability?: string;
+  };
+  socialLinks?: SanitySocialLink[];
+  footer?: {
+    blurb?: string;
+    copyright?: string;
+    newsletterCtaLabel?: string;
+    newsletterCtaUrl?: string;
+  };
+}

@@ -30,7 +30,7 @@ export function AboutPreview({
               title={page?.title || "A grounded voice with an editorial eye."}
               description={
                 page?.excerpt.replace(/<[^>]*>/g, "") ||
-                "Use the About page in WordPress to shape this section with your voice, story, and current direction."
+                "Use the About page in Sanity Studio to shape this section with your voice, story, and current direction."
               }
             />
             <Button asChild variant="outline">

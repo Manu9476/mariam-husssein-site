@@ -17,7 +17,7 @@ export function TestimonialsPreview({
           <SectionHeading
             eyebrow="Kind words"
             title="Warm reflections from readers, collaborators, and clients."
-            description="Only approved testimonials appear here. New submissions can be reviewed in WordPress."
+            description="Only approved testimonials appear here. New submissions can be reviewed in your CMS."
           />
           <Button asChild variant="outline">
             <Link href="/reviews">View all reviews</Link>

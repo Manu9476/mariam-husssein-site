@@ -19,11 +19,16 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
+  transpilePackages: ["next-sanity", "sanity"],
   images: {
     remotePatterns: [
       {
         protocol: mediaProtocol,
         hostname: mediaHostname,
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
       },
     ],
   },

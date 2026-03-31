@@ -34,7 +34,7 @@ export default async function PrivacyPolicyPage() {
       <div className="container section-space">
         <EmptyState
           title="Privacy policy not published yet"
-          description="Create a WordPress page with the slug privacy-policy or privacy."
+          description="Create a Sanity page with the slug privacy-policy or privacy."
         />
       </div>
     );

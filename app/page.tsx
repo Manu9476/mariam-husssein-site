@@ -15,8 +15,9 @@ import {
   getStickyFeaturedPost,
   getTestimonials,
 } from "@/lib/api/wordpress";
+import type { ContentId } from "@/types/content";
 
-function getCategoryLabels(ids: number[], categoryMap: Map<number, string>) {
+function getCategoryLabels(ids: ContentId[], categoryMap: Map<ContentId, string>) {
   return ids.map((id) => categoryMap.get(id)).filter(Boolean) as string[];
 }
 
@@ -45,7 +46,7 @@ export default async function HomePage() {
           <SectionHeading
             eyebrow="Featured article"
             title="One story to start with."
-            description="Use sticky posts in WordPress to control this featured editorial highlight."
+            description="Feature a post from your CMS to control this editorial highlight."
           />
           {featuredPost ? (
             <FeaturedPostCard
@@ -55,7 +56,7 @@ export default async function HomePage() {
           ) : (
             <EmptyState
               title="No featured story yet"
-              description="Publish a post and mark it as sticky in WordPress to feature it here."
+              description="Publish a post and mark it as featured in Sanity Studio to place it here."
             />
           )}
         </div>
@@ -75,7 +76,7 @@ export default async function HomePage() {
           <div className="container">
             <EmptyState
               title="The journal is waiting for its first post"
-              description="Create and publish blog posts in WordPress to populate the homepage feed."
+              description="Create and publish blog posts in Sanity Studio to populate the homepage feed."
             />
           </div>
         </section>

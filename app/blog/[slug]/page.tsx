@@ -14,8 +14,9 @@ import {
 } from "@/lib/api/wordpress";
 import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
+import type { ContentId } from "@/types/content";
 
-function getCategoryLabels(ids: number[], categoryMap: Map<number, string>) {
+function getCategoryLabels(ids: ContentId[], categoryMap: Map<ContentId, string>) {
   return ids.map((id) => categoryMap.get(id)).filter(Boolean) as string[];
 }
 
@@ -112,7 +113,7 @@ export default async function BlogPostPage({
             <SectionHeading
               eyebrow="Continue reading"
               title="More from the journal."
-              description="Related posts are pulled dynamically from WordPress using shared categories."
+              description="Related posts are pulled dynamically from shared Sanity categories."
             />
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {relatedPosts.map((relatedPost) => (

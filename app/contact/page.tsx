@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import { ContactForm } from "@/components/forms/contact-form";
 import { RichTextRenderer } from "@/components/shared/rich-text-renderer";
 import { SectionHeading } from "@/components/shared/section-heading";
-import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 import { getPageBySlug, getSiteSettings } from "@/lib/api/wordpress";
+import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, page] = await Promise.all([getSiteSettings(), getPageBySlug("contact")]);
@@ -31,11 +31,11 @@ export default async function ContactPage() {
       <div className="container grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-6">
           <SectionHeading
-            eyebrow="Contact 💌"
+            eyebrow="Contact"
             title={page?.title || "Let's start a thoughtful conversation."}
             description={
               page?.excerpt.replace(/<[^>]*>/g, "") ||
-              "Use WordPress to manage contact copy and details."
+              "Use Sanity Studio to manage contact copy and details."
             }
           />
 
@@ -43,7 +43,7 @@ export default async function ContactPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="editorial-panel p-5">
-              <p className="eyebrow">Email ✉️</p>
+              <p className="eyebrow">Email</p>
               {settings.contact.email ? (
                 <a
                   href={`mailto:${settings.contact.email}`}
@@ -53,14 +53,14 @@ export default async function ContactPage() {
                 </a>
               ) : (
                 <p className="mt-3 font-serif text-2xl text-foreground">
-                  Add an email in Mariam Brand settings
+                  Add an email in Site Settings
                 </p>
               )}
             </div>
             <div className="editorial-panel p-5">
-              <p className="eyebrow">Location 📍</p>
+              <p className="eyebrow">Location</p>
               <p className="mt-3 font-serif text-2xl text-foreground">
-                {settings.contact.location || "Add a location in Mariam Brand settings"}
+                {settings.contact.location || "Add a location in Site Settings"}
               </p>
             </div>
           </div>

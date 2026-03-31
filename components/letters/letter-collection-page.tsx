@@ -10,13 +10,18 @@ import { SocialIconLink } from "@/components/shared/social-icon-link";
 import { HomePopularStrip } from "@/components/sections/home-popular-strip";
 import { LETTER_COLLECTIONS, type LetterCollection } from "@/lib/letters";
 import { clampText, stripHtml } from "@/lib/utils";
-import type { CategorySummary, PageContent, PostSummary } from "@/types/content";
+import type {
+  CategorySummary,
+  ContentId,
+  PageContent,
+  PostSummary,
+} from "@/types/content";
 import type { SiteSettings } from "@/types/wordpress";
 
 function getCategoryLabel(
   post: PostSummary,
-  categoryMap: Map<number, string>,
-  collectionCategoryId?: number,
+  categoryMap: Map<ContentId, string>,
+  collectionCategoryId?: ContentId,
 ) {
   const alternateCategoryId = post.categories.find((id) => id !== collectionCategoryId);
   return categoryMap.get(alternateCategoryId ?? post.categories[0] ?? -1);
@@ -37,7 +42,7 @@ export function LetterCollectionPage({
   aboutPage: PageContent | null;
   category: CategorySummary | null;
   posts: PostSummary[];
-  categoryMap: Map<number, string>;
+  categoryMap: Map<ContentId, string>;
 }) {
   const featuredPost = posts[0];
   const feedPosts = featuredPost ? posts.slice(1) : posts;
@@ -88,7 +93,7 @@ export function LetterCollectionPage({
           ) : (
             <EmptyState
               title={`No letters in ${collection.shortLabel} yet`}
-              description={`Create a WordPress category using the slug "${collection.categorySlugs[0]}", assign posts to it, and this page will populate automatically.`}
+              description={`Create a Sanity category using the slug "${collection.categorySlugs[0]}", assign posts to it, and this page will populate automatically.`}
             />
           )}
         </div>

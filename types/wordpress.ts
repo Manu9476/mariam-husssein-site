@@ -1,3 +1,5 @@
+import type { ContentId } from "@/types/content";
+
 export interface WordPressRenderedField {
   rendered: string;
 }
@@ -70,7 +72,7 @@ export interface WordPressCategory {
 }
 
 export interface NavigationItem {
-  id: number;
+  id: ContentId;
   title: string;
   url: string;
   target?: string;

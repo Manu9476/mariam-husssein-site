@@ -14,8 +14,9 @@ import {
   getSiteSettings,
 } from "@/lib/api/wordpress";
 import { buildMetadata } from "@/lib/seo";
+import type { ContentId } from "@/types/content";
 
-function getCategoryLabels(ids: number[], categoryMap: Map<number, string>) {
+function getCategoryLabels(ids: ContentId[], categoryMap: Map<ContentId, string>) {
   return ids.map((id) => categoryMap.get(id)).filter(Boolean) as string[];
 }
 
@@ -65,7 +66,7 @@ export default async function BlogPage({
           <SectionHeading
             eyebrow="Journal"
             title="Stories, lessons, and notes with an editorial rhythm."
-            description="Search by keyword, filter by category, and manage every article directly from WordPress."
+            description="Search by keyword, filter by category, and manage every article directly from Sanity Studio."
           />
           <SearchInput defaultValue={query} />
           <CategoryPills
@@ -99,7 +100,7 @@ export default async function BlogPage({
           ) : (
             <EmptyState
               title="No posts match this search yet"
-              description="Try a broader keyword or publish new posts in WordPress to populate the journal."
+              description="Try a broader keyword or publish new posts in Sanity Studio to populate the journal."
             />
           )}
         </div>

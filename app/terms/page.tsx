@@ -38,7 +38,7 @@ export default async function TermsPage() {
       <div className="container section-space">
         <EmptyState
           title="Terms page not published yet"
-          description="Create a WordPress page with the slug terms, terms-of-service, or terms-and-conditions."
+          description="Create a Sanity page with the slug terms, terms-of-service, or terms-and-conditions."
         />
       </div>
     );

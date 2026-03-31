@@ -36,7 +36,7 @@ export default async function AboutPage() {
       <div className="container section-space">
         <EmptyState
           title="The About page is not published yet"
-          description="Create a WordPress page with the slug about to populate this section."
+          description="Create a Sanity page with the slug about to populate this section."
         />
       </div>
     );
@@ -66,7 +66,7 @@ export default async function AboutPage() {
             <SectionHeading
               eyebrow="FAQ"
               title="A few helpful answers."
-              description="These FAQs are managed in WordPress and can support media kits, collaborations, and common questions."
+              description="These FAQs are managed in Sanity Studio and can support media kits, collaborations, and common questions."
             />
             <div className="grid gap-5 md:grid-cols-2">
               {faqs.map((faq) => (

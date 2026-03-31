@@ -42,7 +42,7 @@ export default async function ResourcesPage() {
             title={page?.title || "Curated offers, resources, and thoughtful tools."}
             description={
               page?.excerpt.replace(/<[^>]*>/g, "") ||
-              "Use WordPress resources and services entries to manage these cards."
+              "Use Sanity Studio resources and services entries to manage these cards."
             }
           />
           {page?.content ? <RichTextRenderer content={page.content} /> : null}
@@ -60,7 +60,7 @@ export default async function ResourcesPage() {
           ) : (
             <EmptyState
               title="No resources published yet"
-              description="Create resource entries in WordPress to populate this page."
+              description="Create resource entries in Sanity Studio to populate this page."
             />
           )}
         </div>

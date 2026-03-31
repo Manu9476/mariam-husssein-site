@@ -10,8 +10,9 @@ import {
   getSiteSettings,
 } from "@/lib/api/wordpress";
 import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
+import type { ContentId } from "@/types/content";
 
-function getCategoryLabels(ids: number[], categoryMap: Map<number, string>) {
+function getCategoryLabels(ids: ContentId[], categoryMap: Map<ContentId, string>) {
   return ids.map((id) => categoryMap.get(id)).filter(Boolean) as string[];
 }
 

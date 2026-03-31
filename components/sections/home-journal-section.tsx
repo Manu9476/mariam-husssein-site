@@ -5,7 +5,7 @@ import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
 import { SocialIconLink } from "@/components/shared/social-icon-link";
 import { stripHtml } from "@/lib/utils";
-import type { PageContent, PostSummary } from "@/types/content";
+import type { ContentId, PageContent, PostSummary } from "@/types/content";
 import type { SiteSettings } from "@/types/wordpress";
 
 export function HomeJournalSection({
@@ -17,7 +17,7 @@ export function HomeJournalSection({
   posts: PostSummary[];
   settings: SiteSettings;
   aboutPage?: PageContent | null;
-  categoryMap: Map<number, string>;
+  categoryMap: Map<ContentId, string>;
 }) {
   if (!posts.length) {
     return null;

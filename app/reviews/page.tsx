@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
-import { ReviewSubmissionForm } from "@/components/forms/review-submission-form";
 import { TestimonialCard } from "@/components/content/testimonial-card";
+import { ReviewSubmissionForm } from "@/components/forms/review-submission-form";
 import { EmptyState } from "@/components/shared/empty-state";
 import { RichTextRenderer } from "@/components/shared/rich-text-renderer";
 import { SectionHeading } from "@/components/shared/section-heading";
-import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 import { getPageBySlug, getSiteSettings, getTestimonials } from "@/lib/api/wordpress";
+import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [settings, page] = await Promise.all([getSiteSettings(), getPageBySlug("reviews")]);
@@ -36,12 +36,12 @@ export default async function ReviewsPage() {
       <section className="section-space">
         <div className="container grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="space-y-5">
-          <SectionHeading
-            eyebrow="Reviews ♡"
-            title={page?.title || "Kind words and thoughtful feedback."}
-            description={
+            <SectionHeading
+              eyebrow="Reviews"
+              title={page?.title || "Kind words and thoughtful feedback."}
+              description={
                 page?.excerpt.replace(/<[^>]*>/g, "") ||
-                "Website visitors can submit new testimonials here. Every submission is moderated in WordPress before publication."
+                "Website visitors can submit testimonials here. Every submission can stay pending until you approve it."
               }
             />
             {page?.content ? <RichTextRenderer content={page.content} /> : null}
@@ -61,7 +61,7 @@ export default async function ReviewsPage() {
           ) : (
             <EmptyState
               title="No public reviews yet"
-              description="Approved testimonials will appear here after you publish them from WordPress."
+              description="Approved testimonials will appear here after you publish them from your CMS."
             />
           )}
         </div>

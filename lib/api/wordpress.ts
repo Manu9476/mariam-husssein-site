@@ -5,9 +5,15 @@ import {
   POSTS_PER_PAGE,
   TESTIMONIALS_PREVIEW_LIMIT,
 } from "@/lib/constants";
+import { isSanityConfigured, sanityClient } from "@/lib/sanity/client";
+import {
+  portableTextToHtml,
+  portableTextToPlainText,
+} from "@/lib/sanity/portable-text";
 import { decodeHtml, stripHtml } from "@/lib/utils";
 import type {
   CategorySummary,
+  ContentId,
   FaqEntry,
   ImageAsset,
   PageContent,
@@ -15,6 +21,16 @@ import type {
   ResourceEntry,
   TestimonialEntry,
 } from "@/types/content";
+import type {
+  SanityCategoryDocument,
+  SanityFaqDocument,
+  SanityPageDocument,
+  SanityPortableNode,
+  SanityPostDocument,
+  SanityResourceDocument,
+  SanitySiteSettingsDocument,
+  SanityTestimonialDocument,
+} from "@/types/sanity";
 import type {
   PaginatedResponse,
   SeoMetaFields,
@@ -160,6 +176,30 @@ function resolveImage(node: {
   };
 }
 
+function resolveSanityImage(image?: {
+  alt?: string;
+  asset?: {
+    url?: string;
+    metadata?: {
+      dimensions?: {
+        width?: number;
+        height?: number;
+      };
+    };
+  };
+} | null): ImageAsset | null {
+  if (!image?.asset?.url) {
+    return null;
+  }
+
+  return {
+    url: image.asset.url,
+    alt: image.alt || "Editorial image",
+    width: image.asset.metadata?.dimensions?.width,
+    height: image.asset.metadata?.dimensions?.height,
+  };
+}
+
 function resolveSeo(meta?: SeoMetaFields): {
   title?: string;
   description?: string;
@@ -248,6 +288,125 @@ function mapTestimonial(entry: WordPressTestimonial): TestimonialEntry {
   };
 }
 
+function normalizeRichText(content?: SanityPortableNode[] | null, excerpt?: string) {
+  const html = portableTextToHtml(content);
+  const plain = excerpt || portableTextToPlainText(content);
+
+  return {
+    html,
+    plain,
+  };
+}
+
+function mapSanitySeo(seo?: {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}) {
+  return {
+    title: seo?.title,
+    description: seo?.description,
+    ogImage: seo?.ogImage,
+  };
+}
+
+function mapSanityMenu(
+  items: { _key?: string; title: string; url: string; target?: string }[] = [],
+) {
+  return items
+    .filter((item) => item?.title && item?.url)
+    .map((item, index) => ({
+      id: item._key || index + 1,
+      title: item.title,
+      url: item.url,
+      target: item.target,
+    }));
+}
+
+function mapSanityPage(page: SanityPageDocument): PageContent {
+  const richText = normalizeRichText(page.body, page.excerpt);
+
+  return {
+    id: page._id,
+    slug: page.slug,
+    title: page.title,
+    content: richText.html,
+    excerpt: page.excerpt || richText.plain,
+    image: resolveSanityImage(page.featuredImage),
+    seo: mapSanitySeo(page.seo),
+  };
+}
+
+function mapSanityCategory(
+  category: SanityCategoryDocument & { postCount?: number },
+): CategorySummary {
+  return {
+    id: category._id,
+    count: category.postCount || 0,
+    name: category.title,
+    slug: category.slug,
+    description: category.description || "",
+  };
+}
+
+function mapSanityPost(post: SanityPostDocument): PostSummary {
+  const richText = normalizeRichText(post.body, post.excerpt);
+
+  return {
+    id: post._id,
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt || richText.plain,
+    content: richText.html,
+    date: post.publishedAt || "",
+    modified: post.updatedAt,
+    authorName: post.authorName,
+    categories: (post.categories ?? []).map((category) => category._id),
+    image: resolveSanityImage(post.featuredImage),
+    seo: mapSanitySeo(post.seo),
+    sticky: Boolean(post.featuredOnHome),
+    readingTime: readingTimeFromHtml(richText.html),
+  };
+}
+
+function mapSanityFaq(entry: SanityFaqDocument): FaqEntry {
+  return {
+    id: entry._id,
+    slug: entry.slug,
+    question: entry.question,
+    answer: portableTextToHtml(entry.answer),
+  };
+}
+
+function mapSanityResource(entry: SanityResourceDocument): ResourceEntry {
+  const richText = normalizeRichText(entry.body, entry.excerpt);
+
+  return {
+    id: entry._id,
+    slug: entry.slug,
+    title: entry.title,
+    excerpt: entry.excerpt || richText.plain,
+    content: richText.html,
+    ctaLabel: entry.ctaLabel || "Learn more",
+    ctaUrl: entry.ctaUrl,
+    highlight: Boolean(entry.highlight),
+    image: resolveSanityImage(entry.featuredImage),
+    seo: mapSanitySeo(entry.seo),
+  };
+}
+
+function mapSanityTestimonial(entry: SanityTestimonialDocument): TestimonialEntry {
+  return {
+    id: entry._id,
+    slug: entry.slug,
+    name: entry.name,
+    quote: entry.quote || "",
+    rating: Number(entry.rating || 5),
+    image: resolveSanityImage(entry.image),
+    seo: mapSanitySeo(entry.seo),
+  };
+}
+
 function fallbackSettings(): SiteSettings {
   return {
     siteTitle: "Mariam Husssein",
@@ -265,6 +424,7 @@ function fallbackSettings(): SiteSettings {
       { id: 6, title: "Archive", url: "/blog" },
       { id: 7, title: "About", url: "/about" },
       { id: 8, title: "Contact", url: "/contact" },
+      { id: 9, title: "Studio", url: "/studio" },
     ],
     footerMenu: [
       { id: 1, title: "Newsletter", url: "/newsletter" },
@@ -275,7 +435,7 @@ function fallbackSettings(): SiteSettings {
       eyebrow: "Editorial notes",
       title: "A calm digital home for stories, lessons, and generous living.",
       subtitle:
-        "Connect your WordPress backend to manage this homepage hero, featured posts, and every section without touching the codebase.",
+        "Now connected to a free Sanity content studio, so you can manage sections, pages, stories, and letters without touching code.",
       primaryCtaLabel: "Read the journal",
       primaryCtaUrl: "/blog",
       secondaryCtaLabel: "About Mariam",
@@ -285,7 +445,7 @@ function fallbackSettings(): SiteSettings {
       eyebrow: "Stay close",
       title: "Letters worth slowing down for.",
       description:
-        "Use the WordPress settings panel to tailor this invitation, then connect Beehiiv, ConvertKit, or Mailchimp when you are ready.",
+        "Use Sanity Studio to tailor this invitation, then connect Beehiiv, ConvertKit, or Mailchimp when you are ready.",
       placeholder: "Enter your email address",
       buttonLabel: "Subscribe",
       disclaimer: "No spam. Just thoughtful updates, occasional recommendations, and new essays.",
@@ -315,7 +475,246 @@ export function isWordPressConfigured() {
   return Boolean(wordpressBaseUrl);
 }
 
+async function sanityFetch<T>(
+  query: string,
+  params?: Record<string, string | number | boolean | string[] | null | undefined>,
+) {
+  if (!sanityClient) {
+    throw new Error("Sanity is not configured.");
+  }
+
+  return sanityClient.fetch<T>(query, params ?? {}, {
+    next: {
+      revalidate: DEFAULT_REVALIDATE,
+    },
+  });
+}
+
+const bodyProjection = `
+  body[]{
+    ...,
+    _type == "image" => {
+      ...,
+      "url": asset->url
+    }
+  }
+`;
+
+const pageProjection = `
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  featuredImage{
+    alt,
+    asset->{
+      url,
+      metadata{
+        dimensions{
+          width,
+          height
+        }
+      }
+    }
+  },
+  ${bodyProjection},
+  seo{
+    title,
+    description,
+    ogImage
+  }
+`;
+
+const postProjection = `
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  "publishedAt": coalesce(publishedAt, _createdAt),
+  "updatedAt": _updatedAt,
+  "authorName": author->name,
+  "categories": categories[]->{
+    _id,
+    title,
+    "slug": slug.current,
+    description
+  },
+  featuredOnHome,
+  featuredImage{
+    alt,
+    asset->{
+      url,
+      metadata{
+        dimensions{
+          width,
+          height
+        }
+      }
+    }
+  },
+  ${bodyProjection},
+  seo{
+    title,
+    description,
+    ogImage
+  }
+`;
+
+const resourceProjection = `
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  ctaLabel,
+  ctaUrl,
+  highlight,
+  featuredImage{
+    alt,
+    asset->{
+      url,
+      metadata{
+        dimensions{
+          width,
+          height
+        }
+      }
+    }
+  },
+  ${bodyProjection},
+  seo{
+    title,
+    description,
+    ogImage
+  }
+`;
+
+const siteSettingsQuery = `
+  *[_type == "siteSettings"][0]{
+    siteTitle,
+    siteDescription,
+    siteUrl,
+    logoAlt,
+    logo{
+      alt,
+      asset->{
+        url,
+        metadata{
+          dimensions{
+            width,
+            height
+          }
+        }
+      }
+    },
+    primaryMenu[]{
+      _key,
+      title,
+      url,
+      target
+    },
+    footerMenu[]{
+      _key,
+      title,
+      url,
+      target
+    },
+    hero{
+      eyebrow,
+      title,
+      subtitle,
+      primaryCtaLabel,
+      primaryCtaUrl,
+      secondaryCtaLabel,
+      secondaryCtaUrl
+    },
+    newsletter{
+      eyebrow,
+      title,
+      description,
+      placeholder,
+      buttonLabel,
+      disclaimer
+    },
+    contact{
+      email,
+      phone,
+      location,
+      availability
+    },
+    socialLinks[]{
+      _key,
+      label,
+      url
+    },
+    footer{
+      blurb,
+      copyright,
+      newsletterCtaLabel,
+      newsletterCtaUrl
+    }
+  }
+`;
+
+function mergeSettingsWithFallback(settings?: SanitySiteSettingsDocument | SiteSettings | null) {
+  const fallback = fallbackSettings();
+
+  if (!settings) {
+    return fallback;
+  }
+
+  const sanitySettings = settings as SanitySiteSettingsDocument;
+  const logo = resolveSanityImage(sanitySettings.logo);
+
+  return {
+    ...fallback,
+    siteTitle: sanitySettings.siteTitle || fallback.siteTitle,
+    siteDescription: sanitySettings.siteDescription || fallback.siteDescription,
+    siteUrl: sanitySettings.siteUrl || fallback.siteUrl,
+    logoUrl: logo?.url || fallback.logoUrl,
+    logoAlt: sanitySettings.logoAlt || logo?.alt || fallback.logoAlt,
+    primaryMenu:
+      sanitySettings.primaryMenu?.length
+        ? mapSanityMenu(sanitySettings.primaryMenu)
+        : fallback.primaryMenu,
+    footerMenu:
+      sanitySettings.footerMenu?.length
+        ? mapSanityMenu(sanitySettings.footerMenu)
+        : fallback.footerMenu,
+    hero: {
+      ...fallback.hero,
+      ...(sanitySettings.hero ?? {}),
+    },
+    newsletter: {
+      ...fallback.newsletter,
+      ...(sanitySettings.newsletter ?? {}),
+    },
+    contact: {
+      ...fallback.contact,
+      ...(sanitySettings.contact ?? {}),
+    },
+    socialLinks:
+      sanitySettings.socialLinks?.filter((item) => item?.label && item?.url) ||
+      fallback.socialLinks,
+    footer: {
+      ...fallback.footer,
+      ...(sanitySettings.footer ?? {}),
+    },
+  };
+}
+
 const getSiteSettingsCached = cache(async (): Promise<SiteSettings> => {
+  if (isSanityConfigured() && sanityClient) {
+    try {
+      const settings = await sanityFetch<SanitySiteSettingsDocument | null>(
+        siteSettingsQuery,
+      );
+
+      return mergeSettingsWithFallback(settings);
+    } catch {
+      return fallbackSettings();
+    }
+  }
+
   if (!wordpressBaseUrl) {
     return fallbackSettings();
   }
@@ -338,27 +737,40 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   return getSiteSettingsCached();
 }
 
-const getPageBySlugCached = cache(
-  async (slug: string): Promise<PageContent | null> => {
-    if (!wordpressBaseUrl) {
+const getPageBySlugCached = cache(async (slug: string): Promise<PageContent | null> => {
+  if (isSanityConfigured() && sanityClient) {
+    const query = `
+      *[_type == "page" && slug.current == $slug][0]{
+        ${pageProjection}
+      }
+    `;
+
+    try {
+      const page = await sanityFetch<SanityPageDocument | null>(query, { slug });
+      return page ? mapSanityPage(page) : null;
+    } catch {
       return null;
     }
+  }
 
-    const { data } = await wordpressFetch<WordPressPage[]>("/wp/v2/pages", {
-      query: {
-        slug,
-        _embed: true,
-        status: "publish",
-        per_page: 1,
-      },
-      tags: [`page:${slug}`],
-    });
+  if (!wordpressBaseUrl) {
+    return null;
+  }
 
-    const page = data[0];
+  const { data } = await wordpressFetch<WordPressPage[]>("/wp/v2/pages", {
+    query: {
+      slug,
+      _embed: true,
+      status: "publish",
+      per_page: 1,
+    },
+    tags: [`page:${slug}`],
+  });
 
-    return page ? mapPage(page) : null;
-  },
-);
+  const page = data[0];
+
+  return page ? mapPage(page) : null;
+});
 
 export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   return getPageBySlugCached(slug);
@@ -368,7 +780,6 @@ export async function getPageByPossibleSlugs(
   slugs: string[],
 ): Promise<PageContent | null> {
   const pages = await Promise.all(slugs.map((slug) => getPageBySlug(slug)));
-
   return pages.find(Boolean) ?? null;
 }
 
@@ -376,9 +787,62 @@ const getPostsCached = cache(
   async (
     page: number,
     search: string,
-    categoryId: number,
+    categoryId: ContentId,
     perPage: number,
   ): Promise<PaginatedResponse<PostSummary>> => {
+    if (isSanityConfigured() && sanityClient) {
+      const start = Math.max(0, (page - 1) * perPage);
+      const end = start + perPage;
+      const searchPattern = search ? `*${search}*` : null;
+      const normalizedCategoryId = categoryId ? String(categoryId) : null;
+
+      const filter = `
+        _type == "post" &&
+        defined(slug.current) &&
+        (!defined($searchPattern) || title match $searchPattern || excerpt match $searchPattern || pt::text(body) match $searchPattern) &&
+        (!defined($categoryId) || references($categoryId))
+      `;
+
+      try {
+        const [items, totalItems] = await Promise.all([
+          sanityFetch<SanityPostDocument[]>(
+            `*[
+              ${filter}
+            ] | order(coalesce(publishedAt, _createdAt) desc)[$start...$end]{
+              ${postProjection}
+            }`,
+            {
+              searchPattern,
+              categoryId: normalizedCategoryId,
+              start,
+              end,
+            },
+          ),
+          sanityFetch<number>(
+            `count(*[
+              ${filter}
+            ])`,
+            {
+              searchPattern,
+              categoryId: normalizedCategoryId,
+            },
+          ),
+        ]);
+
+        return {
+          items: items.map(mapSanityPost),
+          totalPages: Math.ceil(totalItems / perPage),
+          totalItems,
+        };
+      } catch {
+        return {
+          items: [],
+          totalPages: 0,
+          totalItems: 0,
+        };
+      }
+    }
+
     if (!wordpressBaseUrl) {
       return {
         items: [],
@@ -415,13 +879,13 @@ export async function getPosts({
 }: {
   page?: number;
   search?: string;
-  categoryId?: number;
+  categoryId?: ContentId;
   perPage?: number;
 } = {}): Promise<PaginatedResponse<PostSummary>> {
-  return getPostsCached(page, search ?? "", categoryId ?? 0, perPage);
+  return getPostsCached(page, search ?? "", categoryId ?? "", perPage);
 }
 
-export async function getLatestPosts(limit = 3, excludeId?: number) {
+export async function getLatestPosts(limit = 3, excludeId?: ContentId) {
   const { items } = await getPosts({
     page: 1,
     perPage: Math.max(limit + (excludeId ? 1 : 0), limit),
@@ -431,6 +895,26 @@ export async function getLatestPosts(limit = 3, excludeId?: number) {
 }
 
 export async function getStickyFeaturedPost() {
+  if (isSanityConfigured() && sanityClient) {
+    try {
+      const post = await sanityFetch<SanityPostDocument | null>(
+        `*[_type == "post" && defined(slug.current) && featuredOnHome == true]
+          | order(coalesce(publishedAt, _createdAt) desc)[0]{
+            ${postProjection}
+          }`,
+      );
+
+      if (post) {
+        return mapSanityPost(post);
+      }
+    } catch {
+      return null;
+    }
+
+    const latest = await getLatestPosts(1);
+    return latest[0] ?? null;
+  }
+
   if (!wordpressBaseUrl) {
     return null;
   }
@@ -458,6 +942,21 @@ export async function getStickyFeaturedPost() {
 }
 
 const getPostBySlugCached = cache(async (slug: string) => {
+  if (isSanityConfigured() && sanityClient) {
+    try {
+      const post = await sanityFetch<SanityPostDocument | null>(
+        `*[_type == "post" && slug.current == $slug][0]{
+          ${postProjection}
+        }`,
+        { slug },
+      );
+
+      return post ? mapSanityPost(post) : null;
+    } catch {
+      return null;
+    }
+  }
+
   if (!wordpressBaseUrl) {
     return null;
   }
@@ -483,6 +982,11 @@ export async function getPostBySlug(slug: string) {
 
 export async function getRelatedPosts(post: PostSummary, limit = 3) {
   const firstCategory = post.categories[0];
+
+  if (!firstCategory) {
+    return [];
+  }
+
   const { items } = await getPosts({
     categoryId: firstCategory,
     perPage: limit + 1,
@@ -492,6 +996,26 @@ export async function getRelatedPosts(post: PostSummary, limit = 3) {
 }
 
 const getCategoriesCached = cache(async () => {
+  if (isSanityConfigured() && sanityClient) {
+    try {
+      const categories = await sanityFetch<
+        (SanityCategoryDocument & { postCount: number })[]
+      >(
+        `*[_type == "category"] | order(title asc){
+          _id,
+          title,
+          "slug": slug.current,
+          description,
+          "postCount": count(*[_type == "post" && references(^._id)])
+        }`,
+      );
+
+      return categories.map(mapSanityCategory);
+    } catch {
+      return [];
+    }
+  }
+
   if (!wordpressBaseUrl) {
     return [];
   }
@@ -514,7 +1038,32 @@ export async function getCategories() {
 }
 
 const getCategoryBySlugCached = cache(async (slug: string) => {
-  if (!slug || !wordpressBaseUrl) {
+  if (!slug) {
+    return null;
+  }
+
+  if (isSanityConfigured() && sanityClient) {
+    try {
+      const category = await sanityFetch<
+        (SanityCategoryDocument & { postCount: number }) | null
+      >(
+        `*[_type == "category" && slug.current == $slug][0]{
+          _id,
+          title,
+          "slug": slug.current,
+          description,
+          "postCount": count(*[_type == "post" && references(^._id)])
+        }`,
+        { slug },
+      );
+
+      return category ? mapSanityCategory(category) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  if (!wordpressBaseUrl) {
     return null;
   }
 
@@ -545,29 +1094,61 @@ export async function getCategoryByPossibleSlugs(
   return categories.find(Boolean) ?? null;
 }
 
-const getTestimonialsCached = cache(
-  async (limit: number): Promise<TestimonialEntry[]> => {
-    if (!wordpressBaseUrl) {
+const getTestimonialsCached = cache(async (limit: number): Promise<TestimonialEntry[]> => {
+  if (isSanityConfigured() && sanityClient) {
+    try {
+      const testimonials = await sanityFetch<SanityTestimonialDocument[]>(
+        `*[_type == "testimonial" && approved == true]
+          | order(_createdAt desc)[0...$limit]{
+            _id,
+            name,
+            "slug": coalesce(slug.current, _id),
+            quote,
+            rating,
+            "image": photo{
+              alt,
+              asset->{
+                url,
+                metadata{
+                  dimensions{
+                    width,
+                    height
+                  }
+                }
+              }
+            },
+            seo{
+              title,
+              description,
+              ogImage
+            }
+          }`,
+        { limit },
+      );
+
+      return testimonials.map(mapSanityTestimonial);
+    } catch {
       return [];
     }
+  }
 
-    const { data } = await wordpressFetch<WordPressTestimonial[]>(
-      "/wp/v2/testimonial",
-      {
-        query: {
-          _embed: true,
-          per_page: limit,
-          status: "publish",
-          orderby: "date",
-          order: "desc",
-        },
-        tags: ["testimonials"],
-      },
-    );
+  if (!wordpressBaseUrl) {
+    return [];
+  }
 
-    return data.map(mapTestimonial);
-  },
-);
+  const { data } = await wordpressFetch<WordPressTestimonial[]>("/wp/v2/testimonial", {
+    query: {
+      _embed: true,
+      per_page: limit,
+      status: "publish",
+      orderby: "date",
+      order: "desc",
+    },
+    tags: ["testimonials"],
+  });
+
+  return data.map(mapTestimonial);
+});
 
 export async function getTestimonials(
   limit = TESTIMONIALS_PREVIEW_LIMIT,
@@ -576,6 +1157,29 @@ export async function getTestimonials(
 }
 
 const getFaqsCached = cache(async (): Promise<FaqEntry[]> => {
+  if (isSanityConfigured() && sanityClient) {
+    try {
+      const faqs = await sanityFetch<SanityFaqDocument[]>(
+        `*[_type == "faq"] | order(_createdAt asc){
+          _id,
+          question,
+          "slug": coalesce(slug.current, _id),
+          answer[]{
+            ...,
+            _type == "image" => {
+              ...,
+              "url": asset->url
+            }
+          }
+        }`,
+      );
+
+      return faqs.map(mapSanityFaq);
+    } catch {
+      return [];
+    }
+  }
+
   if (!wordpressBaseUrl) {
     return [];
   }
@@ -599,6 +1203,20 @@ export async function getFaqs(): Promise<FaqEntry[]> {
 }
 
 const getResourcesCached = cache(async (): Promise<ResourceEntry[]> => {
+  if (isSanityConfigured() && sanityClient) {
+    try {
+      const resources = await sanityFetch<SanityResourceDocument[]>(
+        `*[_type == "resource"] | order(highlight desc, _createdAt asc){
+          ${resourceProjection}
+        }`,
+      );
+
+      return resources.map(mapSanityResource);
+    } catch {
+      return [];
+    }
+  }
+
   if (!wordpressBaseUrl) {
     return [];
   }
@@ -622,14 +1240,13 @@ export async function getResources(): Promise<ResourceEntry[]> {
 }
 
 export async function getIndexableContent() {
-  const [posts, resources, aboutPage, contactPage, newsletterPage] =
-    await Promise.all([
-      getPosts({ page: 1, perPage: 100 }),
-      getResources(),
-      getPageBySlug("about"),
-      getPageBySlug("contact"),
-      getPageBySlug("newsletter"),
-    ]);
+  const [posts, resources, aboutPage, contactPage, newsletterPage] = await Promise.all([
+    getPosts({ page: 1, perPage: 100 }),
+    getResources(),
+    getPageBySlug("about"),
+    getPageBySlug("contact"),
+    getPageBySlug("newsletter"),
+  ]);
 
   return {
     posts: posts.items,

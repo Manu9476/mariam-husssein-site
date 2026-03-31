@@ -1,3 +1,5 @@
+export type ContentId = string | number;
+
 export interface ImageAsset {
   url: string;
   alt: string;
@@ -12,14 +14,14 @@ export interface SeoFields {
 }
 
 export interface NavigationLink {
-  id: number;
+  id: ContentId;
   title: string;
   url: string;
   target?: string;
 }
 
 export interface PostSummary {
-  id: number;
+  id: ContentId;
   slug: string;
   title: string;
   excerpt: string;
@@ -27,7 +29,7 @@ export interface PostSummary {
   date: string;
   modified?: string;
   authorName?: string;
-  categories: number[];
+  categories: ContentId[];
   image?: ImageAsset | null;
   seo: SeoFields;
   sticky: boolean;
@@ -35,7 +37,7 @@ export interface PostSummary {
 }
 
 export interface CategorySummary {
-  id: number;
+  id: ContentId;
   count: number;
   name: string;
   slug: string;
@@ -43,7 +45,7 @@ export interface CategorySummary {
 }
 
 export interface PageContent {
-  id: number;
+  id: ContentId;
   slug: string;
   title: string;
   content: string;
@@ -53,7 +55,7 @@ export interface PageContent {
 }
 
 export interface TestimonialEntry {
-  id: number;
+  id: ContentId;
   slug: string;
   name: string;
   quote: string;
@@ -63,7 +65,7 @@ export interface TestimonialEntry {
 }
 
 export interface ResourceEntry {
-  id: number;
+  id: ContentId;
   slug: string;
   title: string;
   excerpt: string;
@@ -76,7 +78,7 @@ export interface ResourceEntry {
 }
 
 export interface FaqEntry {
-  id: number;
+  id: ContentId;
   slug: string;
   question: string;
   answer: string;
