@@ -70,7 +70,7 @@ export default async function BlogPostPage({
     <>
       <article className="section-space">
         <div className="container space-y-8">
-          <div className="mx-auto max-w-4xl space-y-5">
+          <div className="mx-auto max-w-3xl space-y-5">
             <Link href="/blog" className="eyebrow inline-flex">
               Back to the journal
             </Link>
@@ -91,15 +91,17 @@ export default async function BlogPostPage({
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-md border border-border/80 bg-white shadow-sm">
-            <ImageWrapper
-              image={post.image}
-              alt={post.title}
-              className="aspect-[16/9]"
-              priority
-              sizes="100vw"
-            />
-          </div>
+          {post.image?.url ? (
+            <div className="mx-auto max-w-xl overflow-hidden rounded-md border border-border/80 bg-white shadow-sm">
+              <ImageWrapper
+                image={post.image}
+                alt={post.title}
+                className="aspect-[4/3]"
+                priority
+                sizes="(min-width: 1024px) 40rem, 90vw"
+              />
+            </div>
+          ) : null}
 
           <div className="mx-auto max-w-3xl">
             <RichTextRenderer content={post.content} />
