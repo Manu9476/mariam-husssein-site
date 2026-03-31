@@ -1,0 +1,11 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#F9F2EC"/>
+  <circle cx="972" cy="126" r="168" fill="#EFD9CF"/>
+  <circle cx="180" cy="550" r="210" fill="#E4E1D5"/>
+  <rect x="82" y="82" width="1036" height="466" rx="42" fill="white" fill-opacity="0.84" stroke="#E3D4C8"/>
+  <path d="M157 167H1043" stroke="#D6C1B2" stroke-width="2"/>
+  <path d="M157 463H716" stroke="#D6C1B2" stroke-width="2"/>
+  <text x="157" y="245" fill="#594236" font-family="Georgia, serif" font-size="34" letter-spacing="8">MARIAM HUSSSEIN</text>
+  <text x="157" y="332" fill="#3E2F28" font-family="Georgia, serif" font-size="82">A calm editorial home</text>
+  <text x="157" y="404" fill="#76645A" font-family="Arial, sans-serif" font-size="28">Thoughtful stories, modern reflections, and beautifully managed content.</text>
+</svg>

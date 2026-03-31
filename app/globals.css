@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 20%;
+    --primary: 269 44% 30%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 146 29% 93%;
+    --secondary-foreground: 148 43% 18%;
+    --muted: 145 25% 96%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 266 58% 95%;
+    --accent-foreground: 269 44% 30%;
+    --border: 145 24% 86%;
+    --input: 145 24% 86%;
+    --ring: 269 44% 30%;
+    --radius: 1rem;
+    --page-bg: #ffffff;
+    --header-bg: #c8e2d0;
+    --heading-color: #4b2b70;
+    --body-color: #333333;
+    --nav-color: #1b4332;
+    --accent-color: #4b2b70;
+    --font-sans: var(--font-nunito), "Nunito", sans-serif;
+    --font-serif: var(--font-fraunces), "Fraunces", serif;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    background-color: var(--page-bg);
+    min-height: 100vh;
+    color: var(--body-color);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif tracking-[-0.035em];
+    color: var(--heading-color);
+  }
+
+  p {
+    @apply leading-8;
+    color: var(--body-color);
+  }
+
+  a {
+    @apply transition-colors duration-300;
+    color: var(--accent-color);
+  }
+
+  strong {
+    color: var(--heading-color);
+  }
+
+  ::selection {
+    background: rgba(75, 43, 112, 0.16);
+    color: var(--heading-color);
+  }
+}
+
+@layer components {
+  .section-space {
+    @apply py-12 md:py-20;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.24em];
+    color: var(--accent-color);
+  }
+
+  .editorial-panel {
+    @apply rounded-2xl border bg-card shadow-sm;
+    border-color: rgba(200, 226, 208, 0.95);
+    box-shadow: 0 18px 35px -28px rgba(75, 43, 112, 0.18);
+  }
+
+  .soft-link {
+    @apply inline-flex items-center gap-2 font-serif text-[13px] font-semibold uppercase tracking-[0.16em] underline-offset-4 transition hover:text-primary hover:underline;
+    color: var(--accent-color);
+  }
+
+  .rich-text {
+    @apply text-base text-foreground;
+  }
+
+  .rich-text > * + * {
+    @apply mt-5;
+  }
+
+  .rich-text h2 {
+    @apply mt-10 text-3xl md:text-4xl;
+  }
+
+  .rich-text h3 {
+    @apply mt-8 text-2xl md:text-3xl;
+  }
+
+  .rich-text p,
+  .rich-text li {
+    @apply text-[1.02rem] leading-8 md:text-[1.1rem];
+    color: var(--body-color);
+  }
+
+  .rich-text ul,
+  .rich-text ol {
+    @apply ml-6 space-y-3;
+  }
+
+  .rich-text blockquote {
+    @apply rounded-2xl border-l-4 px-6 py-5 text-lg italic;
+    border-color: rgba(75, 43, 112, 0.2);
+    background: rgba(200, 226, 208, 0.3);
+    color: var(--heading-color);
+  }
+
+  .rich-text a {
+    @apply text-primary underline decoration-primary/40 underline-offset-4;
+  }
+
+  .rich-text figure,
+  .rich-text .wp-block-image,
+  .rich-text .wp-block-gallery {
+    @apply mt-8 grid gap-3;
+  }
+
+  .rich-text figcaption {
+    @apply text-sm;
+    color: rgba(51, 51, 51, 0.72);
+  }
+
+  .rich-text img {
+    @apply mt-8 rounded-md border border-border bg-white;
+  }
+
+  .rich-text figure img,
+  .rich-text .wp-block-image img,
+  .rich-text .wp-block-gallery img {
+    @apply mt-0;
+  }
+
+  .nav-link {
+    @apply font-serif text-[13px] uppercase tracking-[0.18em] transition;
+    color: var(--nav-color);
+  }
+
+  .nav-link:hover {
+    color: var(--accent-color);
+  }
+
+  .header-shell {
+    background-color: var(--header-bg);
+  }
+
+  .brand-forest {
+    color: var(--nav-color);
+  }
+}
