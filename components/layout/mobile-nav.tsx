@@ -1,12 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { SocialIconLink } from "@/components/shared/social-icon-link";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -24,8 +27,15 @@ export function MobileNav({
   socialLinks: SocialLink[];
   siteTitle: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button
           variant="outline"
@@ -48,15 +58,17 @@ export function MobileNav({
             const external = item.url.startsWith("http");
 
             return (
-              <Link
-                key={item.id}
-                href={item.url}
-                target={item.target || (external ? "_blank" : undefined)}
-                rel={external ? "noreferrer" : undefined}
-                className="nav-link text-base"
-              >
-                {item.title}
-              </Link>
+              <SheetClose asChild key={item.id}>
+                <Link
+                  href={item.url}
+                  target={item.target || (external ? "_blank" : undefined)}
+                  rel={external ? "noreferrer" : undefined}
+                  className="nav-link text-base"
+                  onClick={() => setOpen(false)}
+                >
+                  {item.title}
+                </Link>
+              </SheetClose>
             );
           })}
         </nav>
@@ -66,7 +78,11 @@ export function MobileNav({
             <p className="eyebrow">Elsewhere</p>
             <div className="mt-4 flex flex-wrap gap-3">
               {socialLinks.map((item) => (
-                <SocialIconLink key={item.label} label={item.label} url={item.url} />
+                <SheetClose asChild key={item.label}>
+                  <span>
+                    <SocialIconLink label={item.label} url={item.url} />
+                  </span>
+                </SheetClose>
               ))}
             </div>
           </div>
