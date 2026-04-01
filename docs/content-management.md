@@ -18,6 +18,7 @@ Use these collections in Sanity Studio:
 - `Subscribers` for newsletter signups from the website
 - `Comments` for post comments and replies awaiting approval
 - `Contact Messages` for everything sent through the contact form
+- `Reports` for CSV exports of subscribers and comments by custom date range
 - `FAQs` for common questions and answers
 
 ## How To Change The Homepage
@@ -81,7 +82,22 @@ Every newsletter signup from the website is stored in:
 
 - `Subscribers`
 
+After someone subscribes, the browser remembers that subscription and the newsletter page opens in a subscribed state on future visits from that device.
+
 If `RESEND_API_KEY` and `RESEND_FROM_EMAIL` are configured, you will also receive an email notification.
+
+## How To Export CSV Reports
+
+Open:
+
+- `Studio -> Reports`
+
+You can export:
+
+- newsletter subscribers
+- comments and replies
+
+Choose a `From date` and `To date`, then click `Download CSV`.
 
 ## How To Moderate Comments And Replies
 

@@ -40,6 +40,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     return {
       ok: false,
       message: parsed.error.issues[0]?.message || "Please enter a valid email address.",
+      subscriberEmail: undefined,
     };
   }
 
@@ -47,6 +48,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     return {
       ok: true,
       message: "You are subscribed. Look out for the next letter from Mariam.",
+      subscriberEmail: undefined,
     };
   }
 
@@ -55,6 +57,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     return {
       ok: false,
       message: "Please take a little more time before submitting the form.",
+      subscriberEmail: undefined,
     };
   }
 
@@ -102,6 +105,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
         message: notification.ok
           ? "You are subscribed. Your email is saved in Sanity Studio and a notification email has been sent."
           : "You are subscribed. Your email is now saved in Sanity Studio.",
+        subscriberEmail: normalizedEmail,
       };
     }
 
@@ -109,6 +113,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
       ok: false,
       message:
         "Add SANITY_API_WRITE_TOKEN to save subscribers in Sanity Studio, or connect a newsletter provider.",
+      subscriberEmail: undefined,
     };
   }
 
@@ -118,6 +123,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     return {
       ok: false,
       message: `The ${provider} adapter is selected but not configured yet.`,
+      subscriberEmail: undefined,
     };
   }
 
@@ -134,6 +140,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     return {
       ok: false,
       message: "We could not save your subscription right now. Please try again shortly.",
+      subscriberEmail: undefined,
     };
   }
 
@@ -162,5 +169,6 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
         ? "You are subscribed. Your email is saved in Sanity Studio and a notification email has been sent."
         : "You are subscribed. Your email is saved in Sanity Studio too."
       : "You are subscribed. Look out for the next letter from Mariam.",
+    subscriberEmail: normalizedEmail,
   };
 }

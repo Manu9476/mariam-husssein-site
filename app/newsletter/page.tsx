@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 
 import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { PostCard } from "@/components/content/post-card";
@@ -38,16 +39,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function NewsletterPage() {
+  const cookieStore = await cookies();
+  const subscriberEmail = cookieStore.get("mh_newsletter_subscriber")?.value || "";
+  const isSubscribed = Boolean(subscriberEmail);
+
   const [settings, page, categories] = await Promise.all([
     getSiteSettings(),
     getPageBySlug("newsletter"),
     getCategories(),
   ]);
+
   const letterCategoryIds = getLetterCategoryIds(categories);
-  const latestPosts = await getLatestPosts(2, undefined, {
+  const latestPosts = await getLatestPosts(isSubscribed ? 6 : 3, undefined, {
     excludeCategoryIds: letterCategoryIds,
   });
-
   const categoryMap = new Map(categories.map((category) => [category.id, category.name]));
 
   return (
@@ -56,10 +61,12 @@ export default async function NewsletterPage() {
         <div className="container grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div className="space-y-5">
             <SectionHeading
-              eyebrow={settings.newsletter.eyebrow || "Newsletter 💌"}
+              eyebrow={settings.newsletter.eyebrow || "Newsletter"}
               title={page?.title || settings.newsletter.title}
               description={
-                page?.excerpt.replace(/<[^>]*>/g, "") || settings.newsletter.description
+                isSubscribed
+                  ? `Welcome back${subscriberEmail ? `, ${subscriberEmail}` : ""}. Your published notes are ready below.`
+                  : page?.excerpt.replace(/<[^>]*>/g, "") || settings.newsletter.description
               }
             />
             <p className="max-w-xl text-sm text-muted-foreground">
@@ -79,11 +86,19 @@ export default async function NewsletterPage() {
         <section className="section-space pt-0">
           <div className="container space-y-6">
             <SectionHeading
-              eyebrow="Recent reading"
-              title="A small sample from the notes."
-              description="Use this page to preview the kind of thoughtful notes subscribers can expect."
+              eyebrow={isSubscribed ? "Published now" : "Recent reading"}
+              title={
+                isSubscribed
+                  ? "Published notes for subscribers."
+                  : "A small sample from the notes."
+              }
+              description={
+                isSubscribed
+                  ? "Your browser remembers that you subscribed, so this page now opens as your reading room."
+                  : "Use this page to preview the kind of thoughtful notes subscribers can expect."
+              }
             />
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {latestPosts.map((post) => (
                 <PostCard
                   key={post.id}
