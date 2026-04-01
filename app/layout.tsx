@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Nunito } from "next/font/google";
 
-import { Footer } from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
+import { AppShell } from "@/components/layout/app-shell";
 import { getSiteSettings } from "@/lib/api/wordpress";
 import { buildMetadata } from "@/lib/seo";
 
@@ -35,11 +34,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${nunito.variable} ${fraunces.variable} min-h-screen`}>
-        <Header settings={settings} />
-        <div className="relative z-10 flex min-h-[calc(100vh-5rem)] flex-col">
-          <main className="flex-1">{children}</main>
-          <Footer settings={settings} />
-        </div>
+        <AppShell settings={settings}>{children}</AppShell>
       </body>
     </html>
   );

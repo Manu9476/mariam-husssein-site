@@ -171,4 +171,18 @@
   .brand-forest {
     color: var(--nav-color);
   }
+
+  .studio-page-shell {
+    min-height: 100vh;
+    background: #0f1117;
+  }
+
+  .studio-root {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .studio-root > div {
+    height: 100%;
+  }
 }

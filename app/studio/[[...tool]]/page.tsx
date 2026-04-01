@@ -10,7 +10,7 @@ export const dynamic = "force-static";
 export default function StudioPage() {
   if (!hasValidSanityConfig()) {
     return (
-      <div className="mx-auto flex min-h-[60vh] max-w-2xl items-center justify-center px-6 py-20">
+      <div className="mx-auto flex min-h-screen max-w-2xl items-center justify-center px-6 py-20">
         <div className="w-full rounded-2xl border border-border bg-white p-8 shadow-sm">
           <p className="eyebrow">Studio setup</p>
           <h1 className="mt-3 text-4xl">Sanity environment variables are missing.</h1>
@@ -23,5 +23,9 @@ export default function StudioPage() {
     );
   }
 
-  return <NextStudio config={config} />;
+  return (
+    <div className="studio-root">
+      <NextStudio config={config} />
+    </div>
+  );
 }
