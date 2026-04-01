@@ -267,6 +267,97 @@ const testimonial = defineType({
   },
 });
 
+const newsletterSubscriber = defineType({
+  name: "newsletterSubscriber",
+  title: "Subscribers",
+  type: "document",
+  fields: [
+    defineField({
+      name: "email",
+      title: "Email",
+      type: "string",
+      validation: (rule) => rule.required().email(),
+    }),
+    defineField({
+      name: "subscribedAt",
+      title: "Subscribed at",
+      type: "datetime",
+      initialValue: () => new Date().toISOString(),
+    }),
+    defineField({
+      name: "source",
+      title: "Source",
+      type: "string",
+      initialValue: "website",
+    }),
+  ],
+  preview: {
+    select: {
+      title: "email",
+      subtitle: "subscribedAt",
+    },
+  },
+});
+
+const comment = defineType({
+  name: "comment",
+  title: "Comments",
+  type: "document",
+  fields: [
+    defineField({
+      name: "post",
+      title: "Post",
+      type: "reference",
+      to: [{ type: "post" }],
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "name",
+      title: "Name",
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "email",
+      title: "Email",
+      type: "string",
+      description: "Stored for moderation only.",
+      validation: (rule) => rule.required().email(),
+    }),
+    defineField({
+      name: "message",
+      title: "Comment",
+      type: "text",
+      rows: 5,
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "approved",
+      title: "Approved for public display",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
+      name: "createdAt",
+      title: "Submitted at",
+      type: "datetime",
+      initialValue: () => new Date().toISOString(),
+    }),
+  ],
+  preview: {
+    select: {
+      title: "name",
+      subtitle: "post.title",
+    },
+    prepare({ title, subtitle }) {
+      return {
+        title,
+        subtitle: subtitle ? `On ${subtitle}` : "Pending post reference",
+      };
+    },
+  },
+});
+
 const faq = defineType({
   name: "faq",
   title: "FAQs",
@@ -397,7 +488,12 @@ const siteSettings = defineType({
       title: "Contact details",
       type: "object",
       fields: [
-        defineField({ name: "email", title: "Email", type: "string" }),
+        defineField({
+          name: "email",
+          title: "Email",
+          type: "string",
+          description: "This controls the fallback email shown on the website.",
+        }),
         defineField({ name: "phone", title: "Phone", type: "string" }),
         defineField({ name: "location", title: "Location", type: "string" }),
         defineField({ name: "availability", title: "Availability note", type: "text", rows: 3 }),
@@ -407,6 +503,7 @@ const siteSettings = defineType({
       name: "socialLinks",
       title: "Social links",
       type: "array",
+      description: "Update your website and social media handles here.",
       of: [
         defineArrayMember({
           type: "object",
@@ -446,6 +543,8 @@ export const schemaTypes = [
   category,
   post,
   testimonial,
+  newsletterSubscriber,
+  comment,
   faq,
   resource,
 ];

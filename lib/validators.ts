@@ -9,6 +9,8 @@ export const contactSchema = z.object({
 
 export const newsletterSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
+  website: z.string().optional().default(""),
+  startedAt: z.string().optional().default(""),
 });
 
 export const reviewSchema = z.object({
@@ -20,6 +22,16 @@ export const reviewSchema = z.object({
   startedAt: z.string().optional().default(""),
 });
 
+export const commentSchema = z.object({
+  postId: z.string().min(1, "The post could not be found."),
+  name: z.string().min(2, "Please enter your name."),
+  email: z.string().email("Please enter a valid email address."),
+  message: z.string().min(8, "Please write a little more before posting."),
+  website: z.string().optional().default(""),
+  startedAt: z.string().optional().default(""),
+});
+
 export type ContactInput = z.infer<typeof contactSchema>;
 export type NewsletterInput = z.infer<typeof newsletterSchema>;
 export type ReviewInput = z.infer<typeof reviewSchema>;
+export type CommentInput = z.infer<typeof commentSchema>;

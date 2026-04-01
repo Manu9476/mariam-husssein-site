@@ -13,6 +13,7 @@ import {
 import { decodeHtml, stripHtml } from "@/lib/utils";
 import type {
   CategorySummary,
+  CommentEntry,
   ContentId,
   FaqEntry,
   ImageAsset,
@@ -23,6 +24,7 @@ import type {
 } from "@/types/content";
 import type {
   SanityCategoryDocument,
+  SanityCommentDocument,
   SanityFaqDocument,
   SanityPageDocument,
   SanityPortableNode,
@@ -404,6 +406,17 @@ function mapSanityTestimonial(entry: SanityTestimonialDocument): TestimonialEntr
     rating: Number(entry.rating || 5),
     image: resolveSanityImage(entry.image),
     seo: mapSanitySeo(entry.seo),
+  };
+}
+
+function mapSanityComment(entry: SanityCommentDocument): CommentEntry {
+  return {
+    id: entry._id,
+    postId: entry.post?._id || "",
+    name: entry.name,
+    message: entry.message || "",
+    date: entry.createdAt || "",
+    approved: Boolean(entry.approved),
   };
 }
 
@@ -1237,6 +1250,42 @@ const getResourcesCached = cache(async (): Promise<ResourceEntry[]> => {
 
 export async function getResources(): Promise<ResourceEntry[]> {
   return getResourcesCached();
+}
+
+const getCommentsForPostCached = cache(
+  async (postId: ContentId): Promise<CommentEntry[]> => {
+    if (isSanityConfigured() && sanityClient && postId) {
+      try {
+        const comments = await sanityFetch<SanityCommentDocument[]>(
+          `*[_type == "comment" && approved == true && post._ref == $postId]
+            | order(coalesce(createdAt, _createdAt) asc){
+              _id,
+              name,
+              email,
+              message,
+              approved,
+              "createdAt": coalesce(createdAt, _createdAt),
+              post->{
+                _id
+              }
+            }`,
+          {
+            postId: String(postId),
+          },
+        );
+
+        return comments.map(mapSanityComment);
+      } catch {
+        return [];
+      }
+    }
+
+    return [];
+  },
+);
+
+export async function getCommentsForPost(postId: ContentId): Promise<CommentEntry[]> {
+  return getCommentsForPostCached(postId);
 }
 
 export async function getIndexableContent() {

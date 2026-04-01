@@ -93,6 +93,25 @@ export interface SanityTestimonialDocument {
   approved?: boolean;
 }
 
+export interface SanityNewsletterSubscriberDocument {
+  _id: string;
+  email: string;
+  subscribedAt?: string;
+  source?: string;
+}
+
+export interface SanityCommentDocument {
+  _id: string;
+  name: string;
+  email?: string;
+  message?: string;
+  approved?: boolean;
+  createdAt?: string;
+  post?: {
+    _id: string;
+  };
+}
+
 export interface SanityFaqDocument {
   _id: string;
   question: string;

@@ -1,3 +1,6 @@
+import { createHash } from "crypto";
+
+import { sanityWriteClient } from "@/lib/sanity/client";
 import { newsletterSchema, type NewsletterInput } from "@/lib/validators";
 
 type Provider = "none" | "mailchimp" | "convertkit" | "beehiiv" | "webhook";
@@ -36,13 +39,52 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     };
   }
 
+  if (parsed.data.website) {
+    return {
+      ok: true,
+      message: "You are subscribed. Look out for the next letter from Mariam.",
+    };
+  }
+
+  const startedAtNumber = Number(parsed.data.startedAt || 0);
+  if (startedAtNumber && Date.now() - startedAtNumber < 1500) {
+    return {
+      ok: false,
+      message: "Please take a little more time before submitting the form.",
+    };
+  }
+
+  const normalizedEmail = parsed.data.email.trim().toLowerCase();
+
+  if (sanityWriteClient) {
+    const subscriberId = `newsletterSubscriber.${createHash("sha256")
+      .update(normalizedEmail)
+      .digest("hex")
+      .slice(0, 32)}`;
+
+    await sanityWriteClient.createIfNotExists({
+      _id: subscriberId,
+      _type: "newsletterSubscriber",
+      email: normalizedEmail,
+      subscribedAt: new Date().toISOString(),
+      source: "website",
+    });
+  }
+
   const provider = (process.env.NEWSLETTER_PROVIDER || "none") as Provider;
 
   if (provider === "none") {
+    if (sanityWriteClient) {
+      return {
+        ok: true,
+        message: "You are subscribed. Your email is now saved in Sanity Studio.",
+      };
+    }
+
     return {
-      ok: true,
+      ok: false,
       message:
-        "Newsletter UI is ready. Connect Beehiiv, ConvertKit, Mailchimp, or a webhook to collect subscribers in production.",
+        "Add SANITY_API_WRITE_TOKEN to save subscribers in Sanity Studio, or connect a newsletter provider.",
     };
   }
 
@@ -60,7 +102,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(config.transform?.(parsed.data.email) ?? parsed.data),
+    body: JSON.stringify(config.transform?.(normalizedEmail) ?? { email: normalizedEmail }),
     cache: "no-store",
   });
 
@@ -73,6 +115,8 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
 
   return {
     ok: true,
-    message: "You are subscribed. Look out for the next letter from Mariam.",
+    message: sanityWriteClient
+      ? "You are subscribed. Your email is saved in Sanity Studio too."
+      : "You are subscribed. Look out for the next letter from Mariam.",
   };
 }

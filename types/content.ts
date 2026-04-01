@@ -83,3 +83,12 @@ export interface FaqEntry {
   question: string;
   answer: string;
 }
+
+export interface CommentEntry {
+  id: ContentId;
+  postId: ContentId;
+  name: string;
+  message: string;
+  date: string;
+  approved: boolean;
+}

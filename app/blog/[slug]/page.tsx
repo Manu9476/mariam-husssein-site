@@ -2,22 +2,74 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { CommentForm } from "@/components/forms/comment-form";
 import { PostCard } from "@/components/content/post-card";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
 import { RichTextRenderer } from "@/components/shared/rich-text-renderer";
 import { SectionHeading } from "@/components/shared/section-heading";
 import {
   getCategories,
+  getCommentsForPost,
   getPostBySlug,
   getRelatedPosts,
   getSiteSettings,
 } from "@/lib/api/wordpress";
 import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
-import type { ContentId } from "@/types/content";
+import type { CommentEntry, ContentId } from "@/types/content";
 
 function getCategoryLabels(ids: ContentId[], categoryMap: Map<ContentId, string>) {
   return ids.map((id) => categoryMap.get(id)).filter(Boolean) as string[];
+}
+
+function CommentsSection({
+  comments,
+  postId,
+}: {
+  comments: CommentEntry[];
+  postId: ContentId;
+}) {
+  return (
+    <section className="section-space pt-0">
+      <div className="container grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="space-y-6">
+          <SectionHeading
+            eyebrow="Conversation"
+            title="Leave a thoughtful comment."
+            description="Comments are saved in Sanity Studio and only appear publicly after approval."
+            animate={false}
+          />
+          <CommentForm postId={postId} />
+        </div>
+
+        <div className="space-y-4">
+          <SectionHeading
+            eyebrow="Approved comments"
+            title={comments.length ? "What readers are saying." : "No comments yet."}
+            description={
+              comments.length
+                ? "A few approved responses from the conversation around this post."
+                : "Be the first to share a kind, thoughtful response."
+            }
+            animate={false}
+          />
+          {comments.length ? (
+            <div className="space-y-4">
+              {comments.map((comment) => (
+                <article key={comment.id} className="editorial-panel space-y-3 p-5">
+                  <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    <span>{comment.name}</span>
+                    {comment.date ? <span>{formatDate(comment.date)}</span> : null}
+                  </div>
+                  <p className="text-[1rem] leading-8 text-foreground/90">{comment.message}</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 export async function generateMetadata({
@@ -62,7 +114,10 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const relatedPosts = await getRelatedPosts(post, 3);
+  const [relatedPosts, comments] = await Promise.all([
+    getRelatedPosts(post, 3),
+    getCommentsForPost(post.id),
+  ]);
   const categoryMap = new Map(categories.map((category) => [category.id, category.name]));
   const categoryLabels = getCategoryLabels(post.categories, categoryMap);
 
@@ -110,6 +165,8 @@ export default async function BlogPostPage({
           </div>
         </div>
       </article>
+
+      <CommentsSection comments={comments} postId={post.id} />
 
       {relatedPosts.length ? (
         <section className="section-space pt-0">
