@@ -83,12 +83,139 @@ export interface SocialLink {
   url: string;
 }
 
+export interface EditableLink {
+  title: string;
+  url: string;
+  target?: string;
+}
+
+export interface HeaderSettings {
+  eyebrow?: string;
+  monogram?: string;
+  subscribeLabel?: string;
+  mobileLabel?: string;
+}
+
+export interface ProfileSettings {
+  eyebrow?: string;
+  title?: string;
+  summary?: string;
+  highlights: string[];
+  quickLinks: EditableLink[];
+  primaryLinkLabel?: string;
+  primaryLinkUrl?: string;
+}
+
+export interface HomeSectionCopy {
+  featured: {
+    eyebrow?: string;
+    title: string;
+    description?: string;
+    label?: string;
+  };
+  letters: {
+    eyebrow?: string;
+    title: string;
+    description?: string;
+    latestLabel?: string;
+    primaryCtaLabel?: string;
+    secondaryCtaLabel?: string;
+  };
+  notes: {
+    eyebrow?: string;
+    title: string;
+    description?: string;
+    archiveLabel?: string;
+    profileCardEyebrow?: string;
+    profileCtaLabel?: string;
+    browseEyebrow?: string;
+  };
+  testimonials: {
+    eyebrow?: string;
+    title: string;
+    description?: string;
+    ctaLabel?: string;
+  };
+  social: {
+    eyebrow?: string;
+    title: string;
+    description?: string;
+    emailLabel?: string;
+  };
+}
+
+export interface PageSectionCopy {
+  blog: {
+    eyebrow?: string;
+    title: string;
+    description?: string;
+    emptyTitle?: string;
+    emptyDescription?: string;
+  };
+  about: {
+    eyebrow?: string;
+    faqEyebrow?: string;
+    faqTitle?: string;
+    faqDescription?: string;
+    testimonialsEyebrow?: string;
+    testimonialsTitle?: string;
+    testimonialsDescription?: string;
+  };
+  resources: {
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    emptyTitle?: string;
+    emptyDescription?: string;
+  };
+  contact: {
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    emailLabel?: string;
+    locationLabel?: string;
+    availabilityLabel?: string;
+  };
+  reviews: {
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    emptyTitle?: string;
+    emptyDescription?: string;
+  };
+  letters: {
+    featuredLabel?: string;
+    popularTitle?: string;
+    popularArchiveLabel?: string;
+    recentEyebrow?: string;
+    recentTitle?: string;
+    recentArchiveLabel?: string;
+    profileEyebrow?: string;
+    newsletterEyebrow?: string;
+    readNextEyebrow?: string;
+    socialEyebrow?: string;
+  };
+  newsletterPage: {
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    subscribedEyebrow?: string;
+    subscribedTitle?: string;
+    subscribedDescription?: string;
+    previewEyebrow?: string;
+    previewTitle?: string;
+    previewDescription?: string;
+  };
+}
+
 export interface SiteSettings {
   siteTitle: string;
   siteDescription: string;
   siteUrl: string;
   logoUrl?: string | null;
   logoAlt?: string | null;
+  header: HeaderSettings;
+  profile: ProfileSettings;
   primaryMenu: NavigationItem[];
   footerMenu: NavigationItem[];
   hero: {
@@ -100,6 +227,8 @@ export interface SiteSettings {
     secondaryCtaLabel: string;
     secondaryCtaUrl: string;
   };
+  home: HomeSectionCopy;
+  pageCopy: PageSectionCopy;
   newsletter: {
     eyebrow?: string;
     title: string;

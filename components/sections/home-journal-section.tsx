@@ -23,14 +23,19 @@ export function HomeJournalSection({
     return null;
   }
 
+  const copy = settings.home.notes;
   const browseLinks = settings.primaryMenu.filter((item) => item.url !== "/");
   const profileSummary =
-    stripHtml(aboutPage?.excerpt) || settings.siteDescription || settings.hero.subtitle;
+    settings.profile.summary ||
+    stripHtml(aboutPage?.excerpt) ||
+    settings.siteDescription ||
+    settings.hero.subtitle;
   const profileImage =
     aboutPage?.image ??
     (settings.logoUrl
       ? { url: settings.logoUrl, alt: settings.logoAlt || settings.siteTitle }
       : null);
+  const highlights = settings.profile.highlights.slice(0, 2);
 
   return (
     <section className="section-space pt-0">
@@ -38,13 +43,18 @@ export function HomeJournalSection({
         <div>
           <div className="mb-4 flex items-end justify-between gap-4 border-b border-border/70 pb-5">
             <div>
-              <p className="eyebrow">Latest notes</p>
+              <p className="eyebrow">{copy.eyebrow}</p>
               <h2 className="mt-2 text-[2.45rem] leading-[0.96] tracking-[-0.04em] md:text-[3.85rem]">
-                Notes, reflections, and thoughtful updates.
+                {copy.title}
               </h2>
+              {copy.description ? (
+                <p className="mt-3 max-w-3xl text-[1rem] leading-8 text-foreground/82">
+                  {copy.description}
+                </p>
+              ) : null}
             </div>
             <Link href="/blog" className="hidden text-[12px] font-semibold uppercase tracking-[0.18em] text-foreground transition hover:text-primary md:inline-flex">
-              View all
+              {copy.archiveLabel}
             </Link>
           </div>
 
@@ -60,7 +70,7 @@ export function HomeJournalSection({
         </div>
 
         <aside className="space-y-5 xl:sticky xl:top-28">
-          <div className="editorial-panel space-y-4 p-6">
+          <div className="editorial-panel space-y-5 p-6">
             <div className="flex items-center gap-4">
               <div className="relative h-16 w-16 overflow-hidden rounded-full border border-border/70">
                 {profileImage ? (
@@ -77,20 +87,37 @@ export function HomeJournalSection({
                 )}
               </div>
               <div>
-                <p className="font-serif text-[2.15rem] leading-none tracking-[-0.035em]">
+                {copy.profileCardEyebrow ? <p className="eyebrow">{copy.profileCardEyebrow}</p> : null}
+                <p className="font-serif text-[2.1rem] leading-none tracking-[-0.035em]">
                   {settings.siteTitle}
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {settings.hero.eyebrow || "Personal notes"}
                 </p>
               </div>
             </div>
 
-            <p className="text-[1.02rem] leading-8">{profileSummary}</p>
+            {settings.profile.title ? (
+              <p className="font-serif text-[1.6rem] leading-[1.05] tracking-[-0.02em] text-foreground">
+                {settings.profile.title}
+              </p>
+            ) : null}
 
-            <Link href="/about" className="soft-link">
-              Read more about Mariam
-            </Link>
+            <p className="text-[1.02rem] leading-8 text-foreground/82">{profileSummary}</p>
+
+            {highlights.length ? (
+              <ul className="grid gap-3 border-t border-border/70 pt-4">
+                {highlights.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-[0.95rem] leading-7 text-foreground/82">
+                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/70" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            {settings.profile.primaryLinkUrl ? (
+              <Link href={settings.profile.primaryLinkUrl} className="soft-link">
+                {settings.profile.primaryLinkLabel || copy.profileCtaLabel}
+              </Link>
+            ) : null}
           </div>
 
           <div className="editorial-panel space-y-4 p-6">
@@ -109,7 +136,7 @@ export function HomeJournalSection({
 
           <div className="editorial-panel space-y-5 p-6">
             <div>
-              <p className="eyebrow">Browse</p>
+              <p className="eyebrow">{copy.browseEyebrow}</p>
               <div className="mt-4 flex flex-col gap-3">
                 {browseLinks.map((item) => (
                   <Link

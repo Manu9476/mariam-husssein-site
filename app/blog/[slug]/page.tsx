@@ -90,7 +90,7 @@ function CommentsSection({
           <SectionHeading
             eyebrow="Conversation"
             title="Leave a thoughtful comment."
-            description="Comments and replies are saved in Sanity Studio and appear publicly right away."
+            description="Comments and replies appear publicly right away, so the conversation can unfold in real time."
             animate={false}
           />
           <CommentForm postId={postId} />

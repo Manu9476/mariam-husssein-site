@@ -439,6 +439,30 @@ function fallbackSettings(): SiteSettings {
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
     logoUrl: null,
     logoAlt: "Mariam Husssein",
+    header: {
+      eyebrow: "Personal brand",
+      monogram: "M",
+      subscribeLabel: "Subscribe",
+      mobileLabel: "Editorial brand site",
+    },
+    profile: {
+      eyebrow: "Profile",
+      title: "A thoughtful digital home shaped around letters, notes, and generous living.",
+      summary:
+        "Mariam shares quiet reflections, elegant storytelling, and the kind of guidance that invites readers to linger.",
+      highlights: [
+        "Writer, curator, and personal brand storyteller.",
+        "Building a refined home for letters, notes, and meaningful resources.",
+        "Thoughtful collaborations, conversations, and editorial projects are always welcome.",
+      ],
+      quickLinks: [
+        { title: "Letters", url: "/letters/younger-me" },
+        { title: "Notes", url: "/blog" },
+        { title: "Newsletter", url: "/newsletter" },
+      ],
+      primaryLinkLabel: "Read Mariam's story",
+      primaryLinkUrl: "/about",
+    },
     primaryMenu: [
       { id: 1, title: "Home", url: "/" },
       { id: 2, title: "Letters", url: "/letters/younger-me" },
@@ -464,6 +488,116 @@ function fallbackSettings(): SiteSettings {
       primaryCtaUrl: "/blog",
       secondaryCtaLabel: "About Mariam",
       secondaryCtaUrl: "/about",
+    },
+    home: {
+      featured: {
+        eyebrow: "Featured article",
+        title: "One story to begin with.",
+        description: "A lead note that sets the tone for the rest of the visit.",
+        label: "Featured note",
+      },
+      letters: {
+        eyebrow: "Letters to Myself",
+        title: "Enter the letters, one season at a time.",
+        description:
+          "Choose the chapter that meets you where you are, then follow the thread deeper.",
+        latestLabel: "Start here",
+        primaryCtaLabel: "Open the letters",
+        secondaryCtaLabel: "Read one now",
+      },
+      notes: {
+        eyebrow: "Latest notes",
+        title: "Notes, reflections, and thoughtful updates.",
+        description:
+          "A curated stream of essays and smaller pieces that keep the site alive between the longer letters.",
+        archiveLabel: "View all",
+        profileCardEyebrow: "Profile",
+        profileCtaLabel: "Read more about Mariam",
+        browseEyebrow: "Browse",
+      },
+      testimonials: {
+        eyebrow: "Kind words",
+        title: "Warm reflections from readers, collaborators, and clients.",
+        description:
+          "A few approved notes that add social proof without disrupting the editorial mood.",
+        ctaLabel: "View all reviews",
+      },
+      social: {
+        eyebrow: "Elsewhere",
+        title: "Keep up with Mariam online.",
+        description:
+          "Follow along for thoughtful updates, new writing, resources, and everyday inspiration.",
+        emailLabel: "Email",
+      },
+    },
+    pageCopy: {
+      blog: {
+        eyebrow: "Notes",
+        title: "Stories, lessons, and notes with an editorial rhythm.",
+        description:
+          "An archive of essays, reflections, and thoughtful updates distinct from the letters.",
+        emptyTitle: "No notes published yet",
+        emptyDescription: "Publish notes in Sanity Studio and they will appear here automatically.",
+      },
+      about: {
+        eyebrow: "About",
+        faqEyebrow: "FAQ",
+        faqTitle: "A few helpful answers.",
+        faqDescription:
+          "A tidy place for practical questions, collaborations, and the details people often want to know.",
+        testimonialsEyebrow: "In good company",
+        testimonialsTitle: "A few kind words.",
+        testimonialsDescription: "Approved reflections from readers, collaborators, and clients.",
+      },
+      resources: {
+        eyebrow: "Resources",
+        title: "Curated offers, resources, and thoughtful tools.",
+        description:
+          "A flexible space for offers, services, recommendations, and editorial resources.",
+        emptyTitle: "No resources published yet",
+        emptyDescription: "Create resource entries in Studio to populate this page.",
+      },
+      contact: {
+        eyebrow: "Contact",
+        title: "Start a thoughtful conversation.",
+        description:
+          "Use this page for collaborations, speaking requests, media, and meaningful enquiries.",
+        emailLabel: "Email",
+        locationLabel: "Location",
+        availabilityLabel: "Availability",
+      },
+      reviews: {
+        eyebrow: "Reviews",
+        title: "Kind words and thoughtful feedback.",
+        description: "A place for public testimonials and private review submissions.",
+        emptyTitle: "No public reviews yet",
+        emptyDescription: "Approved testimonials will appear here automatically.",
+      },
+      letters: {
+        featuredLabel: "Featured letter",
+        popularTitle: "A Few to Begin With",
+        popularArchiveLabel: "Return to collection",
+        recentEyebrow: "Recent letters",
+        recentTitle: "Notes, reflections, and quieter truths.",
+        recentArchiveLabel: "This collection",
+        profileEyebrow: "Collection note",
+        newsletterEyebrow: "Stay close",
+        readNextEyebrow: "Read next",
+        socialEyebrow: "Elsewhere",
+      },
+      newsletterPage: {
+        eyebrow: "Newsletter",
+        title: "Letters worth slowing down for.",
+        description: "A quiet room for subscribers, new readers, and published notes.",
+        subscribedEyebrow: "Published now",
+        subscribedTitle: "Published notes for subscribers.",
+        subscribedDescription:
+          "Your browser remembers that you subscribed, so this page becomes a reading room.",
+        previewEyebrow: "Recent reading",
+        previewTitle: "A small sample from the notes.",
+        previewDescription:
+          "Use this page to preview the kind of thoughtful notes subscribers can expect.",
+      },
     },
     newsletter: {
       eyebrow: "Stay close",
@@ -620,6 +754,26 @@ const siteSettingsQuery = `
     siteDescription,
     siteUrl,
     logoAlt,
+    header{
+      eyebrow,
+      monogram,
+      subscribeLabel,
+      mobileLabel
+    },
+    profile{
+      eyebrow,
+      title,
+      summary,
+      highlights,
+      quickLinks[]{
+        _key,
+        title,
+        url,
+        target
+      },
+      primaryLinkLabel,
+      primaryLinkUrl
+    },
     logo{
       alt,
       asset->{
@@ -652,6 +806,106 @@ const siteSettingsQuery = `
       primaryCtaUrl,
       secondaryCtaLabel,
       secondaryCtaUrl
+    },
+    home{
+      featured{
+        eyebrow,
+        title,
+        description,
+        label
+      },
+      letters{
+        eyebrow,
+        title,
+        description,
+        latestLabel,
+        primaryCtaLabel,
+        secondaryCtaLabel
+      },
+      notes{
+        eyebrow,
+        title,
+        description,
+        archiveLabel,
+        profileCardEyebrow,
+        profileCtaLabel,
+        browseEyebrow
+      },
+      testimonials{
+        eyebrow,
+        title,
+        description,
+        ctaLabel
+      },
+      social{
+        eyebrow,
+        title,
+        description,
+        emailLabel
+      }
+    },
+    pageCopy{
+      blog{
+        eyebrow,
+        title,
+        description,
+        emptyTitle,
+        emptyDescription
+      },
+      about{
+        eyebrow,
+        faqEyebrow,
+        faqTitle,
+        faqDescription,
+        testimonialsEyebrow,
+        testimonialsTitle,
+        testimonialsDescription
+      },
+      resources{
+        eyebrow,
+        title,
+        description,
+        emptyTitle,
+        emptyDescription
+      },
+      contact{
+        eyebrow,
+        title,
+        description,
+        emailLabel,
+        locationLabel,
+        availabilityLabel
+      },
+      reviews{
+        eyebrow,
+        title,
+        description,
+        emptyTitle,
+        emptyDescription
+      },
+      letters{
+        featuredLabel,
+        popularTitle,
+        popularArchiveLabel,
+        recentEyebrow,
+        recentTitle,
+        recentArchiveLabel,
+        profileEyebrow,
+        newsletterEyebrow,
+        readNextEyebrow,
+        socialEyebrow
+      },
+      newsletterPage{
+        eyebrow,
+        title,
+        description,
+        subscribedEyebrow,
+        subscribedTitle,
+        subscribedDescription,
+        previewEyebrow,
+        previewTitle,
+        previewDescription
+      }
     },
     newsletter{
       eyebrow,
@@ -698,6 +952,20 @@ function mergeSettingsWithFallback(settings?: SanitySiteSettingsDocument | SiteS
     siteUrl: sanitySettings.siteUrl || fallback.siteUrl,
     logoUrl: logo?.url || fallback.logoUrl,
     logoAlt: sanitySettings.logoAlt || logo?.alt || fallback.logoAlt,
+    header: {
+      ...fallback.header,
+      ...(sanitySettings.header ?? {}),
+    },
+    profile: {
+      ...fallback.profile,
+      ...(sanitySettings.profile ?? {}),
+      highlights:
+        sanitySettings.profile?.highlights?.filter(Boolean) || fallback.profile.highlights,
+      quickLinks:
+        sanitySettings.profile?.quickLinks?.length
+          ? mapSanityMenu(sanitySettings.profile.quickLinks)
+          : fallback.profile.quickLinks,
+    },
     primaryMenu:
       sanitySettings.primaryMenu?.length
         ? mapSanityMenu(sanitySettings.primaryMenu)
@@ -709,6 +977,58 @@ function mergeSettingsWithFallback(settings?: SanitySiteSettingsDocument | SiteS
     hero: {
       ...fallback.hero,
       ...(sanitySettings.hero ?? {}),
+    },
+    home: {
+      featured: {
+        ...fallback.home.featured,
+        ...(sanitySettings.home?.featured ?? {}),
+      },
+      letters: {
+        ...fallback.home.letters,
+        ...(sanitySettings.home?.letters ?? {}),
+      },
+      notes: {
+        ...fallback.home.notes,
+        ...(sanitySettings.home?.notes ?? {}),
+      },
+      testimonials: {
+        ...fallback.home.testimonials,
+        ...(sanitySettings.home?.testimonials ?? {}),
+      },
+      social: {
+        ...fallback.home.social,
+        ...(sanitySettings.home?.social ?? {}),
+      },
+    },
+    pageCopy: {
+      blog: {
+        ...fallback.pageCopy.blog,
+        ...(sanitySettings.pageCopy?.blog ?? {}),
+      },
+      about: {
+        ...fallback.pageCopy.about,
+        ...(sanitySettings.pageCopy?.about ?? {}),
+      },
+      resources: {
+        ...fallback.pageCopy.resources,
+        ...(sanitySettings.pageCopy?.resources ?? {}),
+      },
+      contact: {
+        ...fallback.pageCopy.contact,
+        ...(sanitySettings.pageCopy?.contact ?? {}),
+      },
+      reviews: {
+        ...fallback.pageCopy.reviews,
+        ...(sanitySettings.pageCopy?.reviews ?? {}),
+      },
+      letters: {
+        ...fallback.pageCopy.letters,
+        ...(sanitySettings.pageCopy?.letters ?? {}),
+      },
+      newsletterPage: {
+        ...fallback.pageCopy.newsletterPage,
+        ...(sanitySettings.pageCopy?.newsletterPage ?? {}),
+      },
     },
     newsletter: {
       ...fallback.newsletter,

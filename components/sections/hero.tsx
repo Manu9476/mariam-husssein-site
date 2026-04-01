@@ -15,111 +15,105 @@ export function Hero({
   settings: SiteSettings;
   aboutPreview?: PageContent | null;
 }) {
-  const hasPortrait = Boolean(aboutPreview?.image?.url);
-  const introCopy = stripHtml(aboutPreview?.excerpt) || settings.hero.subtitle;
-  const quickLinks = [
-    { label: "Letters", url: "/letters/younger-me" },
-    { label: "Notes", url: "/blog" },
-    { label: "Newsletter", url: "/newsletter" },
-  ];
-  const heroFacts = [
-    {
-      emoji: "👩‍💻",
-      text: "Writer, creator, and thoughtful storyteller building a softer digital home.",
-    },
-    {
-      emoji: "📍",
-      text: settings.contact.location
-        ? `Currently based in ${settings.contact.location}.`
-        : "Creating from wherever life feels light and inspired.",
-    },
-    {
-      emoji: "💌",
-      text: "Sharing letters, stories, and gentle resources that feel personal and encouraging.",
-    },
-  ];
+  const portrait = aboutPreview?.image;
+  const introCopy =
+    settings.profile.summary ||
+    stripHtml(aboutPreview?.excerpt) ||
+    settings.hero.subtitle;
+  const highlights = settings.profile.highlights.slice(0, 3);
+  const quickLinks = settings.profile.quickLinks;
 
   return (
-    <section className="pb-12 pt-8 md:pb-16 md:pt-10">
+    <section className="section-space pb-10 pt-8 md:pb-14 md:pt-10">
       <div className="container">
-        <div
-          className={`grid gap-8 border-b border-border/80 pb-10 lg:items-start lg:gap-12 lg:pb-14 ${
-            hasPortrait ? "lg:grid-cols-[0.72fr_1.28fr]" : ""
-          }`}
-        >
-          {hasPortrait ? (
-            <FadeIn className="lg:max-w-md">
-              <div className="overflow-hidden rounded-md border border-border/90 bg-white shadow-sm">
-                <ImageWrapper
-                  image={aboutPreview?.image}
-                  alt={aboutPreview?.title || "Mariam portrait"}
-                  className="aspect-[5/6]"
-                  priority
-                  sizes="(min-width: 1024px) 24rem, 100vw"
-                />
-              </div>
-            </FadeIn>
-          ) : null}
-
-          <FadeIn delay={0.08} className="space-y-6 lg:pt-2">
-            <div className="space-y-3">
+        <div className="grid gap-8 xl:grid-cols-[1.08fr_0.92fr] xl:items-start">
+          <FadeIn className="space-y-8">
+            <div className="space-y-5">
               {settings.hero.eyebrow ? <p className="eyebrow">{settings.hero.eyebrow}</p> : null}
-              <div className="space-y-2">
-                <h1 className="max-w-4xl text-[3rem] font-bold leading-[0.92] tracking-[-0.05em] md:text-[4.35rem] lg:text-[4.95rem]">
-                  Hello, I&apos;m Mariam. 👋
+              <div className="space-y-4">
+                <h1 className="max-w-5xl text-[3.25rem] leading-[0.9] tracking-[-0.055em] md:text-[5rem] xl:text-[5.7rem]">
+                  {settings.siteTitle}
                 </h1>
-                <p className="max-w-3xl font-serif text-[1.55rem] leading-[1.06] tracking-[-0.03em] text-primary md:text-[2.25rem] lg:text-[2.7rem]">
+                <p className="max-w-3xl font-serif text-[1.35rem] leading-[1.08] tracking-[-0.03em] text-primary md:text-[2rem] xl:text-[2.45rem]">
                   {settings.hero.title}
                 </p>
+                <p className="max-w-2xl text-[1.02rem] leading-8 text-foreground/82 md:text-[1.12rem]">
+                  {settings.hero.subtitle}
+                </p>
               </div>
-              <p className="max-w-2xl text-[1rem] leading-8 md:text-[1.08rem]">
-                {introCopy}
-              </p>
             </div>
 
-            <ul className="grid max-w-2xl gap-3 rounded-2xl border border-border/80 bg-[#f8fcfa] p-4 md:p-5">
-              {heroFacts.map((fact) => (
-                <li key={fact.text} className="flex items-start gap-3 text-[1rem] leading-7 text-foreground">
-                  <span className="text-xl leading-none">{fact.emoji}</span>
-                  <span>{fact.text}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <Link href={settings.hero.primaryCtaUrl}>
-                  {settings.hero.primaryCtaLabel}
-                </Link>
+                <Link href={settings.hero.primaryCtaUrl}>{settings.hero.primaryCtaLabel}</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href={settings.hero.secondaryCtaUrl}>
-                  {settings.hero.secondaryCtaLabel}
-                </Link>
+                <Link href={settings.hero.secondaryCtaUrl}>{settings.hero.secondaryCtaLabel}</Link>
               </Button>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {quickLinks.map((item) => {
-                const external = item.url.startsWith("http");
+            {quickLinks.length ? (
+              <div className="flex flex-wrap gap-2.5">
+                {quickLinks.map((item) => {
+                  const external = item.url.startsWith("http");
 
-                return (
-                  <Link
-                    key={`${item.label}-${item.url}`}
-                    href={item.url}
-                    target={external ? "_blank" : undefined}
-                    rel={external ? "noreferrer" : undefined}
-                    className="nav-link rounded-full border border-border bg-white px-3.5 py-2"
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
+                  return (
+                    <Link
+                      key={`${item.title}-${item.url}`}
+                      href={item.url}
+                      target={item.target || (external ? "_blank" : undefined)}
+                      rel={external ? "noreferrer" : undefined}
+                      className="rounded-full border border-border/80 bg-white/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-foreground transition hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+                    >
+                      {item.title}
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : null}
+          </FadeIn>
+
+          <FadeIn delay={0.08} className="grid gap-5">
+            {portrait?.url ? (
+              <div className="overflow-hidden rounded-[2rem] border border-border/80 bg-white/70 shadow-soft">
+                <ImageWrapper
+                  image={portrait}
+                  alt={aboutPreview?.title || settings.siteTitle}
+                  className="aspect-[4/5]"
+                  priority
+                  sizes="(min-width: 1280px) 32rem, (min-width: 768px) 44vw, 100vw"
+                />
+              </div>
+            ) : null}
+
+            <div className="editorial-panel space-y-5 p-6 md:p-7">
+              {settings.profile.eyebrow ? <p className="eyebrow">{settings.profile.eyebrow}</p> : null}
+              <div className="space-y-3">
+                {settings.profile.title ? (
+                  <h2 className="text-[2.25rem] leading-[0.96] tracking-[-0.04em] md:text-[3rem]">
+                    {settings.profile.title}
+                  </h2>
+                ) : null}
+                <p className="text-[1rem] leading-8 text-foreground/82">{introCopy}</p>
+              </div>
+
+              {highlights.length ? (
+                <ul className="grid gap-3 border-t border-border/70 pt-5">
+                  {highlights.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-[0.98rem] leading-7 text-foreground/84">
+                      <span className="mt-2 h-1.5 w-1.5 rounded-full bg-primary/70" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+
+              {settings.profile.primaryLinkLabel && settings.profile.primaryLinkUrl ? (
+                <Link href={settings.profile.primaryLinkUrl} className="soft-link">
+                  {settings.profile.primaryLinkLabel} <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : null}
             </div>
-
-            <Link href="/about" className="soft-link pt-1">
-              Read Mariam&apos;s story <ArrowRight className="h-4 w-4" />
-            </Link>
           </FadeIn>
         </div>
       </div>

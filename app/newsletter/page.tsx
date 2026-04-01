@@ -48,6 +48,7 @@ export default async function NewsletterPage() {
     getPageBySlug("newsletter"),
     getCategories(),
   ]);
+  const copy = settings.pageCopy.newsletterPage;
 
   const letterCategoryIds = getLetterCategoryIds(categories);
   const latestPosts = await getLatestPosts(isSubscribed ? 6 : 3, undefined, {
@@ -61,12 +62,22 @@ export default async function NewsletterPage() {
         <div className="container grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div className="space-y-5">
             <SectionHeading
-              eyebrow={settings.newsletter.eyebrow || "Newsletter"}
-              title={page?.title || settings.newsletter.title}
+              eyebrow={
+                isSubscribed
+                  ? copy.subscribedEyebrow
+                  : copy.eyebrow || settings.newsletter.eyebrow
+              }
+              title={
+                isSubscribed
+                  ? copy.subscribedTitle || page?.title || settings.newsletter.title
+                  : page?.title || copy.title || settings.newsletter.title
+              }
               description={
                 isSubscribed
-                  ? `Welcome back${subscriberEmail ? `, ${subscriberEmail}` : ""}. Your published notes are ready below.`
-                  : page?.excerpt.replace(/<[^>]*>/g, "") || settings.newsletter.description
+                  ? `Welcome back${subscriberEmail ? `, ${subscriberEmail}` : ""}. ${copy.subscribedDescription || "Your published notes are ready below."}`
+                  : page?.excerpt?.replace(/<[^>]*>/g, "") ||
+                    copy.description ||
+                    settings.newsletter.description
               }
             />
             <p className="max-w-xl text-sm text-muted-foreground">
@@ -86,16 +97,18 @@ export default async function NewsletterPage() {
         <section className="section-space pt-0">
           <div className="container space-y-6">
             <SectionHeading
-              eyebrow={isSubscribed ? "Published now" : "Recent reading"}
+              eyebrow={isSubscribed ? copy.subscribedEyebrow : copy.previewEyebrow}
               title={
                 isSubscribed
-                  ? "Published notes for subscribers."
-                  : "A small sample from the notes."
+                  ? copy.subscribedTitle || "Published notes for subscribers."
+                  : copy.previewTitle || "A small sample from the notes."
               }
               description={
                 isSubscribed
-                  ? "Your browser remembers that you subscribed, so this page now opens as your reading room."
-                  : "Use this page to preview the kind of thoughtful notes subscribers can expect."
+                  ? copy.subscribedDescription ||
+                    "Your browser remembers that you subscribed, so this page now opens as your reading room."
+                  : copy.previewDescription ||
+                    "Use this page to preview the kind of thoughtful notes subscribers can expect."
               }
             />
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

@@ -26,10 +26,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ReviewsPage() {
-  const [page, testimonials] = await Promise.all([
+  const [settings, page, testimonials] = await Promise.all([
+    getSiteSettings(),
     getPageBySlug("reviews"),
     getTestimonials(100),
   ]);
+  const copy = settings.pageCopy.reviews;
 
   return (
     <>
@@ -37,13 +39,13 @@ export default async function ReviewsPage() {
         <div className="container grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="space-y-5">
             <SectionHeading
-              eyebrow="Reviews"
-              title={page?.title || "Kind words and thoughtful feedback."}
-              description={
-                page?.excerpt.replace(/<[^>]*>/g, "") ||
-                "Website visitors can submit testimonials here. Every submission can stay pending until you approve it."
-              }
-            />
+              eyebrow={copy.eyebrow}
+            title={page?.title || copy.title || "Kind words and thoughtful feedback."}
+            description={
+              page?.excerpt?.replace(/<[^>]*>/g, "") ||
+              copy.description
+            }
+          />
             {page?.content ? <RichTextRenderer content={page.content} /> : null}
           </div>
           <ReviewSubmissionForm />
@@ -60,8 +62,8 @@ export default async function ReviewsPage() {
             </div>
           ) : (
             <EmptyState
-              title="No public reviews yet"
-              description="Approved testimonials will appear here after you publish them from your CMS."
+              title={copy.emptyTitle || "No public reviews yet"}
+              description={copy.emptyDescription || "Approved testimonials will appear here automatically."}
             />
           )}
         </div>

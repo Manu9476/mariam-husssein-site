@@ -61,6 +61,7 @@ export default async function BlogPage({
     getCategories(),
     getCategoryBySlug(categorySlug),
   ]);
+  const copy = settings.pageCopy.blog;
 
   const noteCategories = filterNonLetterCategories(categories);
   const letterCategoryIds = getLetterCategoryIds(categories);
@@ -79,9 +80,9 @@ export default async function BlogPage({
       <section className="section-space">
         <div className="container space-y-6">
           <SectionHeading
-            eyebrow="Notes"
-            title="Stories, lessons, and notes with an editorial rhythm."
-            description="Letters now live on their own dedicated pages, while this space stays focused on notes and essays."
+            eyebrow={copy.eyebrow}
+            title={copy.title}
+            description={copy.description}
           />
           <SearchInput defaultValue={query} />
           <CategoryPills
@@ -114,8 +115,8 @@ export default async function BlogPage({
             </>
           ) : (
             <EmptyState
-              title="No posts match this search yet"
-              description="Try a broader keyword or publish new posts in Sanity Studio to populate the journal."
+              title={copy.emptyTitle || "No notes match this search yet"}
+              description={copy.emptyDescription || "Try a broader keyword or adjust the filters."}
             />
           )}
         </div>

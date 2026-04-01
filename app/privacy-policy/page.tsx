@@ -33,8 +33,8 @@ export default async function PrivacyPolicyPage() {
     return (
       <div className="container section-space">
         <EmptyState
-          title="Privacy policy not published yet"
-          description="Create a Sanity page with the slug privacy-policy or privacy."
+          title="Privacy policy coming soon"
+          description="This page will share how reader data, subscriptions, and contact details are handled."
         />
       </div>
     );
@@ -43,7 +43,7 @@ export default async function PrivacyPolicyPage() {
   return (
     <section className="section-space">
       <div className="container max-w-4xl space-y-6">
-        <SectionHeading eyebrow="Legal" title={page.title} description={page.excerpt.replace(/<[^>]*>/g, "")} />
+        <SectionHeading eyebrow="Legal" title={page.title} description={page.excerpt?.replace(/<[^>]*>/g, "")} />
         <RichTextRenderer content={page.content} />
       </div>
     </section>

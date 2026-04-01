@@ -1,16 +1,15 @@
 import { FeaturedPostCard } from "@/components/content/featured-post-card";
-import { EmptyState } from "@/components/shared/empty-state";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { Hero } from "@/components/sections/hero";
 import { HomeJournalSection } from "@/components/sections/home-journal-section";
 import { HomeLettersSection } from "@/components/sections/home-letters-section";
-import { HomePopularStrip } from "@/components/sections/home-popular-strip";
 import { NewsletterSection } from "@/components/sections/newsletter-section";
 import { SocialLinksSection } from "@/components/sections/social-links-section";
 import { TestimonialsPreview } from "@/components/sections/testimonials-preview";
 import {
   getCategories,
   getLatestPosts,
+  getPageByPossibleSlugs,
   getPosts,
   getPageBySlug,
   getSiteSettings,
@@ -65,44 +64,36 @@ export default async function HomePage() {
         return {
           collection,
           latestPost: latestLetter,
+          introPage: await getPageByPossibleSlugs(collection.pageSlugs),
         };
       }),
     ),
   ]);
 
-  const popularPosts = [featuredNote, ...latestPosts]
-    .filter((post): post is NonNullable<typeof post> => Boolean(post))
-    .slice(0, 4);
   const categoryMap = new Map(categories.map((category) => [category.id, category.name]));
 
   return (
     <>
       <Hero settings={settings} aboutPreview={aboutPage} />
 
-      <section className="section-space pt-0">
-        <div className="container space-y-6">
-          <SectionHeading
-            eyebrow="Featured article"
-            title="One story to start with."
-            description="Home now highlights notes separately, while letters live in their own destination."
-          />
-          {featuredNote ? (
+      {featuredNote ? (
+        <section className="section-space pt-0">
+          <div className="container space-y-6">
+            <SectionHeading
+              eyebrow={settings.home.featured.eyebrow}
+              title={settings.home.featured.title}
+              description={settings.home.featured.description}
+            />
             <FeaturedPostCard
               post={featuredNote}
               categoryLabels={getCategoryLabels(featuredNote.categories, categoryMap)}
+              label={settings.home.featured.label}
             />
-          ) : (
-            <EmptyState
-              title="No featured note yet"
-              description="Publish a non-letter post and mark it as featured in Sanity Studio to place it here."
-            />
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      ) : null}
 
-      <HomePopularStrip posts={popularPosts} />
-
-      <HomeLettersSection collections={letterCollections} />
+      <HomeLettersSection collections={letterCollections} settings={settings} />
 
       {latestPosts.length ? (
         <HomeJournalSection
@@ -111,18 +102,9 @@ export default async function HomePage() {
           aboutPage={aboutPage}
           categoryMap={categoryMap}
         />
-      ) : (
-        <section className="section-space pt-0">
-          <div className="container">
-            <EmptyState
-              title="The journal is waiting for its first post"
-              description="Create and publish blog posts in Sanity Studio to populate the homepage feed."
-            />
-          </div>
-        </section>
-      )}
+      ) : null}
 
-      {testimonials.length ? <TestimonialsPreview testimonials={testimonials} /> : null}
+      {testimonials.length ? <TestimonialsPreview testimonials={testimonials} settings={settings} /> : null}
 
       <NewsletterSection settings={settings} />
       <SocialLinksSection settings={settings} />

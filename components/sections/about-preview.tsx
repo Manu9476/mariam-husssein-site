@@ -33,8 +33,8 @@ export function AboutPreview({
               eyebrow="About Mariam"
               title={page?.title || "A grounded voice with an editorial eye."}
               description={
-                page?.excerpt.replace(/<[^>]*>/g, "") ||
-                "Use the About page in Sanity Studio to shape this section with your voice, story, and current direction."
+                page?.excerpt?.replace(/<[^>]*>/g, "") ||
+                "A personal introduction shaped around thoughtful work, warm storytelling, and a clear point of view."
               }
             />
             <Button asChild variant="outline">

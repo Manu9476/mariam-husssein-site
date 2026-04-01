@@ -25,25 +25,26 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const [settings, page] = await Promise.all([getSiteSettings(), getPageBySlug("contact")]);
+  const copy = settings.pageCopy.contact;
 
   return (
     <section className="section-space">
       <div className="container grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-6">
           <SectionHeading
-            eyebrow="Contact"
-            title={page?.title || "Let's start a thoughtful conversation."}
+            eyebrow={copy.eyebrow}
+            title={page?.title || copy.title || "Let's start a thoughtful conversation."}
             description={
-              page?.excerpt.replace(/<[^>]*>/g, "") ||
-              "Use Sanity Studio to manage contact copy and details."
+              page?.excerpt?.replace(/<[^>]*>/g, "") ||
+              copy.description
             }
           />
 
           {page?.content ? <RichTextRenderer content={page.content} /> : null}
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-3">
             <div className="editorial-panel p-5">
-              <p className="eyebrow">Email</p>
+              <p className="eyebrow">{copy.emailLabel}</p>
               {settings.contact.email ? (
                 <a
                   href={`mailto:${settings.contact.email}`}
@@ -52,15 +53,19 @@ export default async function ContactPage() {
                   {settings.contact.email}
                 </a>
               ) : (
-                <p className="mt-3 font-serif text-2xl text-foreground">
-                  Add an email in Site Settings
-                </p>
+                <p className="mt-3 font-serif text-2xl text-foreground">Available on request</p>
               )}
             </div>
             <div className="editorial-panel p-5">
-              <p className="eyebrow">Location</p>
+              <p className="eyebrow">{copy.locationLabel}</p>
               <p className="mt-3 font-serif text-2xl text-foreground">
-                {settings.contact.location || "Add a location in Site Settings"}
+                {settings.contact.location || "Worldwide"}
+              </p>
+            </div>
+            <div className="editorial-panel p-5">
+              <p className="eyebrow">{copy.availabilityLabel}</p>
+              <p className="mt-3 font-serif text-2xl text-foreground">
+                {settings.contact.availability || "Open to thoughtful collaborations"}
               </p>
             </div>
           </div>

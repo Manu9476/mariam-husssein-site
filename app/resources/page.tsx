@@ -28,21 +28,23 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ResourcesPage() {
-  const [page, resources] = await Promise.all([
+  const [settings, page, resources] = await Promise.all([
+    getSiteSettings(),
     getPageByPossibleSlugs(["resources", "services"]),
     getResources(),
   ]);
+  const copy = settings.pageCopy.resources;
 
   return (
     <>
       <section className="section-space">
         <div className="container space-y-6">
           <SectionHeading
-            eyebrow="Resources"
-            title={page?.title || "Curated offers, resources, and thoughtful tools."}
+            eyebrow={copy.eyebrow}
+            title={page?.title || copy.title || "Curated offers, resources, and thoughtful tools."}
             description={
-              page?.excerpt.replace(/<[^>]*>/g, "") ||
-              "Use Sanity Studio resources and services entries to manage these cards."
+              page?.excerpt?.replace(/<[^>]*>/g, "") ||
+              copy.description
             }
           />
           {page?.content ? <RichTextRenderer content={page.content} /> : null}
@@ -59,8 +61,8 @@ export default async function ResourcesPage() {
             </div>
           ) : (
             <EmptyState
-              title="No resources published yet"
-              description="Create resource entries in Sanity Studio to populate this page."
+              title={copy.emptyTitle || "No resources published yet"}
+              description={copy.emptyDescription || "Add resources in Studio and they will appear here."}
             />
           )}
         </div>

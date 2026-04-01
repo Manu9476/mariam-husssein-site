@@ -167,6 +167,21 @@ export interface SanitySiteSettingsDocument {
   siteUrl?: string;
   logo?: SanityImageField | null;
   logoAlt?: string;
+  header?: {
+    eyebrow?: string;
+    monogram?: string;
+    subscribeLabel?: string;
+    mobileLabel?: string;
+  };
+  profile?: {
+    eyebrow?: string;
+    title?: string;
+    summary?: string;
+    highlights?: string[];
+    quickLinks?: SanityMenuItem[];
+    primaryLinkLabel?: string;
+    primaryLinkUrl?: string;
+  };
   primaryMenu?: SanityMenuItem[];
   footerMenu?: SanityMenuItem[];
   hero?: {
@@ -177,6 +192,106 @@ export interface SanitySiteSettingsDocument {
     primaryCtaUrl?: string;
     secondaryCtaLabel?: string;
     secondaryCtaUrl?: string;
+  };
+  home?: {
+    featured?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      label?: string;
+    };
+    letters?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      latestLabel?: string;
+      primaryCtaLabel?: string;
+      secondaryCtaLabel?: string;
+    };
+    notes?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      archiveLabel?: string;
+      profileCardEyebrow?: string;
+      profileCtaLabel?: string;
+      browseEyebrow?: string;
+    };
+    testimonials?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      ctaLabel?: string;
+    };
+    social?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      emailLabel?: string;
+    };
+  };
+  pageCopy?: {
+    blog?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      emptyTitle?: string;
+      emptyDescription?: string;
+    };
+    about?: {
+      eyebrow?: string;
+      faqEyebrow?: string;
+      faqTitle?: string;
+      faqDescription?: string;
+      testimonialsEyebrow?: string;
+      testimonialsTitle?: string;
+      testimonialsDescription?: string;
+    };
+    resources?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      emptyTitle?: string;
+      emptyDescription?: string;
+    };
+    contact?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      emailLabel?: string;
+      locationLabel?: string;
+      availabilityLabel?: string;
+    };
+    reviews?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      emptyTitle?: string;
+      emptyDescription?: string;
+    };
+    letters?: {
+      featuredLabel?: string;
+      popularTitle?: string;
+      popularArchiveLabel?: string;
+      recentEyebrow?: string;
+      recentTitle?: string;
+      recentArchiveLabel?: string;
+      profileEyebrow?: string;
+      newsletterEyebrow?: string;
+      readNextEyebrow?: string;
+      socialEyebrow?: string;
+    };
+    newsletterPage?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      subscribedEyebrow?: string;
+      subscribedTitle?: string;
+      subscribedDescription?: string;
+      previewEyebrow?: string;
+      previewTitle?: string;
+      previewDescription?: string;
+    };
   };
   newsletter?: {
     eyebrow?: string;

@@ -37,8 +37,8 @@ export default async function TermsPage() {
     return (
       <div className="container section-space">
         <EmptyState
-          title="Terms page not published yet"
-          description="Create a Sanity page with the slug terms, terms-of-service, or terms-and-conditions."
+          title="Terms coming soon"
+          description="This page will outline the guidelines and terms for using the website, resources, and forms."
         />
       </div>
     );
@@ -47,7 +47,7 @@ export default async function TermsPage() {
   return (
     <section className="section-space">
       <div className="container max-w-4xl space-y-6">
-        <SectionHeading eyebrow="Legal" title={page.title} description={page.excerpt.replace(/<[^>]*>/g, "")} />
+        <SectionHeading eyebrow="Legal" title={page.title} description={page.excerpt?.replace(/<[^>]*>/g, "")} />
         <RichTextRenderer content={page.content} />
       </div>
     </section>

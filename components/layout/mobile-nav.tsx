@@ -22,10 +22,12 @@ export function MobileNav({
   items,
   socialLinks,
   siteTitle,
+  description,
 }: {
   items: NavigationItem[];
   socialLinks: SocialLink[];
   siteTitle: string;
+  description?: string;
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -49,9 +51,7 @@ export function MobileNav({
       <SheetContent>
         <SheetHeader className="mt-8">
           <SheetTitle>{siteTitle}</SheetTitle>
-          <SheetDescription>
-            Navigate through the pages, notes, and links inspired by your editorial layout.
-          </SheetDescription>
+          {description ? <SheetDescription>{description}</SheetDescription> : null}
         </SheetHeader>
         <nav className="mt-12 flex flex-col gap-5">
           {items.map((item) => {

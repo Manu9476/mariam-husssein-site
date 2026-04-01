@@ -12,102 +12,106 @@ export function Header({
   settings: SiteSettings;
 }) {
   const headerSocialLinks = settings.socialLinks.slice(0, 3);
+  const subscribeLabel = settings.header.subscribeLabel || settings.footer.newsletterCtaLabel || "Subscribe";
+  const monogram = settings.header.monogram || settings.siteTitle.charAt(0);
 
   return (
-    <header className="header-shell sticky top-0 z-40 border-b border-[#a7ccb6]">
-      <div className="header-shell border-b border-[#a7ccb6]">
-        <div className="container hidden h-24 items-center md:grid md:grid-cols-[1fr_auto_1fr]">
-          <Link href="/" className="flex items-center gap-4">
-            {settings.logoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={settings.logoUrl}
-                alt={settings.logoAlt || settings.siteTitle}
-                className="h-12 w-12 rounded-full border border-white/80 object-cover shadow-sm"
-              />
-            ) : (
-              <div className="brand-forest flex h-12 w-12 items-center justify-center rounded-full border border-white/90 bg-white font-serif text-lg shadow-sm">
-                M
+    <header className="header-shell sticky top-0 z-40 border-b border-border/70">
+      <div className="container py-3 md:py-4">
+        <div className="rounded-[2rem] border border-white/70 bg-white/80 px-4 py-3 shadow-soft backdrop-blur md:px-6">
+          <div className="hidden items-center gap-6 lg:grid lg:grid-cols-[auto_1fr_auto]">
+            <Link href="/" className="flex items-center gap-4">
+              {settings.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={settings.logoUrl}
+                  alt={settings.logoAlt || settings.siteTitle}
+                  className="h-12 w-12 rounded-full border border-white/80 object-cover shadow-sm"
+                />
+              ) : (
+                <div className="brand-forest flex h-12 w-12 items-center justify-center rounded-full border border-border/80 bg-white font-serif text-lg shadow-sm">
+                  {monogram}
+                </div>
+              )}
+              <div className="min-w-0">
+                {settings.header.eyebrow ? (
+                  <p className="brand-forest text-[11px] font-semibold uppercase tracking-[0.24em] opacity-75">
+                    {settings.header.eyebrow}
+                  </p>
+                ) : null}
+                <p className="brand-forest truncate font-serif text-[1.75rem] leading-none tracking-[-0.03em]">
+                  {settings.siteTitle}
+                </p>
               </div>
-            )}
-            <div className="min-w-0">
-              <p className="brand-forest text-[11px] font-semibold uppercase tracking-[0.24em] opacity-80">
-                Personal brand
-              </p>
-              <p className="brand-forest truncate font-serif text-[1.9rem] tracking-[-0.03em]">
-                {settings.siteTitle}
-              </p>
-            </div>
-          </Link>
-
-          <Link href="/" className="brand-forest justify-self-center font-serif text-[3.25rem] font-bold leading-none tracking-[-0.045em] lg:text-[3.9rem]">
-            {settings.siteTitle}
-          </Link>
-
-          <div className="ml-auto flex items-center gap-3">
-            {headerSocialLinks.map((item) => (
-              <SocialIconLink key={item.label} label={item.label} url={item.url} />
-            ))}
-            <Link
-              href="/blog"
-              aria-label="Search the journal"
-              className="brand-forest inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/90 bg-white transition hover:-translate-y-0.5 hover:border-primary hover:text-primary"
-            >
-              <Search className="h-4 w-4" />
             </Link>
-            <Button asChild>
-              <Link href="/newsletter">Subscribe</Link>
-            </Button>
+
+            <nav className="flex items-center justify-center gap-7 xl:gap-8">
+              {settings.primaryMenu.map((item) => {
+                const external = item.url.startsWith("http");
+
+                return (
+                  <Link
+                    key={item.id}
+                    href={item.url}
+                    target={item.target || (external ? "_blank" : undefined)}
+                    rel={external ? "noreferrer" : undefined}
+                    className="nav-link"
+                  >
+                    {item.title}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="ml-auto flex items-center gap-3">
+              {headerSocialLinks.map((item) => (
+                <SocialIconLink key={item.label} label={item.label} url={item.url} className="h-10 w-10" />
+              ))}
+              <Link
+                href="/blog"
+                aria-label="Search the notes"
+                className="brand-forest inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/80 bg-white transition hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+              >
+                <Search className="h-4 w-4" />
+              </Link>
+              <Button asChild size="sm">
+                <Link href="/newsletter">{subscribeLabel}</Link>
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-4 lg:hidden">
+            <Link href="/" className="group flex min-w-0 items-center gap-3">
+              {settings.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={settings.logoUrl}
+                  alt={settings.logoAlt || settings.siteTitle}
+                  className="h-11 w-11 rounded-full border border-white/80 object-cover shadow-sm"
+                />
+              ) : (
+                <div className="brand-forest flex h-11 w-11 items-center justify-center rounded-full border border-border/80 bg-white font-serif text-base shadow-sm">
+                  {monogram}
+                </div>
+              )}
+              <div className="min-w-0">
+                <span className="brand-forest block truncate font-serif text-[1.7rem] font-bold leading-none tracking-tight">
+                  {settings.siteTitle}
+                </span>
+                <span className="brand-forest block text-[11px] uppercase tracking-[0.24em] opacity-75 transition group-hover:text-primary">
+                  {settings.header.mobileLabel || settings.header.eyebrow || "Editorial brand site"}
+                </span>
+              </div>
+            </Link>
+
+            <MobileNav
+              items={settings.primaryMenu}
+              socialLinks={settings.socialLinks}
+              siteTitle={settings.siteTitle}
+              description={settings.profile.summary || settings.siteDescription}
+            />
           </div>
         </div>
-
-        <div className="container flex h-16 items-center justify-between gap-6 md:hidden">
-          <Link href="/" className="group inline-flex flex-col">
-            <span className="brand-forest font-serif text-2xl font-bold leading-none tracking-tight">
-              {settings.siteTitle}
-            </span>
-            <span className="brand-forest text-[11px] uppercase tracking-[0.24em] opacity-80 transition group-hover:text-primary">
-              Editorial brand site
-            </span>
-          </Link>
-
-          <MobileNav
-            items={settings.primaryMenu}
-            socialLinks={settings.socialLinks}
-            siteTitle={settings.siteTitle}
-          />
-        </div>
-      </div>
-
-      <div className="header-shell container hidden h-14 items-center justify-center gap-8 md:flex">
-        <nav className="flex items-center gap-8">
-          {settings.primaryMenu.map((item) => {
-            const external = item.url.startsWith("http");
-
-            return (
-              <Link
-                key={item.id}
-                href={item.url}
-                target={item.target || (external ? "_blank" : undefined)}
-                rel={external ? "noreferrer" : undefined}
-                className="nav-link"
-              >
-                {item.title}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      <div className="header-shell container flex h-14 items-center justify-between gap-4 border-t border-[#a7ccb6] md:hidden">
-        <div className="flex items-center gap-3">
-          {headerSocialLinks.map((item) => (
-            <SocialIconLink key={item.label} label={item.label} url={item.url} className="h-9 w-9" iconClassName="h-4 w-4" />
-          ))}
-        </div>
-        <Button asChild size="sm">
-          <Link href="/newsletter">Subscribe</Link>
-        </Button>
       </div>
     </header>
   );

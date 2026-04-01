@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { EmptyState } from "@/components/shared/empty-state";
 import { RichTextRenderer } from "@/components/shared/rich-text-renderer";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
@@ -25,43 +24,42 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const [page, faqs, testimonials] = await Promise.all([
+  const [settings, page, faqs, testimonials] = await Promise.all([
+    getSiteSettings(),
     getPageBySlug("about"),
     getFaqs(),
     getTestimonials(3),
   ]);
-
-  if (!page) {
-    return (
-      <div className="container section-space">
-        <EmptyState
-          title="The About page is not published yet"
-          description="Create a Sanity page with the slug about to populate this section."
-        />
-      </div>
-    );
-  }
+  const copy = settings.pageCopy.about;
+  const portrait =
+    page?.image ??
+    (settings.logoUrl
+      ? { url: settings.logoUrl, alt: settings.logoAlt || settings.siteTitle }
+      : null);
+  const fallbackBody = settings.profile.summary
+    ? `<p>${settings.profile.summary}</p>`
+    : "";
 
   return (
     <>
       <section className="section-space">
         <div
           className={`container grid gap-8 lg:items-start ${
-            page.image?.url ? "lg:grid-cols-[0.9fr_1.1fr]" : ""
+            portrait?.url ? "lg:grid-cols-[0.9fr_1.1fr]" : ""
           }`}
         >
-          {page.image?.url ? (
-            <div className="overflow-hidden rounded-md border border-border/80 bg-white shadow-sm">
-              <ImageWrapper image={page.image} alt={page.title} className="aspect-[4/5]" />
+          {portrait?.url ? (
+            <div className="overflow-hidden rounded-[2rem] border border-border/80 bg-white shadow-soft">
+              <ImageWrapper image={portrait} alt={page?.title || settings.siteTitle} className="aspect-[4/5]" />
             </div>
           ) : null}
           <div className="space-y-6">
             <SectionHeading
-              eyebrow="About"
-              title={page.title}
-              description={page.excerpt.replace(/<[^>]*>/g, "")}
+              eyebrow={copy.eyebrow}
+              title={page?.title || settings.profile.title || settings.siteTitle}
+              description={page?.excerpt?.replace(/<[^>]*>/g, "") || settings.siteDescription}
             />
-            <RichTextRenderer content={page.content} />
+            <RichTextRenderer content={page?.content || fallbackBody} />
           </div>
         </div>
       </section>
@@ -70,9 +68,9 @@ export default async function AboutPage() {
         <section className="section-space pt-0">
           <div className="container space-y-6">
             <SectionHeading
-              eyebrow="FAQ"
-              title="A few helpful answers."
-              description="These FAQs are managed in Sanity Studio and can support media kits, collaborations, and common questions."
+              eyebrow={copy.faqEyebrow}
+              title={copy.faqTitle || "A few helpful answers."}
+              description={copy.faqDescription}
             />
             <div className="grid gap-5 md:grid-cols-2">
               {faqs.map((faq) => (
@@ -90,9 +88,9 @@ export default async function AboutPage() {
         <section className="section-space pt-0">
           <div className="container space-y-6">
             <SectionHeading
-              eyebrow="In good company"
-              title="A few kind words."
-              description="Approved testimonials from readers, collaborators, and clients."
+              eyebrow={copy.testimonialsEyebrow}
+              title={copy.testimonialsTitle || "A few kind words."}
+              description={copy.testimonialsDescription}
             />
             <div className="grid gap-6 lg:grid-cols-3">
               {testimonials.map((testimonial) => (

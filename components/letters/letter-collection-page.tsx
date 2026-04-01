@@ -44,6 +44,7 @@ export function LetterCollectionPage({
   posts: PostSummary[];
   categoryMap: Map<ContentId, string>;
 }) {
+  const copy = settings.pageCopy.letters;
   const featuredPost = posts[0];
   const feedPosts = featuredPost ? posts.slice(1) : posts;
   const popularPosts = posts.slice(0, 4);
@@ -87,13 +88,13 @@ export function LetterCollectionPage({
           {featuredPost ? (
             <FeaturedPostCard
               post={featuredPost}
-              label="Featured letter"
+              label={copy.featuredLabel}
               categoryLabels={featuredCategoryLabel ? [featuredCategoryLabel] : []}
             />
           ) : (
             <EmptyState
               title={`No letters in ${collection.shortLabel} yet`}
-              description={`Create a Sanity category using the slug "${collection.categorySlugs[0]}", assign posts to it, and this page will populate automatically.`}
+              description="This room is ready for the first letter in the collection."
             />
           )}
         </div>
@@ -101,9 +102,9 @@ export function LetterCollectionPage({
 
       <HomePopularStrip
         posts={popularPosts}
-        title="A Few to Begin With"
+        title={copy.popularTitle}
         archiveHref={archiveHref}
-        archiveLabel="Return to collection"
+        archiveLabel={copy.popularArchiveLabel}
       />
 
       <section className="section-space pt-0">
@@ -111,16 +112,16 @@ export function LetterCollectionPage({
           <div>
             <div className="mb-4 flex items-end justify-between gap-4 border-b border-border/70 pb-4">
               <div>
-                <p className="eyebrow">Recent letters</p>
+                <p className="eyebrow">{copy.recentEyebrow}</p>
                 <h2 className="mt-2 max-w-3xl text-[2.15rem] leading-[0.98] tracking-[-0.035em] md:text-[3.05rem]">
-                  Notes, reflections, and quieter truths.
+                  {copy.recentTitle}
                 </h2>
               </div>
               <Link
                 href={archiveHref}
                 className="hidden text-[12px] font-semibold uppercase tracking-[0.18em] text-foreground transition hover:text-primary md:inline-flex"
               >
-                This collection
+                {copy.recentArchiveLabel}
               </Link>
             </div>
 
@@ -137,7 +138,7 @@ export function LetterCollectionPage({
             ) : featuredPost ? (
               <EmptyState
                 title="More letters are coming"
-                description="Publish more posts in this collection to expand the archive below the featured story."
+                description="The collection will deepen here as more letters are added."
               />
             ) : null}
           </div>
@@ -160,6 +161,7 @@ export function LetterCollectionPage({
                   )}
                 </div>
                 <div>
+                  <p className="eyebrow">{copy.profileEyebrow}</p>
                   <p className="font-serif text-[2rem] leading-none tracking-[-0.035em]">
                     {collection.shortLabel}
                   </p>
@@ -172,13 +174,13 @@ export function LetterCollectionPage({
               <p className="text-[0.98rem] leading-8">{introCopy}</p>
 
               <Link href="/newsletter" className="soft-link">
-                Subscribe for new letters
+                {settings.footer.newsletterCtaLabel || "Subscribe for new letters"}
               </Link>
             </div>
 
             <div className="editorial-panel space-y-4 p-5">
               <div className="space-y-2">
-                <p className="eyebrow">{settings.newsletter.eyebrow || "Stay close"}</p>
+                <p className="eyebrow">{copy.newsletterEyebrow || settings.newsletter.eyebrow}</p>
                 <h3 className="text-[1.95rem] leading-[1] tracking-[-0.03em]">
                   {settings.newsletter.title}
                 </h3>
@@ -192,7 +194,7 @@ export function LetterCollectionPage({
 
             <div className="editorial-panel space-y-5 p-5">
               <div>
-                <p className="eyebrow">Read next</p>
+                <p className="eyebrow">{copy.readNextEyebrow}</p>
                 <div className="mt-4 flex flex-col gap-3">
                   {relatedCollections.map((entry) => (
                     <Link
@@ -208,7 +210,7 @@ export function LetterCollectionPage({
 
               {settings.socialLinks.length ? (
                 <div>
-                  <p className="eyebrow">Elsewhere</p>
+                  <p className="eyebrow">{copy.socialEyebrow}</p>
                   <div className="mt-4 flex flex-wrap gap-3">
                     {settings.socialLinks.map((item) => (
                       <SocialIconLink key={item.label} label={item.label} url={item.url} />
