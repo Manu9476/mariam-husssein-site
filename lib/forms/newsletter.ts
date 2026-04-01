@@ -47,7 +47,7 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
   if (parsed.data.website) {
     return {
       ok: true,
-      message: "You are subscribed. Look out for the next letter from Mariam.",
+      message: "Thanks. Your email has been received.",
       subscriberEmail: undefined,
     };
   }
@@ -103,8 +103,8 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
       return {
         ok: true,
         message: notification.ok
-          ? "You are subscribed. Your email is saved in Sanity Studio and a notification email has been sent."
-          : "You are subscribed. Your email is now saved in Sanity Studio.",
+          ? "Thanks. Your email is saved in Sanity Studio and a notification email has been sent."
+          : "Thanks. Your email is now saved in Sanity Studio.",
         subscriberEmail: normalizedEmail,
       };
     }
@@ -166,9 +166,9 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     ok: true,
     message: sanityWriteClient
       ? notification.ok
-        ? "You are subscribed. Your email is saved in Sanity Studio and a notification email has been sent."
-        : "You are subscribed. Your email is saved in Sanity Studio too."
-      : "You are subscribed. Look out for the next letter from Mariam.",
+        ? "Thanks. Your email is saved in Sanity Studio and a notification email has been sent."
+        : "Thanks. Your email is saved in Sanity Studio too."
+      : "Thanks. You're on the list.",
     subscriberEmail: normalizedEmail,
   };
 }
