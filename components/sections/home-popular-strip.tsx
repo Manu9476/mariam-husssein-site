@@ -38,7 +38,11 @@ export function HomePopularStrip({
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
-                className="grid gap-4 rounded-xl p-2 transition hover:bg-accent/40 md:grid-cols-[1fr_92px] md:items-center xl:grid-cols-1"
+                className={`grid gap-4 rounded-xl p-2 transition hover:bg-accent/40 ${
+                  post.image?.url
+                    ? "md:grid-cols-[1fr_92px] md:items-center xl:grid-cols-1"
+                    : ""
+                }`}
               >
                 <div className="space-y-2">
                   <h3 className="text-[1.55rem] leading-[1.08] tracking-[-0.02em] md:text-[1.75rem]">
@@ -48,9 +52,11 @@ export function HomePopularStrip({
                     {formatDate(post.date)}
                   </p>
                 </div>
-                <div className="overflow-hidden rounded-md border border-border/80">
-                  <ImageWrapper image={post.image} alt={post.title} className="aspect-square" />
-                </div>
+                {post.image?.url ? (
+                  <div className="overflow-hidden rounded-md border border-border/80">
+                    <ImageWrapper image={post.image} alt={post.title} className="aspect-square" />
+                  </div>
+                ) : null}
               </Link>
             ))}
           </div>

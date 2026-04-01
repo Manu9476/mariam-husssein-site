@@ -15,6 +15,7 @@ export function Hero({
   settings: SiteSettings;
   aboutPreview?: PageContent | null;
 }) {
+  const hasPortrait = Boolean(aboutPreview?.image?.url);
   const introCopy = stripHtml(aboutPreview?.excerpt) || settings.hero.subtitle;
   const quickLinks = [
     { label: "Letters", url: "/letters/younger-me" },
@@ -41,30 +42,24 @@ export function Hero({
   return (
     <section className="pb-12 pt-8 md:pb-16 md:pt-10">
       <div className="container">
-        <div className="grid gap-8 border-b border-border/80 pb-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-start lg:gap-12 lg:pb-14">
-          <FadeIn className="lg:max-w-md">
-            {aboutPreview?.image ? (
+        <div
+          className={`grid gap-8 border-b border-border/80 pb-10 lg:items-start lg:gap-12 lg:pb-14 ${
+            hasPortrait ? "lg:grid-cols-[0.72fr_1.28fr]" : ""
+          }`}
+        >
+          {hasPortrait ? (
+            <FadeIn className="lg:max-w-md">
               <div className="overflow-hidden rounded-md border border-border/90 bg-white shadow-sm">
                 <ImageWrapper
-                  image={aboutPreview.image}
-                  alt={aboutPreview.title}
+                  image={aboutPreview?.image}
+                  alt={aboutPreview?.title || "Mariam portrait"}
                   className="aspect-[5/6]"
                   priority
                   sizes="(min-width: 1024px) 24rem, 100vw"
                 />
               </div>
-            ) : (
-              <div className="flex aspect-[5/6] flex-col justify-end rounded-md border border-dashed border-border bg-muted p-6 md:p-8">
-                <p className="eyebrow">Portrait</p>
-                <h2 className="mt-3 text-[2.2rem] leading-[0.98] tracking-[-0.03em]">
-                  Add Mariam&apos;s portrait here
-                </h2>
-                <p className="mt-3 text-sm leading-7">
-                  Upload a featured image on the About page and this space will become the opening visual.
-                </p>
-              </div>
-            )}
-          </FadeIn>
+            </FadeIn>
+          ) : null}
 
           <FadeIn delay={0.08} className="space-y-6 lg:pt-2">
             <div className="space-y-3">

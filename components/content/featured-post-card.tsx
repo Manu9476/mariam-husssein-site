@@ -17,22 +17,30 @@ export function FeaturedPostCard({
   categoryLabels?: string[];
   label?: string;
 }) {
+  const hasImage = Boolean(post.image?.url);
+
   return (
     <FadeIn>
       <Card className="overflow-hidden p-5 md:p-6">
-        <div className="grid gap-5 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
-          <Link
-            href={`/blog/${post.slug}`}
-            className="relative overflow-hidden rounded-md border border-border/80"
-          >
-            <ImageWrapper
-              image={post.image}
-              alt={post.title}
-              className="aspect-[4/3] transition duration-700 hover:scale-[1.02]"
-              priority
-              sizes="(min-width: 1024px) 26rem, 100vw"
-            />
-          </Link>
+        <div
+          className={`grid gap-5 lg:items-center ${
+            hasImage ? "lg:grid-cols-[0.86fr_1.14fr]" : ""
+          }`}
+        >
+          {hasImage ? (
+            <Link
+              href={`/blog/${post.slug}`}
+              className="relative overflow-hidden rounded-md border border-border/80"
+            >
+              <ImageWrapper
+                image={post.image}
+                alt={post.title}
+                className="aspect-[4/3] transition duration-700 hover:scale-[1.02]"
+                priority
+                sizes="(min-width: 1024px) 26rem, 100vw"
+              />
+            </Link>
+          ) : null}
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-3">
               <Badge>{label}</Badge>

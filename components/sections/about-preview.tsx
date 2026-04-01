@@ -11,19 +11,23 @@ export function AboutPreview({
 }: {
   page?: PageContent | null;
 }) {
+  const hasImage = Boolean(page?.image?.url);
+
   return (
     <section className="section-space">
       <div className="container">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <FadeIn>
-            <div className="overflow-hidden rounded-md border border-border/80 bg-white shadow-sm">
-              <ImageWrapper
-                image={page?.image}
-                alt={page?.title || "About Mariam"}
-                className="aspect-[4/5]"
-              />
-            </div>
-          </FadeIn>
+        <div className={`grid gap-10 lg:items-center ${hasImage ? "lg:grid-cols-[0.9fr_1.1fr]" : ""}`}>
+          {hasImage ? (
+            <FadeIn>
+              <div className="overflow-hidden rounded-md border border-border/80 bg-white shadow-sm">
+                <ImageWrapper
+                  image={page?.image}
+                  alt={page?.title || "About Mariam"}
+                  className="aspect-[4/5]"
+                />
+              </div>
+            </FadeIn>
+          ) : null}
           <FadeIn delay={0.1} className="space-y-6">
             <SectionHeading
               eyebrow="About Mariam"

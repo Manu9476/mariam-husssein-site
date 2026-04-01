@@ -12,9 +12,15 @@ export function EditorialListItem({
   post: PostSummary;
   categoryLabel?: string;
 }) {
+  const hasImage = Boolean(post.image?.url);
+
   return (
     <FadeIn>
-      <article className="grid gap-5 border-b border-border/70 py-7 md:grid-cols-[1fr_230px] md:items-center md:py-8">
+      <article
+        className={`grid gap-5 border-b border-border/70 py-7 md:items-center md:py-8 ${
+          hasImage ? "md:grid-cols-[1fr_230px]" : ""
+        }`}
+      >
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             {categoryLabel ? <span>{categoryLabel}</span> : null}
@@ -35,13 +41,15 @@ export function EditorialListItem({
             Continue reading
           </Link>
         </div>
-        <Link href={`/blog/${post.slug}`} className="overflow-hidden rounded-md border border-border/80">
-          <ImageWrapper
-            image={post.image}
-            alt={post.title}
-            className="aspect-[4/3] transition duration-700 hover:scale-[1.03]"
-          />
-        </Link>
+        {hasImage ? (
+          <Link href={`/blog/${post.slug}`} className="overflow-hidden rounded-md border border-border/80">
+            <ImageWrapper
+              image={post.image}
+              alt={post.title}
+              className="aspect-[4/3] transition duration-700 hover:scale-[1.03]"
+            />
+          </Link>
+        ) : null}
       </article>
     </FadeIn>
   );

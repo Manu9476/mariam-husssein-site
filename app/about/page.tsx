@@ -45,10 +45,16 @@ export default async function AboutPage() {
   return (
     <>
       <section className="section-space">
-        <div className="container grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div className="overflow-hidden rounded-md border border-border/80 bg-white shadow-sm">
-            <ImageWrapper image={page.image} alt={page.title} className="aspect-[4/5]" />
-          </div>
+        <div
+          className={`container grid gap-8 lg:items-start ${
+            page.image?.url ? "lg:grid-cols-[0.9fr_1.1fr]" : ""
+          }`}
+        >
+          {page.image?.url ? (
+            <div className="overflow-hidden rounded-md border border-border/80 bg-white shadow-sm">
+              <ImageWrapper image={page.image} alt={page.title} className="aspect-[4/5]" />
+            </div>
+          ) : null}
           <div className="space-y-6">
             <SectionHeading
               eyebrow="About"

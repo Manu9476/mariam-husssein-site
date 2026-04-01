@@ -15,17 +15,24 @@ export function PostCard({
   post: PostSummary;
   categoryLabels?: string[];
 }) {
+  const hasImage = Boolean(post.image?.url);
+
   return (
     <FadeIn>
       <Card className="group overflow-hidden p-5">
         <div className="space-y-5">
-          <Link href={`/blog/${post.slug}`} className="relative block overflow-hidden rounded-md border border-border/80">
-            <ImageWrapper
-              image={post.image}
-              alt={post.title}
-              className="aspect-[4/3] transition duration-700 group-hover:scale-[1.03]"
-            />
-          </Link>
+          {hasImage ? (
+            <Link
+              href={`/blog/${post.slug}`}
+              className="relative block overflow-hidden rounded-md border border-border/80"
+            >
+              <ImageWrapper
+                image={post.image}
+                alt={post.title}
+                className="aspect-[4/3] transition duration-700 group-hover:scale-[1.03]"
+              />
+            </Link>
+          ) : null}
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
               {categoryLabels[0] ? <Badge>{categoryLabels[0]}</Badge> : null}
