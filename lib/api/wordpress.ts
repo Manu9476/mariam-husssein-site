@@ -2,6 +2,7 @@ import { cache } from "react";
 
 import {
   DEFAULT_REVALIDATE,
+  DEFAULT_CONTACT_EMAIL,
   POSTS_PER_PAGE,
   TESTIMONIALS_PREVIEW_LIMIT,
 } from "@/lib/constants";
@@ -229,6 +230,7 @@ function mapPost(post: WordPressPost): PostSummary {
     seo: resolveSeo(post.meta),
     sticky: Boolean(post.sticky || post.meta?._mh_featured_on_home),
     readingTime: readingTimeFromHtml(post.content?.rendered),
+    commentCount: 0,
   };
 }
 
@@ -368,6 +370,7 @@ function mapSanityPost(post: SanityPostDocument): PostSummary {
     seo: mapSanitySeo(post.seo),
     sticky: Boolean(post.featuredOnHome),
     readingTime: readingTimeFromHtml(richText.html),
+    commentCount: post.commentCount || 0,
   };
 }
 
@@ -413,10 +416,12 @@ function mapSanityComment(entry: SanityCommentDocument): CommentEntry {
   return {
     id: entry._id,
     postId: entry.post?._id || "",
+    parentId: entry.parentComment?._id,
     name: entry.name,
     message: entry.message || "",
     date: entry.createdAt || "",
     approved: Boolean(entry.approved),
+    replies: [],
   };
 }
 
@@ -464,7 +469,7 @@ function fallbackSettings(): SiteSettings {
       disclaimer: "No spam. Just thoughtful updates, occasional recommendations, and new essays.",
     },
     contact: {
-      email: "emmanuelmacharia408@gmail.com",
+      email: DEFAULT_CONTACT_EMAIL,
       phone: "+254 700 000 000",
       location: "Nairobi, Kenya",
       availability: "Open to speaking, partnerships, and thoughtful collaborations.",
@@ -553,6 +558,7 @@ const postProjection = `
     description
   },
   featuredOnHome,
+  "commentCount": count(*[_type == "comment" && approved == true && post._ref == ^._id]),
   featuredImage{
     alt,
     asset->{
@@ -1267,6 +1273,9 @@ const getCommentsForPostCached = cache(
               "createdAt": coalesce(createdAt, _createdAt),
               post->{
                 _id
+              },
+              parentComment->{
+                _id
               }
             }`,
           {
@@ -1274,7 +1283,24 @@ const getCommentsForPostCached = cache(
           },
         );
 
-        return comments.map(mapSanityComment);
+        const mappedComments = comments.map(mapSanityComment);
+        const commentsById = new Map(
+          mappedComments.map((comment) => [String(comment.id), comment]),
+        );
+        const roots: CommentEntry[] = [];
+
+        for (const comment of mappedComments) {
+          const parentId = comment.parentId ? String(comment.parentId) : null;
+
+          if (parentId && commentsById.has(parentId)) {
+            commentsById.get(parentId)?.replies?.push(comment);
+            continue;
+          }
+
+          roots.push(comment);
+        }
+
+        return roots;
       } catch {
         return [];
       }

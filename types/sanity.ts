@@ -80,6 +80,7 @@ export interface SanityPostDocument {
   featuredImage?: SanityImageField | null;
   seo?: SanitySeoField;
   featuredOnHome?: boolean;
+  commentCount?: number;
 }
 
 export interface SanityTestimonialDocument {
@@ -110,6 +111,20 @@ export interface SanityCommentDocument {
   post?: {
     _id: string;
   };
+  parentComment?: {
+    _id: string;
+  };
+}
+
+export interface SanityContactMessageDocument {
+  _id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  reviewed?: boolean;
+  createdAt?: string;
+  source?: string;
 }
 
 export interface SanityFaqDocument {

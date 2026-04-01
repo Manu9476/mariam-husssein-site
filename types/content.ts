@@ -34,6 +34,7 @@ export interface PostSummary {
   seo: SeoFields;
   sticky: boolean;
   readingTime: number;
+  commentCount?: number;
 }
 
 export interface CategorySummary {
@@ -87,8 +88,10 @@ export interface FaqEntry {
 export interface CommentEntry {
   id: ContentId;
   postId: ContentId;
+  parentId?: ContentId;
   name: string;
   message: string;
   date: string;
   approved: boolean;
+  replies?: CommentEntry[];
 }

@@ -332,6 +332,13 @@ const comment = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "parentComment",
+      title: "Reply to",
+      type: "reference",
+      to: [{ type: "comment" }],
+      description: "Leave empty for a top-level comment.",
+    }),
+    defineField({
       name: "approved",
       title: "Approved for public display",
       type: "boolean",
@@ -348,11 +355,79 @@ const comment = defineType({
     select: {
       title: "name",
       subtitle: "post.title",
+      replyTo: "parentComment.name",
+    },
+    prepare({ title, subtitle, replyTo }) {
+      return {
+        title,
+        subtitle: replyTo
+          ? `Reply to ${replyTo}${subtitle ? ` on ${subtitle}` : ""}`
+          : subtitle
+            ? `On ${subtitle}`
+            : "Pending post reference",
+      };
+    },
+  },
+});
+
+const contactMessage = defineType({
+  name: "contactMessage",
+  title: "Contact Messages",
+  type: "document",
+  fields: [
+    defineField({
+      name: "name",
+      title: "Name",
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "email",
+      title: "Email",
+      type: "string",
+      validation: (rule) => rule.required().email(),
+    }),
+    defineField({
+      name: "subject",
+      title: "Subject",
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "message",
+      title: "Message",
+      type: "text",
+      rows: 8,
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "reviewed",
+      title: "Reviewed",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
+      name: "createdAt",
+      title: "Submitted at",
+      type: "datetime",
+      initialValue: () => new Date().toISOString(),
+    }),
+    defineField({
+      name: "source",
+      title: "Source",
+      type: "string",
+      initialValue: "website",
+    }),
+  ],
+  preview: {
+    select: {
+      title: "subject",
+      subtitle: "name",
     },
     prepare({ title, subtitle }) {
       return {
-        title,
-        subtitle: subtitle ? `On ${subtitle}` : "Pending post reference",
+        title: title || "Untitled message",
+        subtitle: subtitle ? `From ${subtitle}` : "Website contact form",
       };
     },
   },
@@ -492,7 +567,8 @@ const siteSettings = defineType({
           name: "email",
           title: "Email",
           type: "string",
-          description: "This controls the fallback email shown on the website.",
+          description:
+            "This controls the fallback email shown on the website and receives form notifications when email delivery is configured.",
         }),
         defineField({ name: "phone", title: "Phone", type: "string" }),
         defineField({ name: "location", title: "Location", type: "string" }),
@@ -545,6 +621,7 @@ export const schemaTypes = [
   testimonial,
   newsletterSubscriber,
   comment,
+  contactMessage,
   faq,
   resource,
 ];

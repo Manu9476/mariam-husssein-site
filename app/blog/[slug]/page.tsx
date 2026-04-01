@@ -22,6 +22,56 @@ function getCategoryLabels(ids: ContentId[], categoryMap: Map<ContentId, string>
   return ids.map((id) => categoryMap.get(id)).filter(Boolean) as string[];
 }
 
+function countComments(entries: CommentEntry[]): number {
+  return entries.reduce(
+    (total, entry) => total + 1 + countComments(entry.replies ?? []),
+    0,
+  );
+}
+
+function CommentThread({
+  comments,
+  postId,
+  depth = 0,
+}: {
+  comments: CommentEntry[];
+  postId: ContentId;
+  depth?: number;
+}) {
+  return (
+    <div className="space-y-4">
+      {comments.map((comment) => (
+        <article key={comment.id} className="editorial-panel space-y-3 p-5">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            <span>{comment.name}</span>
+            {comment.date ? <span>{formatDate(comment.date)}</span> : null}
+            {depth ? <span>Reply</span> : null}
+          </div>
+          <p className="text-[1rem] leading-8 text-foreground/90">{comment.message}</p>
+          <details className="pt-1">
+            <summary className="soft-link cursor-pointer list-none">
+              Reply thoughtfully
+            </summary>
+            <div className="mt-4">
+              <CommentForm
+                postId={postId}
+                parentId={comment.id}
+                replyToName={comment.name}
+                compact
+              />
+            </div>
+          </details>
+          {comment.replies?.length ? (
+            <div className="space-y-4 border-l border-border/70 pl-4 sm:pl-6">
+              <CommentThread comments={comment.replies} postId={postId} depth={depth + 1} />
+            </div>
+          ) : null}
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function CommentsSection({
   comments,
   postId,
@@ -29,6 +79,8 @@ function CommentsSection({
   comments: CommentEntry[];
   postId: ContentId;
 }) {
+  const totalComments = countComments(comments);
+
   return (
     <section className="section-space pt-0">
       <div className="container grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
@@ -45,26 +97,16 @@ function CommentsSection({
         <div className="space-y-4">
           <SectionHeading
             eyebrow="Approved comments"
-            title={comments.length ? "What readers are saying." : "No comments yet."}
+            title={totalComments ? `What readers are saying (${totalComments}).` : "No comments yet."}
             description={
-              comments.length
-                ? "A few approved responses from the conversation around this post."
+              totalComments
+                ? "Approved comments and replies from the conversation around this post."
                 : "Be the first to share a kind, thoughtful response."
             }
             animate={false}
           />
           {comments.length ? (
-            <div className="space-y-4">
-              {comments.map((comment) => (
-                <article key={comment.id} className="editorial-panel space-y-3 p-5">
-                  <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                    <span>{comment.name}</span>
-                    {comment.date ? <span>{formatDate(comment.date)}</span> : null}
-                  </div>
-                  <p className="text-[1rem] leading-8 text-foreground/90">{comment.message}</p>
-                </article>
-              ))}
-            </div>
+            <CommentThread comments={comments} postId={postId} />
           ) : null}
         </div>
       </div>
@@ -136,6 +178,11 @@ export default async function BlogPostPage({
                 ))}
                 <span>{formatDate(post.date)}</span>
                 <span>{post.readingTime} min read</span>
+                {typeof post.commentCount === "number" && post.commentCount > 0 ? (
+                  <span>
+                    {post.commentCount} {post.commentCount === 1 ? "comment" : "comments"}
+                  </span>
+                ) : null}
               </div>
               <h1 className="text-[3.35rem] leading-[0.94] tracking-[-0.045em] md:text-[4.75rem]">
                 {post.title}

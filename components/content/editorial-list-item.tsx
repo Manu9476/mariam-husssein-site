@@ -26,6 +26,11 @@ export function EditorialListItem({
             {categoryLabel ? <span>{categoryLabel}</span> : null}
             <span>{formatDate(post.date)}</span>
             {post.authorName ? <span>{post.authorName}</span> : null}
+            {typeof post.commentCount === "number" && post.commentCount > 0 ? (
+              <span>
+                {post.commentCount} {post.commentCount === 1 ? "comment" : "comments"}
+              </span>
+            ) : null}
           </div>
           <div className="space-y-3">
             <Link href={`/blog/${post.slug}`}>

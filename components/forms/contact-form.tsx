@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,12 +12,14 @@ const initialValues = {
   email: "",
   subject: "",
   message: "",
+  website: "",
 };
 
 export function ContactForm() {
   const [values, setValues] = useState(initialValues);
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const startedAt = useMemo(() => String(Date.now()), []);
 
   function updateValue(key: keyof typeof initialValues, value: string) {
     setValues((current) => ({
@@ -36,7 +38,10 @@ export function ContactForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          startedAt,
+        }),
       });
 
       const data = (await response.json()) as { message: string };
@@ -71,6 +76,16 @@ export function ContactForm() {
           />
         </div>
       </div>
+      <div className="hidden">
+        <Label htmlFor="contact-website">Website</Label>
+        <Input
+          id="contact-website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={values.website}
+          onChange={(event) => updateValue("website", event.target.value)}
+        />
+      </div>
       <div className="space-y-2">
         <Label htmlFor="subject">Subject</Label>
         <Input
@@ -91,7 +106,7 @@ export function ContactForm() {
       </div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
-          Thoughtful messages are always welcome.
+          Thoughtful messages are always welcome and will be saved in your Studio inbox.
         </p>
         <Button type="submit" disabled={isPending}>
           {isPending ? "Sending..." : "Send message"}

@@ -13,6 +13,7 @@ export function NewsletterForm({
   buttonLabel: string;
 }) {
   const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const startedAt = useMemo(() => String(Date.now()), []);
@@ -27,7 +28,7 @@ export function NewsletterForm({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, website: "", startedAt }),
+        body: JSON.stringify({ email, website, startedAt }),
       });
 
       const data = (await response.json()) as { message: string };
@@ -35,12 +36,22 @@ export function NewsletterForm({
 
       if (response.ok) {
         setEmail("");
+        setWebsite("");
       }
     });
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      <div className="hidden">
+        <Input
+          value={website}
+          onChange={(event) => setWebsite(event.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+        />
+      </div>
       <div className="flex flex-col gap-3 sm:flex-row">
         <Input
           type="email"

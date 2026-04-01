@@ -39,6 +39,11 @@ export function PostCard({
               <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                 {formatDate(post.date)}
               </span>
+              {typeof post.commentCount === "number" && post.commentCount > 0 ? (
+                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  {post.commentCount} {post.commentCount === 1 ? "comment" : "comments"}
+                </span>
+              ) : null}
             </div>
             <div className="space-y-3">
               <Link href={`/blog/${post.slug}`}>

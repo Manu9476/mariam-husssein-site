@@ -50,6 +50,9 @@ export function HomePopularStrip({
                   </h3>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                     {formatDate(post.date)}
+                    {typeof post.commentCount === "number" && post.commentCount > 0
+                      ? ` / ${post.commentCount} ${post.commentCount === 1 ? "comment" : "comments"}`
+                      : ""}
                   </p>
                 </div>
                 {post.image?.url ? (

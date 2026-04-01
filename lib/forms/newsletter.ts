@@ -1,5 +1,9 @@
 import { createHash } from "crypto";
 
+import {
+  formatNotificationLine,
+  sendSubmissionNotification,
+} from "@/lib/forms/notifications";
 import { sanityWriteClient } from "@/lib/sanity/client";
 import { newsletterSchema, type NewsletterInput } from "@/lib/validators";
 
@@ -75,9 +79,29 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
 
   if (provider === "none") {
     if (sanityWriteClient) {
+      const notification = await sendSubmissionNotification({
+        kind: "subscriber",
+        subject: "New newsletter subscriber",
+        text: [
+          "A new subscriber joined from the website.",
+          `Email: ${normalizedEmail}`,
+        ].join("\n"),
+        html: [
+          "<h2>New newsletter subscriber</h2>",
+          "<p>A new subscriber joined from the website.</p>",
+          formatNotificationLine("Email", normalizedEmail),
+        ].join(""),
+      });
+
+      if (!notification.ok && !notification.skipped) {
+        console.error("Subscriber notification email could not be sent.");
+      }
+
       return {
         ok: true,
-        message: "You are subscribed. Your email is now saved in Sanity Studio.",
+        message: notification.ok
+          ? "You are subscribed. Your email is saved in Sanity Studio and a notification email has been sent."
+          : "You are subscribed. Your email is now saved in Sanity Studio.",
       };
     }
 
@@ -113,10 +137,30 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     };
   }
 
+  const notification = await sendSubmissionNotification({
+    kind: "subscriber",
+    subject: "New newsletter subscriber",
+    text: [
+      "A new subscriber joined from the website.",
+      `Email: ${normalizedEmail}`,
+    ].join("\n"),
+    html: [
+      "<h2>New newsletter subscriber</h2>",
+      "<p>A new subscriber joined from the website.</p>",
+      formatNotificationLine("Email", normalizedEmail),
+    ].join(""),
+  });
+
+  if (!notification.ok && !notification.skipped) {
+    console.error("Subscriber notification email could not be sent.");
+  }
+
   return {
     ok: true,
     message: sanityWriteClient
-      ? "You are subscribed. Your email is saved in Sanity Studio too."
+      ? notification.ok
+        ? "You are subscribed. Your email is saved in Sanity Studio and a notification email has been sent."
+        : "You are subscribed. Your email is saved in Sanity Studio too."
       : "You are subscribed. Look out for the next letter from Mariam.",
   };
 }

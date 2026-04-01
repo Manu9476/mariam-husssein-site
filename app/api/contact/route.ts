@@ -12,7 +12,7 @@ export async function POST(request: Request) {
         message: result.message,
       },
       {
-        status: result.ok ? 200 : 400,
+        status: result.status,
       },
     );
   } catch {

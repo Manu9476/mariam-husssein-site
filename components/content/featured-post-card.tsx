@@ -49,6 +49,9 @@ export function FeaturedPostCard({
             <div className="space-y-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                 {formatDate(post.date)} / {post.readingTime} min read
+                {typeof post.commentCount === "number" && post.commentCount > 0
+                  ? ` / ${post.commentCount} ${post.commentCount === 1 ? "comment" : "comments"}`
+                  : ""}
               </p>
               <h3 className="max-w-3xl text-[2.45rem] leading-[0.95] tracking-[-0.04em] md:text-[3.55rem]">
                 {post.title}

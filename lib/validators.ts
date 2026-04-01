@@ -5,6 +5,8 @@ export const contactSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
   subject: z.string().min(3, "Please add a short subject."),
   message: z.string().min(20, "Please share a little more detail."),
+  website: z.string().optional().default(""),
+  startedAt: z.string().optional().default(""),
 });
 
 export const newsletterSchema = z.object({
@@ -24,6 +26,7 @@ export const reviewSchema = z.object({
 
 export const commentSchema = z.object({
   postId: z.string().min(1, "The post could not be found."),
+  parentId: z.string().optional(),
   name: z.string().min(2, "Please enter your name."),
   email: z.string().email("Please enter a valid email address."),
   message: z.string().min(8, "Please write a little more before posting."),

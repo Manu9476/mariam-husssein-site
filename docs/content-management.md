@@ -1,32 +1,37 @@
-# Managing Content Without Code
+# Managing Content In Sanity Studio
 
-## What You Edit In WordPress
+Open your content dashboard at:
 
-Use these areas of WordPress Admin:
+- `/studio` on localhost while developing
+- `/studio` on your live Vercel site after deployment
 
-- `Mariam Brand` for hero copy, newsletter text, contact details, social links, and footer copy
-- `Pages` for About, Contact, Newsletter, Reviews, Privacy Policy, and Terms
-- `Posts` for blog articles
-- `Categories` and `Tags` for post organization
-- `Resources` for services, offers, free downloads, or curated recommendations
-- `FAQs` for common questions
-- `Testimonials` for approved reviews and public submissions
-- `Contact Messages` for incoming contact form submissions
-- `Appearance -> Menus` for navigation labels and links
-- `Appearance -> Customize -> Site Identity` for the logo, site title, and tagline
+## What You Edit In Studio
+
+Use these collections in Sanity Studio:
+
+- `Site Settings` for hero copy, fallback email, social links, menus, newsletter text, and footer content
+- `Pages` for About, Contact, Newsletter, Privacy Policy, and Terms
+- `Posts` for notes, stories, and letters
+- `Categories` for grouping posts like `Younger Me`, `Current Me`, and `Future Me`
+- `Resources` for services, offers, curated tools, and downloads
+- `Testimonials` for public reviews
+- `Subscribers` for newsletter signups from the website
+- `Comments` for post comments and replies awaiting approval
+- `Contact Messages` for everything sent through the contact form
+- `FAQs` for common questions and answers
 
 ## How To Change The Homepage
 
-Homepage sections come from WordPress like this:
+Homepage sections come from Studio like this:
 
-- hero section: `Mariam Brand`
-- featured article: make a blog post `Sticky`
-- latest posts: publish regular blog posts
+- hero section: `Site Settings -> Homepage hero`
+- featured article: mark a post with `Feature on homepage`
+- latest posts: publish regular posts
 - about preview: edit the `About` page content and featured image
-- testimonials preview: publish testimonials
-- newsletter section: `Mariam Brand`
-- social links: `Mariam Brand`
-- footer copy: `Mariam Brand`
+- testimonials preview: approve testimonials
+- newsletter section: `Site Settings -> Newsletter section`
+- social links: `Site Settings -> Social links`
+- footer copy: `Site Settings -> Footer`
 
 ## How To Manage The Letters Pages
 
@@ -36,58 +41,62 @@ The three editorial letter pages are:
 - `/letters/current-me`
 - `/letters/future-me`
 
-Each one is powered by a WordPress category plus an optional WordPress page for intro copy and SEO.
+Create these categories in `Categories`:
 
-Create these categories in `Posts -> Categories`:
-
-- `younger-me`
-- `current-me`
-- `future-me`
+- `Younger Me`
+- `Current Me`
+- `Future Me`
 
 Assign posts to those categories and they will automatically appear in the matching letters page.
-Featured images for those posts are optional, and inline photos inside the post body are supported too.
 
-If you want editable intro copy, featured image, and SEO for each page, create these WordPress pages:
+If you want custom intro copy or a top image for a letters page, create matching `Pages` documents with these slugs:
 
 - `letters-younger-me`
 - `letters-current-me`
 - `letters-future-me`
 
-Use the page title, excerpt, featured image, and SEO fields to control the top section of each letters page.
+## How To Add A Blog Post Or Letter
 
-## How To Add A Blog Post
+1. Open `Posts`.
+2. Click `Create new`.
+3. Add a title, excerpt, categories, and body content.
+4. Upload a featured image only if you want one. Empty image cards are hidden automatically.
+5. Publish the post.
+6. If you want it featured on the homepage, turn on `Feature on homepage`.
 
-1. Go to `Posts -> Add New`.
-2. Add a title, featured image, excerpt, categories, and content.
-3. Fill the `Headless SEO` box if you want custom metadata.
-4. Publish the post.
-5. If you want it featured on the homepage, mark it as `Sticky`.
+You can also add inline images inside the body content editor. Those images are optional and will appear inside the story.
 
-You can also add optional inline photos inside the WordPress editor for stories and letters.
-Those images will render inside the article body on the frontend.
+## How To Update Email And Social Handles
 
-## How To Add A Resource Or Service
+Open:
 
-1. Go to `Resources -> Add New`.
-2. Add the title, excerpt, body content, and featured image.
-3. Fill the `Resource Details` box with CTA label and URL.
-4. Use the highlight checkbox if you want the card to stand out.
-5. Publish.
+- `Site Settings -> Contact details`
+- `Site Settings -> Social links`
 
-## How To Moderate Reviews
+Change the values there and publish. The frontend will use those published values everywhere, including the fallback contact email and social icons.
 
-Public reviews submitted from the frontend appear in:
+## How To View Newsletter Subscribers
 
-- `Testimonials`
+Every newsletter signup from the website is stored in:
+
+- `Subscribers`
+
+If `RESEND_API_KEY` and `RESEND_FROM_EMAIL` are configured, you will also receive an email notification.
+
+## How To Moderate Comments And Replies
+
+Every comment and reply from the website is stored in:
+
+- `Comments`
 
 Workflow:
 
-1. Open a pending testimonial.
-2. Review the message, submitter details, rating, and photo.
-3. Publish it to approve.
-4. Trash it to reject.
+1. Open a pending comment.
+2. Review the name, email, message, and linked post.
+3. Turn on `Approved for public display`.
+4. Publish the document.
 
-Only published testimonials are shown on the public website.
+Only approved comments and replies appear publicly.
 
 ## How To View Contact Form Messages
 
@@ -95,4 +104,11 @@ Every contact form submission is stored in:
 
 - `Contact Messages`
 
-Open any message to read the full contents.
+Workflow:
+
+1. Open a message.
+2. Read the name, email, subject, and message body.
+3. Turn on `Reviewed` when you have handled it.
+4. Publish if you changed the review status.
+
+If email notifications are configured, you will also receive a notification at the contact email from `Site Settings`, or the hardcoded fallback email if the Studio field is empty.

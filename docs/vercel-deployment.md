@@ -2,32 +2,39 @@
 
 ## 1. Push The Frontend Repository
 
-Push this project to GitHub, GitLab, or Bitbucket.
+Push this project to GitHub.
 
 ## 2. Import Into Vercel
 
 1. Create a new Vercel project.
 2. Import the repository.
 3. Keep the framework preset as `Next.js`.
+4. Leave the root directory as `./`.
 
 ## 3. Add Environment Variables
 
 At minimum, set:
 
 - `NEXT_PUBLIC_SITE_URL`
-- `NEXT_PUBLIC_WORDPRESS_URL`
-- `CONTACT_DESTINATION`
-- `WORDPRESS_CONTACT_FORM_ENDPOINT`
-- `WORDPRESS_REVIEW_SUBMISSION_ENDPOINT`
-- `NEWSLETTER_PROVIDER`
+- `NEXT_PUBLIC_SANITY_PROJECT_ID`
+- `NEXT_PUBLIC_SANITY_DATASET`
+- `NEXT_PUBLIC_SANITY_API_VERSION`
+- `SANITY_API_WRITE_TOKEN`
 
-If you connect newsletter providers or webhooks, also set the matching endpoint variables from `.env.example`.
+For email notifications from contact forms, comments, and subscribers, also set:
+
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+
+Optional override:
+
+- `CONTACT_NOTIFICATION_TO`
+
+If `CONTACT_NOTIFICATION_TO` is empty, the site will use the contact email from `Site Settings` in Sanity Studio, then fall back to the built-in default email.
 
 ## 4. Deploy
 
-Trigger the first deployment.
-
-The frontend will fetch content from your separate WordPress installation on cPanel while Vercel only hosts the public Next.js site.
+Trigger the first deployment. The live frontend and the embedded Studio will both run from Vercel.
 
 ## 5. Connect A Custom Domain
 
@@ -41,7 +48,7 @@ In Vercel:
 
 ## 6. Production Notes
 
-- Keep WordPress and Vercel on separate domains or subdomains.
-- The frontend already fetches content server-side, so direct browser CORS configuration is not required for the main content flow.
-- Form submissions are proxied through Next.js route handlers before being sent to WordPress.
-- If WordPress media lives on a different hostname, keep `NEXT_PUBLIC_WORDPRESS_URL` pointed to that WordPress install so Next.js image optimization can allow it.
+- The public website and Sanity Studio can both live in the same Vercel project.
+- Open the Studio at `/studio`.
+- Contact form submissions, newsletter signups, comments, and replies are stored in Sanity.
+- Published content changes may take a few minutes to appear on the live frontend because the site uses revalidation.

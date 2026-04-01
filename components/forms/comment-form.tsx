@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useId, useMemo, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,17 +12,25 @@ const initialValues = {
   name: "",
   email: "",
   message: "",
+  website: "",
 };
 
 export function CommentForm({
   postId,
+  parentId,
+  replyToName,
+  compact = false,
 }: {
   postId: ContentId;
+  parentId?: ContentId;
+  replyToName?: string;
+  compact?: boolean;
 }) {
   const [values, setValues] = useState(initialValues);
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const startedAt = useMemo(() => String(Date.now()), []);
+  const formId = useId();
 
   function updateValue(key: keyof typeof initialValues, value: string) {
     setValues((current) => ({
@@ -44,7 +52,7 @@ export function CommentForm({
         body: JSON.stringify({
           ...values,
           postId: String(postId),
-          website: "",
+          ...(parentId ? { parentId: String(parentId) } : {}),
           startedAt,
         }),
       });
@@ -59,21 +67,29 @@ export function CommentForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="editorial-panel space-y-4 p-5 md:p-6">
+    <form
+      onSubmit={onSubmit}
+      className={`editorial-panel space-y-4 ${compact ? "p-4 md:p-5" : "p-5 md:p-6"}`}
+    >
+      {replyToName ? (
+        <p className="text-sm text-muted-foreground">
+          Replying to {replyToName}.
+        </p>
+      ) : null}
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="comment-name">Name</Label>
+          <Label htmlFor={`${formId}-comment-name`}>Name</Label>
           <Input
-            id="comment-name"
+            id={`${formId}-comment-name`}
             value={values.name}
             onChange={(event) => updateValue("name", event.target.value)}
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="comment-email">Email</Label>
+          <Label htmlFor={`${formId}-comment-email`}>Email</Label>
           <Input
-            id="comment-email"
+            id={`${formId}-comment-email`}
             type="email"
             value={values.email}
             onChange={(event) => updateValue("email", event.target.value)}
@@ -82,19 +98,19 @@ export function CommentForm({
         </div>
       </div>
       <div className="hidden">
-        <Label htmlFor="comment-website">Website</Label>
+        <Label htmlFor={`${formId}-comment-website`}>Website</Label>
         <Input
-          id="comment-website"
+          id={`${formId}-comment-website`}
           tabIndex={-1}
           autoComplete="off"
-          value=""
-          onChange={() => undefined}
+          value={values.website}
+          onChange={(event) => updateValue("website", event.target.value)}
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="comment-message">Comment</Label>
+        <Label htmlFor={`${formId}-comment-message`}>Comment</Label>
         <Textarea
-          id="comment-message"
+          id={`${formId}-comment-message`}
           value={values.message}
           onChange={(event) => updateValue("message", event.target.value)}
           required
@@ -102,10 +118,12 @@ export function CommentForm({
       </div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
-          Comments are moderated before they appear publicly.
+          {parentId
+            ? "Replies are moderated before they appear publicly."
+            : "Comments are moderated before they appear publicly."}
         </p>
         <Button type="submit" disabled={isPending}>
-          {isPending ? "Sending..." : "Post comment"}
+          {isPending ? "Sending..." : parentId ? "Post reply" : "Post comment"}
         </Button>
       </div>
       {status ? <p className="text-sm text-muted-foreground">{status}</p> : null}
