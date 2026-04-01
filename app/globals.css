@@ -51,7 +51,7 @@
   h4,
   h5,
   h6 {
-    @apply font-serif tracking-[-0.035em];
+    @apply font-serif font-bold tracking-[-0.035em];
     color: var(--heading-color);
   }
 
@@ -61,7 +61,7 @@
   }
 
   a {
-    @apply transition-colors duration-300;
+    @apply font-bold transition-colors duration-300;
     color: var(--accent-color);
   }
 
@@ -92,7 +92,7 @@
   }
 
   .soft-link {
-    @apply inline-flex items-center gap-2 font-serif text-[13px] font-semibold uppercase tracking-[0.16em] underline-offset-4 transition hover:text-primary hover:underline;
+    @apply inline-flex items-center gap-2 font-serif text-[13px] font-bold uppercase tracking-[0.16em] underline-offset-4 transition hover:text-primary hover:underline;
     color: var(--accent-color);
   }
 
@@ -156,7 +156,7 @@
   }
 
   .nav-link {
-    @apply font-serif text-[13px] uppercase tracking-[0.18em] transition;
+    @apply font-serif font-bold text-[13px] uppercase tracking-[0.18em] transition;
     color: var(--nav-color);
   }
 

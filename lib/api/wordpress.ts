@@ -451,7 +451,7 @@ function fallbackSettings(): SiteSettings {
       disclaimer: "No spam. Just thoughtful updates, occasional recommendations, and new essays.",
     },
     contact: {
-      email: "hello@example.com",
+      email: "emmanuelmacharia408@gmail.com",
       phone: "+254 700 000 000",
       location: "Nairobi, Kenya",
       availability: "Open to speaking, partnerships, and thoughtful collaborations.",
