@@ -3,6 +3,7 @@ import {
   formatNotificationMessage,
   sendSubmissionNotification,
 } from "@/lib/forms/notifications";
+import { getPostRevalidationPaths } from "@/lib/post-revalidation";
 import { sanityWriteClient } from "@/lib/sanity/client";
 import { commentSchema, type CommentInput } from "@/lib/validators";
 
@@ -66,6 +67,25 @@ export async function handleCommentSubmission(payload: CommentInput) {
     }
   }
 
+  const targetPost = await sanityWriteClient.fetch<{
+    slug?: string;
+    categorySlugs?: Array<string | null>;
+  } | null>(
+    `*[_type == "post" && _id == $postId][0]{
+      "slug": slug.current,
+      "categorySlugs": categories[]->slug.current
+    }`,
+    { postId: parsed.data.postId },
+  );
+
+  if (!targetPost?.slug) {
+    return {
+      ok: false,
+      status: 404,
+      message: "That post is no longer available for comments.",
+    };
+  }
+
   await sanityWriteClient.create({
     _type: "comment",
     post: {
@@ -83,13 +103,13 @@ export async function handleCommentSubmission(payload: CommentInput) {
     name: parsed.data.name,
     email: parsed.data.email,
     message: parsed.data.message,
-    approved: false,
+    approved: true,
     createdAt: new Date().toISOString(),
   });
 
   const notification = await sendSubmissionNotification({
     kind: "comment",
-    subject: parsed.data.parentId ? "New comment reply awaiting approval" : "New comment awaiting approval",
+    subject: parsed.data.parentId ? "New public comment reply" : "New public comment",
     replyTo: parsed.data.email,
     text: [
       parsed.data.parentId
@@ -103,7 +123,7 @@ export async function handleCommentSubmission(payload: CommentInput) {
     ].join("\n"),
     html: [
       `<h2>${parsed.data.parentId ? "New comment reply" : "New comment"}</h2>`,
-      "<p>A new comment was submitted from the website and is waiting for approval.</p>",
+      "<p>A new comment was submitted from the website and is now visible on the post.</p>",
       formatNotificationLine("Name", parsed.data.name),
       formatNotificationLine("Email", parsed.data.email),
       formatNotificationLine("Post ID", parsed.data.postId),
@@ -123,7 +143,8 @@ export async function handleCommentSubmission(payload: CommentInput) {
     ok: true,
     status: 200,
     message: notification.ok
-      ? "Thank you. Your comment has been received, saved in Sanity Studio, and an email notification has been sent."
-      : "Thank you. Your comment has been received and is waiting for approval.",
+      ? "Thank you. Your comment is now live, saved in Sanity Studio, and an email notification has been sent."
+      : "Thank you. Your comment is now live and saved in Sanity Studio.",
+    pathsToRevalidate: getPostRevalidationPaths(targetPost),
   };
 }

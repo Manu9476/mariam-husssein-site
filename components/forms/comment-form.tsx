@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useId, useMemo, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export function CommentForm({
   replyToName?: string;
   compact?: boolean;
 }) {
+  const router = useRouter();
   const [values, setValues] = useState(initialValues);
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -62,6 +64,7 @@ export function CommentForm({
 
       if (response.ok) {
         setValues(initialValues);
+        router.refresh();
       }
     });
   }
@@ -119,8 +122,8 @@ export function CommentForm({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted-foreground">
           {parentId
-            ? "Replies are moderated before they appear publicly."
-            : "Comments are moderated before they appear publicly."}
+            ? "Replies appear publicly right away, so keep them kind and thoughtful."
+            : "Comments appear publicly right away, so keep them kind and thoughtful."}
         </p>
         <Button type="submit" disabled={isPending}>
           {isPending ? "Sending..." : parentId ? "Post reply" : "Post comment"}

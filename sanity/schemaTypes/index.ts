@@ -197,6 +197,13 @@ const post = defineType({
       type: "boolean",
       initialValue: false,
     }),
+    defineField({
+      name: "likeCount",
+      title: "Public likes",
+      type: "number",
+      initialValue: 0,
+      description: "Updated automatically when readers like this post.",
+    }),
     imageField,
     richTextField,
     seoField,
@@ -239,7 +246,8 @@ const testimonial = defineType({
       name: "approved",
       title: "Approved for public display",
       type: "boolean",
-      initialValue: false,
+      initialValue: true,
+      description: "Turn this off if you want to hide a comment from the public site.",
     }),
     defineField({ name: "quote", title: "Quote", type: "text", rows: 5, validation: (rule) => rule.required() }),
     defineField({

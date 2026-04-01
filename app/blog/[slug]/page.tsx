@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CommentForm } from "@/components/forms/comment-form";
+import { PostLikeButton } from "@/components/content/post-like-button";
 import { PostCard } from "@/components/content/post-card";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
 import { RichTextRenderer } from "@/components/shared/rich-text-renderer";
@@ -89,7 +90,7 @@ function CommentsSection({
           <SectionHeading
             eyebrow="Conversation"
             title="Leave a thoughtful comment."
-            description="Comments are saved in Sanity Studio and only appear publicly after approval."
+            description="Comments and replies are saved in Sanity Studio and appear publicly right away."
             animate={false}
           />
           <CommentForm postId={postId} />
@@ -97,11 +98,11 @@ function CommentsSection({
 
         <div className="space-y-4">
           <SectionHeading
-            eyebrow="Approved comments"
+            eyebrow="Latest comments"
             title={totalComments ? `What readers are saying (${totalComments}).` : "No comments yet."}
             description={
               totalComments
-                ? "Approved comments and replies from the conversation around this post."
+                ? "Public comments and replies from the conversation around this post."
                 : "Be the first to share a kind, thoughtful response."
             }
             animate={false}
@@ -196,6 +197,7 @@ export default async function BlogPostPage({
                     {post.commentCount} {post.commentCount === 1 ? "comment" : "comments"}
                   </span>
                 ) : null}
+                <PostLikeButton postId={post.id} initialCount={post.likeCount} />
               </div>
               <h1 className="text-[3.35rem] leading-[0.94] tracking-[-0.045em] md:text-[4.75rem]">
                 {post.title}

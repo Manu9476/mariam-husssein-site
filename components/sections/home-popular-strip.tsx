@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { PostLikeButton } from "@/components/content/post-like-button";
 import { FadeIn } from "@/components/shared/fade-in";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
 import { formatDate } from "@/lib/utils";
@@ -35,9 +36,8 @@ export function HomePopularStrip({
 
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
             {posts.map((post) => (
-              <Link
+              <article
                 key={post.id}
-                href={`/blog/${post.slug}`}
                 className={`grid gap-4 rounded-xl p-2 transition hover:bg-accent/40 ${
                   post.image?.url
                     ? "md:grid-cols-[1fr_92px] md:items-center xl:grid-cols-1"
@@ -45,22 +45,28 @@ export function HomePopularStrip({
                 }`}
               >
                 <div className="space-y-2">
-                  <h3 className="text-[1.55rem] leading-[1.08] tracking-[-0.02em] md:text-[1.75rem]">
-                    {post.title}
-                  </h3>
+                  <Link href={`/blog/${post.slug}`}>
+                    <h3 className="text-[1.55rem] leading-[1.08] tracking-[-0.02em] transition hover:text-primary md:text-[1.75rem]">
+                      {post.title}
+                    </h3>
+                  </Link>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                     {formatDate(post.date)}
                     {typeof post.commentCount === "number" && post.commentCount > 0
                       ? ` / ${post.commentCount} ${post.commentCount === 1 ? "comment" : "comments"}`
                       : ""}
                   </p>
+                  <PostLikeButton postId={post.id} initialCount={post.likeCount} compact />
                 </div>
                 {post.image?.url ? (
-                  <div className="overflow-hidden rounded-md border border-border/80">
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="overflow-hidden rounded-md border border-border/80"
+                  >
                     <ImageWrapper image={post.image} alt={post.title} className="aspect-square" />
-                  </div>
+                  </Link>
                 ) : null}
-              </Link>
+              </article>
             ))}
           </div>
         </div>

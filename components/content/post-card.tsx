@@ -5,6 +5,7 @@ import { FadeIn } from "@/components/shared/fade-in";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
+import { PostLikeButton } from "@/components/content/post-like-button";
 import { formatDate, stripHtml } from "@/lib/utils";
 import type { PostSummary } from "@/types/content";
 
@@ -53,9 +54,12 @@ export function PostCard({
               </Link>
               <p className="line-clamp-3 text-[1.02rem] leading-8">{stripHtml(post.excerpt)}</p>
             </div>
-            <Link href={`/blog/${post.slug}`} className="soft-link">
-              Read article <ArrowRight className="h-4 w-4" />
-            </Link>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <Link href={`/blog/${post.slug}`} className="soft-link">
+                Read article <ArrowRight className="h-4 w-4" />
+              </Link>
+              <PostLikeButton postId={post.id} initialCount={post.likeCount} compact />
+            </div>
           </div>
         </div>
       </Card>

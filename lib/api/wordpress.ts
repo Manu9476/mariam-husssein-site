@@ -235,6 +235,7 @@ function mapPost(post: WordPressPost): PostSummary {
     sticky: Boolean(post.sticky || post.meta?._mh_featured_on_home),
     readingTime: readingTimeFromHtml(post.content?.rendered),
     commentCount: 0,
+    likeCount: 0,
   };
 }
 
@@ -375,6 +376,7 @@ function mapSanityPost(post: SanityPostDocument): PostSummary {
     sticky: Boolean(post.featuredOnHome),
     readingTime: readingTimeFromHtml(richText.html),
     commentCount: post.commentCount || 0,
+    likeCount: Number(post.likeCount || 0),
   };
 }
 
@@ -563,6 +565,7 @@ const postProjection = `
   },
   featuredOnHome,
   "commentCount": count(*[_type == "comment" && approved == true && post._ref == ^._id]),
+  "likeCount": coalesce(likeCount, 0),
   featuredImage{
     alt,
     asset->{

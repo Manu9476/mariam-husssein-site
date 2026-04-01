@@ -35,6 +35,7 @@ export interface PostSummary {
   sticky: boolean;
   readingTime: number;
   commentCount?: number;
+  likeCount?: number;
 }
 
 export interface CategorySummary {

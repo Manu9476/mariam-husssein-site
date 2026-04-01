@@ -81,6 +81,7 @@ export interface SanityPostDocument {
   seo?: SanitySeoField;
   featuredOnHome?: boolean;
   commentCount?: number;
+  likeCount?: number;
 }
 
 export interface SanityTestimonialDocument {

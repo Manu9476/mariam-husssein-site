@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { FadeIn } from "@/components/shared/fade-in";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
+import { PostLikeButton } from "@/components/content/post-like-button";
 import { formatDate, stripHtml } from "@/lib/utils";
 import type { PostSummary } from "@/types/content";
 
@@ -42,9 +43,12 @@ export function EditorialListItem({
               {stripHtml(post.excerpt)}
             </p>
           </div>
-          <Link href={`/blog/${post.slug}`} className="soft-link">
-            Continue reading
-          </Link>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Link href={`/blog/${post.slug}`} className="soft-link">
+              Continue reading
+            </Link>
+            <PostLikeButton postId={post.id} initialCount={post.likeCount} compact />
+          </div>
         </div>
         {hasImage ? (
           <Link href={`/blog/${post.slug}`} className="overflow-hidden rounded-md border border-border/80">
