@@ -9,6 +9,7 @@ import {
   getPageBySlug,
   getSiteSettings,
 } from "@/lib/api/wordpress";
+import { getLetterCategoryIds } from "@/lib/letters";
 import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 import type { ContentId } from "@/types/content";
 
@@ -37,12 +38,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function NewsletterPage() {
-  const [settings, page, latestPosts, categories] = await Promise.all([
+  const [settings, page, categories] = await Promise.all([
     getSiteSettings(),
     getPageBySlug("newsletter"),
-    getLatestPosts(2),
     getCategories(),
   ]);
+  const letterCategoryIds = getLetterCategoryIds(categories);
+  const latestPosts = await getLatestPosts(2, undefined, {
+    excludeCategoryIds: letterCategoryIds,
+  });
 
   const categoryMap = new Map(categories.map((category) => [category.id, category.name]));
 
@@ -76,8 +80,8 @@ export default async function NewsletterPage() {
           <div className="container space-y-6">
             <SectionHeading
               eyebrow="Recent reading"
-              title="A small sample from the journal."
-              description="Use the newsletter page to introduce what subscribers can expect."
+              title="A small sample from the notes."
+              description="Use this page to preview the kind of thoughtful notes subscribers can expect."
             />
             <div className="grid gap-6 md:grid-cols-2">
               {latestPosts.map((post) => (

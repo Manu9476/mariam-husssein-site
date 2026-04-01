@@ -47,7 +47,7 @@ export function LetterCollectionPage({
   const featuredPost = posts[0];
   const feedPosts = featuredPost ? posts.slice(1) : posts;
   const popularPosts = posts.slice(0, 4);
-  const archiveHref = category?.slug ? `/blog?category=${category.slug}` : "/blog";
+  const archiveHref = collection.path;
   const introTitle = introPage?.title || collection.title;
   const introCopy = clampText(
     stripHtml(introPage?.excerpt || introPage?.content) || collection.description,
@@ -103,7 +103,7 @@ export function LetterCollectionPage({
         posts={popularPosts}
         title="A Few to Begin With"
         archiveHref={archiveHref}
-        archiveLabel="View all letters"
+        archiveLabel="Return to collection"
       />
 
       <section className="section-space pt-0">
@@ -120,7 +120,7 @@ export function LetterCollectionPage({
                 href={archiveHref}
                 className="hidden text-[12px] font-semibold uppercase tracking-[0.18em] text-foreground transition hover:text-primary md:inline-flex"
               >
-                View archive
+                This collection
               </Link>
             </div>
 

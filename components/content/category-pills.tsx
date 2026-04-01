@@ -23,7 +23,7 @@ export function CategoryPills({
             : "border-border bg-card text-primary hover:bg-accent/50",
         )}
       >
-        All posts
+        All notes
       </Link>
       {categories.map((category) => {
         const href = query

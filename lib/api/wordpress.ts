@@ -51,6 +51,10 @@ const WORDPRESS_FETCH_TIMEOUT_MS = Number(
   process.env.WORDPRESS_FETCH_TIMEOUT_MS || 3500,
 );
 
+function normalizeContentIds(ids?: ContentId[]) {
+  return (ids ?? []).map((id) => String(id)).filter(Boolean);
+}
+
 type FetchOptions = {
   query?: Record<string, string | number | boolean | undefined | null>;
   revalidate?: number;
@@ -808,7 +812,12 @@ const getPostsCached = cache(
     search: string,
     categoryId: ContentId,
     perPage: number,
+    excludeCategoryIdsKey: string,
   ): Promise<PaginatedResponse<PostSummary>> => {
+    const excludeCategoryIds = excludeCategoryIdsKey
+      ? excludeCategoryIdsKey.split(",").filter(Boolean)
+      : [];
+
     if (isSanityConfigured() && sanityClient) {
       const start = Math.max(0, (page - 1) * perPage);
       const end = start + perPage;
@@ -819,7 +828,8 @@ const getPostsCached = cache(
         _type == "post" &&
         defined(slug.current) &&
         (!defined($searchPattern) || title match $searchPattern || excerpt match $searchPattern || pt::text(body) match $searchPattern) &&
-        (!defined($categoryId) || references($categoryId))
+        (!defined($categoryId) || references($categoryId)) &&
+        (count(categories[@._ref in $excludeCategoryIds]) == 0)
       `;
 
       try {
@@ -833,6 +843,7 @@ const getPostsCached = cache(
             {
               searchPattern,
               categoryId: normalizedCategoryId,
+              excludeCategoryIds,
               start,
               end,
             },
@@ -844,6 +855,7 @@ const getPostsCached = cache(
             {
               searchPattern,
               categoryId: normalizedCategoryId,
+              excludeCategoryIds,
             },
           ),
         ]);
@@ -878,6 +890,9 @@ const getPostsCached = cache(
         status: "publish",
         search: search || undefined,
         categories: categoryId || undefined,
+        categories_exclude: excludeCategoryIds.length
+          ? excludeCategoryIds.join(",")
+          : undefined,
       },
       tags: ["posts"],
     });
@@ -895,32 +910,54 @@ export async function getPosts({
   search,
   categoryId,
   perPage = POSTS_PER_PAGE,
+  excludeCategoryIds,
 }: {
   page?: number;
   search?: string;
   categoryId?: ContentId;
   perPage?: number;
+  excludeCategoryIds?: ContentId[];
 } = {}): Promise<PaginatedResponse<PostSummary>> {
-  return getPostsCached(page, search ?? "", categoryId ?? "", perPage);
+  return getPostsCached(
+    page,
+    search ?? "",
+    categoryId ?? "",
+    perPage,
+    normalizeContentIds(excludeCategoryIds).join(","),
+  );
 }
 
-export async function getLatestPosts(limit = 3, excludeId?: ContentId) {
+export async function getLatestPosts(
+  limit = 3,
+  excludeId?: ContentId,
+  options?: {
+    excludeCategoryIds?: ContentId[];
+  },
+) {
   const { items } = await getPosts({
     page: 1,
     perPage: Math.max(limit + (excludeId ? 1 : 0), limit),
+    excludeCategoryIds: options?.excludeCategoryIds,
   });
 
   return items.filter((item) => item.id !== excludeId).slice(0, limit);
 }
 
-export async function getStickyFeaturedPost() {
+export async function getStickyFeaturedPost(options?: {
+  excludeCategoryIds?: ContentId[];
+}) {
   if (isSanityConfigured() && sanityClient) {
+    const excludeCategoryIds = normalizeContentIds(options?.excludeCategoryIds);
+
     try {
       const post = await sanityFetch<SanityPostDocument | null>(
-        `*[_type == "post" && defined(slug.current) && featuredOnHome == true]
+        `*[_type == "post" && defined(slug.current) && featuredOnHome == true && count(categories[@._ref in $excludeCategoryIds]) == 0]
           | order(coalesce(publishedAt, _createdAt) desc)[0]{
             ${postProjection}
           }`,
+        {
+          excludeCategoryIds,
+        },
       );
 
       if (post) {
@@ -930,7 +967,9 @@ export async function getStickyFeaturedPost() {
       return null;
     }
 
-    const latest = await getLatestPosts(1);
+    const latest = await getLatestPosts(1, undefined, {
+      excludeCategoryIds: options?.excludeCategoryIds,
+    });
     return latest[0] ?? null;
   }
 
@@ -945,6 +984,9 @@ export async function getStickyFeaturedPost() {
         per_page: 1,
         sticky: true,
         status: "publish",
+        categories_exclude: normalizeContentIds(options?.excludeCategoryIds).length
+          ? normalizeContentIds(options?.excludeCategoryIds).join(",")
+          : undefined,
       },
       tags: ["posts", "featured-post"],
     });
@@ -956,7 +998,9 @@ export async function getStickyFeaturedPost() {
     return null;
   }
 
-  const latest = await getLatestPosts(1);
+  const latest = await getLatestPosts(1, undefined, {
+    excludeCategoryIds: options?.excludeCategoryIds,
+  });
   return latest[0] ?? null;
 }
 

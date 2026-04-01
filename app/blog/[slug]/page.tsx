@@ -14,6 +14,7 @@ import {
   getRelatedPosts,
   getSiteSettings,
 } from "@/lib/api/wordpress";
+import { getLetterCollectionByCategorySlug } from "@/lib/letters";
 import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 import type { CommentEntry, ContentId } from "@/types/content";
@@ -161,15 +162,27 @@ export default async function BlogPostPage({
     getCommentsForPost(post.id),
   ]);
   const categoryMap = new Map(categories.map((category) => [category.id, category.name]));
+  const letterCollection =
+    categories
+      .map((category) =>
+        post.categories.includes(category.id)
+          ? getLetterCollectionByCategorySlug(category.slug)
+          : null,
+      )
+      .find(Boolean) ?? null;
   const categoryLabels = getCategoryLabels(post.categories, categoryMap);
+  const backHref = letterCollection?.path || "/blog";
+  const backLabel = letterCollection
+    ? `Back to ${letterCollection.shortLabel}`
+    : "Back to the notes";
 
   return (
     <>
       <article className="section-space">
         <div className="container space-y-6">
           <div className="mx-auto max-w-[44rem] space-y-4">
-            <Link href="/blog" className="eyebrow inline-flex">
-              Back to the journal
+            <Link href={backHref} className="eyebrow inline-flex">
+              {backLabel}
             </Link>
             <div className="space-y-3">
               <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">

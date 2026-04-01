@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { CategoryPills } from "@/components/content/category-pills";
 import { Pagination } from "@/components/content/pagination";
@@ -13,6 +14,11 @@ import {
   getPosts,
   getSiteSettings,
 } from "@/lib/api/wordpress";
+import {
+  filterNonLetterCategories,
+  getLetterCategoryIds,
+  getLetterCollectionByCategorySlug,
+} from "@/lib/letters";
 import { buildMetadata } from "@/lib/seo";
 import type { ContentId } from "@/types/content";
 
@@ -24,9 +30,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
 
   return buildMetadata(settings, {
-    title: "Journal",
+    title: "Notes",
     description:
-      "An editorial collection of essays, reflections, and thoughtful writing by Mariam Husssein.",
+      "An editorial collection of notes, essays, and thoughtful writing by Mariam Husssein.",
     path: "/blog",
   });
 }
@@ -45,32 +51,41 @@ export default async function BlogPage({
   const query = params.query?.trim() || "";
   const categorySlug = params.category?.trim() || "";
 
+  const letterCollection = getLetterCollectionByCategorySlug(categorySlug);
+  if (letterCollection) {
+    redirect(letterCollection.path);
+  }
+
   const [settings, categories, activeCategory] = await Promise.all([
     getSiteSettings(),
     getCategories(),
     getCategoryBySlug(categorySlug),
   ]);
 
+  const noteCategories = filterNonLetterCategories(categories);
+  const letterCategoryIds = getLetterCategoryIds(categories);
+
   const postData = await getPosts({
     page: currentPage,
     search: query || undefined,
     categoryId: activeCategory?.id,
+    excludeCategoryIds: letterCategoryIds,
   });
 
-  const categoryMap = new Map(categories.map((category) => [category.id, category.name]));
+  const categoryMap = new Map(noteCategories.map((category) => [category.id, category.name]));
 
   return (
     <>
       <section className="section-space">
         <div className="container space-y-6">
           <SectionHeading
-            eyebrow="Journal"
+            eyebrow="Notes"
             title="Stories, lessons, and notes with an editorial rhythm."
-            description="Search by keyword, filter by category, and manage every article directly from Sanity Studio."
+            description="Letters now live on their own dedicated pages, while this space stays focused on notes and essays."
           />
           <SearchInput defaultValue={query} />
           <CategoryPills
-            categories={categories}
+            categories={noteCategories}
             activeSlug={activeCategory?.slug}
             query={query}
           />

@@ -1,5 +1,10 @@
 export type LetterCollectionSlug = "younger-me" | "current-me" | "future-me";
 
+type CategoryLike = {
+  id: string | number;
+  slug: string;
+};
+
 export type LetterCollection = {
   slug: LetterCollectionSlug;
   title: string;
@@ -45,4 +50,34 @@ export const LETTER_COLLECTIONS: LetterCollection[] = [
 
 export function getLetterCollection(slug: string) {
   return LETTER_COLLECTIONS.find((entry) => entry.slug === slug);
+}
+
+export const LETTER_CATEGORY_SLUGS = Array.from(
+  new Set(LETTER_COLLECTIONS.flatMap((entry) => entry.categorySlugs)),
+);
+
+export function isLetterCategorySlug(slug?: string | null) {
+  if (!slug) {
+    return false;
+  }
+
+  return LETTER_CATEGORY_SLUGS.includes(slug);
+}
+
+export function getLetterCollectionByCategorySlug(slug?: string | null) {
+  if (!slug) {
+    return null;
+  }
+
+  return LETTER_COLLECTIONS.find((entry) => entry.categorySlugs.includes(slug)) ?? null;
+}
+
+export function getLetterCategoryIds(categories: CategoryLike[]) {
+  return categories
+    .filter((category) => isLetterCategorySlug(category.slug))
+    .map((category) => category.id);
+}
+
+export function filterNonLetterCategories<T extends CategoryLike>(categories: T[]) {
+  return categories.filter((category) => !isLetterCategorySlug(category.slug));
 }

@@ -40,7 +40,7 @@ export function HomeJournalSection({
             <div>
               <p className="eyebrow">Latest notes</p>
               <h2 className="mt-2 text-[2.45rem] leading-[0.96] tracking-[-0.04em] md:text-[3.85rem]">
-                Essays, reflections, and thoughtful updates.
+                Notes, reflections, and thoughtful updates.
               </h2>
             </div>
             <Link href="/blog" className="hidden text-[12px] font-semibold uppercase tracking-[0.18em] text-foreground transition hover:text-primary md:inline-flex">
