@@ -142,6 +142,8 @@ export async function handleCommentSubmission(payload: CommentInput) {
   return {
     ok: true,
     status: 200,
+    commenterName: parsed.data.name,
+    commenterEmail: parsed.data.email,
     message: notification.ok
       ? "Thank you. Your comment is now live, saved in Sanity Studio, and an email notification has been sent."
       : "Thank you. Your comment is now live and saved in Sanity Studio.",

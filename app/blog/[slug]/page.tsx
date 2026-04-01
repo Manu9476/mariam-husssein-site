@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -17,7 +18,7 @@ import {
 } from "@/lib/api/wordpress";
 import { getLetterCollectionByCategorySlug } from "@/lib/letters";
 import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
-import { formatDate } from "@/lib/utils";
+import { deriveDisplayNameFromEmail, formatDate } from "@/lib/utils";
 import type { CommentEntry, ContentId } from "@/types/content";
 
 function getCategoryLabels(ids: ContentId[], categoryMap: Map<ContentId, string>) {
@@ -34,10 +35,16 @@ function countComments(entries: CommentEntry[]): number {
 function CommentThread({
   comments,
   postId,
+  rememberedIdentity,
   depth = 0,
 }: {
   comments: CommentEntry[];
   postId: ContentId;
+  rememberedIdentity?: {
+    name: string;
+    email: string;
+    source: "subscriber" | "commenter";
+  } | null;
   depth?: number;
 }) {
   return (
@@ -59,13 +66,19 @@ function CommentThread({
                 postId={postId}
                 parentId={comment.id}
                 replyToName={comment.name}
+                rememberedIdentity={rememberedIdentity}
                 compact
               />
             </div>
           </details>
           {comment.replies?.length ? (
             <div className="space-y-4 border-l border-border/70 pl-4 sm:pl-6">
-              <CommentThread comments={comment.replies} postId={postId} depth={depth + 1} />
+              <CommentThread
+                comments={comment.replies}
+                postId={postId}
+                rememberedIdentity={rememberedIdentity}
+                depth={depth + 1}
+              />
             </div>
           ) : null}
         </article>
@@ -77,9 +90,15 @@ function CommentThread({
 function CommentsSection({
   comments,
   postId,
+  rememberedIdentity,
 }: {
   comments: CommentEntry[];
   postId: ContentId;
+  rememberedIdentity?: {
+    name: string;
+    email: string;
+    source: "subscriber" | "commenter";
+  } | null;
 }) {
   const totalComments = countComments(comments);
 
@@ -90,10 +109,14 @@ function CommentsSection({
           <SectionHeading
             eyebrow="Conversation"
             title="Leave a thoughtful comment."
-            description="Comments and replies appear publicly right away, so the conversation can unfold in real time."
+            description={
+              rememberedIdentity
+                ? "Your identity is remembered on this browser, so you can jump straight into the conversation."
+                : "Comments and replies appear publicly right away, so the conversation can unfold in real time."
+            }
             animate={false}
           />
-          <CommentForm postId={postId} />
+          <CommentForm postId={postId} rememberedIdentity={rememberedIdentity} />
         </div>
 
         <div className="space-y-4">
@@ -108,7 +131,11 @@ function CommentsSection({
             animate={false}
           />
           {comments.length ? (
-            <CommentThread comments={comments} postId={postId} />
+            <CommentThread
+              comments={comments}
+              postId={postId}
+              rememberedIdentity={rememberedIdentity}
+            />
           ) : null}
         </div>
       </div>
@@ -152,6 +179,7 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const cookieStore = await cookies();
   const [post, categories] = await Promise.all([getPostBySlug(slug), getCategories()]);
 
   if (!post) {
@@ -176,6 +204,20 @@ export default async function BlogPostPage({
   const backLabel = letterCollection
     ? `Back to ${letterCollection.shortLabel}`
     : "Back to the notes";
+  const subscriberEmail =
+    cookieStore.get("mh_newsletter_subscriber")?.value?.trim().toLowerCase() || "";
+  const rememberedCommentEmail =
+    cookieStore.get("mh_commenter_email")?.value?.trim().toLowerCase() || "";
+  const rememberedCommentName = cookieStore.get("mh_commenter_name")?.value?.trim() || "";
+  const rememberedEmail = subscriberEmail || rememberedCommentEmail;
+  const rememberedIdentity = rememberedEmail
+    ? {
+        name:
+          rememberedCommentName || deriveDisplayNameFromEmail(rememberedEmail),
+        email: rememberedEmail,
+        source: subscriberEmail ? ("subscriber" as const) : ("commenter" as const),
+      }
+    : null;
 
   return (
     <>
@@ -228,7 +270,11 @@ export default async function BlogPostPage({
         </div>
       </article>
 
-      <CommentsSection comments={comments} postId={post.id} />
+      <CommentsSection
+        comments={comments}
+        postId={post.id}
+        rememberedIdentity={rememberedIdentity}
+      />
 
       {relatedPosts.length ? (
         <section className="section-space pt-0">

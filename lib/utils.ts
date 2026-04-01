@@ -52,3 +52,26 @@ export function clampText(value: string, maxLength: number) {
 
   return `${value.slice(0, maxLength).trim()}...`;
 }
+
+export function deriveDisplayNameFromEmail(email?: string | null) {
+  if (!email) {
+    return "Reader";
+  }
+
+  const localPart = email.split("@")[0] || "";
+  const cleaned = localPart
+    .replace(/[._-]+/g, " ")
+    .replace(/\d+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!cleaned || cleaned.length < 2) {
+    return "Reader";
+  }
+
+  return cleaned
+    .split(" ")
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(" ");
+}

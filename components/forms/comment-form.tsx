@@ -16,19 +16,39 @@ const initialValues = {
   website: "",
 };
 
+function buildInitialValues(
+  rememberedIdentity?: {
+    name: string;
+    email: string;
+  } | null,
+) {
+  return {
+    name: rememberedIdentity?.name || "",
+    email: rememberedIdentity?.email || "",
+    message: "",
+    website: "",
+  };
+}
+
 export function CommentForm({
   postId,
   parentId,
   replyToName,
+  rememberedIdentity,
   compact = false,
 }: {
   postId: ContentId;
   parentId?: ContentId;
   replyToName?: string;
+  rememberedIdentity?: {
+    name: string;
+    email: string;
+    source: "subscriber" | "commenter";
+  } | null;
   compact?: boolean;
 }) {
   const router = useRouter();
-  const [values, setValues] = useState(initialValues);
+  const [values, setValues] = useState(() => buildInitialValues(rememberedIdentity));
   const [status, setStatus] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const startedAt = useMemo(() => String(Date.now()), []);
@@ -63,7 +83,7 @@ export function CommentForm({
       setStatus(data.message);
 
       if (response.ok) {
-        setValues(initialValues);
+        setValues(buildInitialValues(rememberedIdentity));
         router.refresh();
       }
     });
@@ -79,27 +99,33 @@ export function CommentForm({
           Replying to {replyToName}.
         </p>
       ) : null}
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor={`${formId}-comment-name`}>Name</Label>
-          <Input
-            id={`${formId}-comment-name`}
-            value={values.name}
-            onChange={(event) => updateValue("name", event.target.value)}
-            required
-          />
+      {rememberedIdentity ? (
+        <p className="text-sm text-muted-foreground">
+          Commenting as {rememberedIdentity.name}.
+        </p>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-comment-name`}>Name</Label>
+            <Input
+              id={`${formId}-comment-name`}
+              value={values.name}
+              onChange={(event) => updateValue("name", event.target.value)}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-comment-email`}>Email</Label>
+            <Input
+              id={`${formId}-comment-email`}
+              type="email"
+              value={values.email}
+              onChange={(event) => updateValue("email", event.target.value)}
+              required
+            />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor={`${formId}-comment-email`}>Email</Label>
-          <Input
-            id={`${formId}-comment-email`}
-            type="email"
-            value={values.email}
-            onChange={(event) => updateValue("email", event.target.value)}
-            required
-          />
-        </div>
-      </div>
+      )}
       <div className="hidden">
         <Label htmlFor={`${formId}-comment-website`}>Website</Label>
         <Input
