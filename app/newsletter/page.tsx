@@ -55,32 +55,29 @@ export default async function NewsletterPage() {
 
   return (
     <>
-      <section className="section-space">
-        <div className="container grid gap-8 xl:grid-cols-[0.78fr_1.22fr] xl:items-start">
-          <div className="space-y-5">
-            <SectionHeading
-              eyebrow={copy.eyebrow || settings.newsletter.eyebrow}
-              title={page?.title || copy.title || settings.newsletter.title}
-              description={
-                page?.excerpt?.replace(/<[^>]*>/g, "") ||
-                copy.description ||
-                settings.newsletter.description
-              }
-            />
-            <p className="max-w-xl text-sm text-muted-foreground">
-              {settings.newsletter.disclaimer}
-            </p>
-          </div>
-
-          {featuredPost ? (
+      {featuredPost ? (
+        <section className="section-space">
+          <div className="container">
             <FeaturedPostCard
               post={featuredPost}
               categoryLabels={getCategoryLabels(featuredPost.categories, categoryMap)}
               label={copy.previewEyebrow || "Latest issue"}
             />
-          ) : null}
-        </div>
-      </section>
+          </div>
+        </section>
+      ) : null}
+
+      {!featuredPost && page ? (
+        <section className="section-space">
+          <div className="container">
+            <SectionHeading
+              eyebrow={copy.eyebrow}
+              title={page.title}
+              description={page.excerpt?.replace(/<[^>]*>/g, "") || copy.description}
+            />
+          </div>
+        </section>
+      ) : null}
 
       {remainingPosts.length ? (
         <section className="section-space pt-0">
