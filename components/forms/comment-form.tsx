@@ -38,6 +38,7 @@ export function CommentForm({
   tone = "light",
   minimal = false,
   compact = false,
+  layout = "default",
 }: {
   postId: ContentId;
   parentId?: ContentId;
@@ -50,6 +51,7 @@ export function CommentForm({
   tone?: "light" | "dark";
   minimal?: boolean;
   compact?: boolean;
+  layout?: "default" | "sheet";
 }) {
   const router = useRouter();
   const [values, setValues] = useState(() => buildInitialValues(rememberedIdentity));
@@ -58,6 +60,7 @@ export function CommentForm({
   const startedAt = useMemo(() => String(Date.now()), []);
   const formId = useId();
   const isDark = tone === "dark";
+  const isSheet = layout === "sheet";
 
   function updateValue(key: keyof typeof initialValues, value: string) {
     setValues((current) => ({
@@ -98,7 +101,9 @@ export function CommentForm({
     <form
       onSubmit={onSubmit}
       className={
-        isDark
+        isSheet
+          ? "space-y-3"
+          : isDark
           ? `space-y-4 rounded-[1.5rem] border border-white/10 bg-white/[0.04] ${
               compact ? "p-4 md:p-5" : "p-5 md:p-6"
             }`
@@ -106,16 +111,26 @@ export function CommentForm({
       }
     >
       {replyToName ? (
-        <p className={isDark ? "text-sm text-white/60" : "text-sm text-muted-foreground"}>
+        <p
+          className={
+            isSheet
+              ? "text-[11px] font-medium text-white/42"
+              : isDark
+                ? "text-sm text-white/60"
+                : "text-sm text-muted-foreground"
+          }
+        >
           Replying to {replyToName}.
         </p>
       ) : null}
       {!rememberedIdentity ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className={isSheet ? "grid gap-2 sm:grid-cols-2" : "grid gap-4 md:grid-cols-2"}>
           <div className="space-y-2">
             <Label
               htmlFor={`${formId}-comment-name`}
-              className={isDark ? "text-white/80" : undefined}
+              className={
+                isSheet ? "sr-only" : isDark ? "text-white/80" : undefined
+              }
             >
               Name
             </Label>
@@ -124,17 +139,22 @@ export function CommentForm({
               value={values.name}
               onChange={(event) => updateValue("name", event.target.value)}
               className={
-                isDark
-                  ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
-                  : undefined
+                isSheet
+                  ? "h-10 rounded-2xl border-white/8 bg-white/[0.04] px-4 text-[13px] text-white shadow-none placeholder:text-white/28 focus-visible:ring-1 focus-visible:ring-white/20"
+                  : isDark
+                    ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
+                    : undefined
               }
+              placeholder="Name"
               required
             />
           </div>
           <div className="space-y-2">
             <Label
               htmlFor={`${formId}-comment-email`}
-              className={isDark ? "text-white/80" : undefined}
+              className={
+                isSheet ? "sr-only" : isDark ? "text-white/80" : undefined
+              }
             >
               Email
             </Label>
@@ -144,10 +164,13 @@ export function CommentForm({
               value={values.email}
               onChange={(event) => updateValue("email", event.target.value)}
               className={
-                isDark
-                  ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
-                  : undefined
+                isSheet
+                  ? "h-10 rounded-2xl border-white/8 bg-white/[0.04] px-4 text-[13px] text-white shadow-none placeholder:text-white/28 focus-visible:ring-1 focus-visible:ring-white/20"
+                  : isDark
+                    ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
+                    : undefined
               }
+              placeholder="Email"
               required
             />
           </div>
@@ -163,52 +186,88 @@ export function CommentForm({
           onChange={(event) => updateValue("website", event.target.value)}
         />
       </div>
-      <div className="space-y-2">
-        <Label
-          htmlFor={`${formId}-comment-message`}
+      {isSheet ? (
+        <div className="flex items-end gap-2">
+          <div className="flex-1 space-y-2">
+            <Label htmlFor={`${formId}-comment-message`} className="sr-only">
+              Comment
+            </Label>
+            <Textarea
+              id={`${formId}-comment-message`}
+              rows={1}
+              value={values.message}
+              onChange={(event) => updateValue("message", event.target.value)}
+              placeholder={parentId ? "Add a reply..." : "Add a comment..."}
+              className="min-h-[46px] rounded-[1.25rem] border-white/8 bg-white/[0.04] px-4 py-3 text-[13px] leading-[1.45] text-white shadow-none placeholder:text-white/28 focus-visible:ring-1 focus-visible:ring-white/20"
+              required
+            />
+          </div>
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="h-[46px] rounded-full bg-white px-4 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#171717] shadow-none hover:bg-white/90"
+          >
+            {isPending ? "Sending" : parentId ? "Reply" : "Post"}
+          </Button>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-2">
+            <Label
+              htmlFor={`${formId}-comment-message`}
+              className={
+                minimal
+                  ? "sr-only"
+                  : isDark
+                    ? "text-white/80"
+                    : undefined
+              }
+            >
+              Comment
+            </Label>
+            <Textarea
+              id={`${formId}-comment-message`}
+              value={values.message}
+              onChange={(event) => updateValue("message", event.target.value)}
+              placeholder={parentId ? "Write your reply..." : "Write your comment..."}
+              className={
+                isDark
+                  ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
+                  : undefined
+              }
+              required
+            />
+          </div>
+          <div
+            className={
+              minimal
+                ? "flex justify-end"
+                : "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+            }
+          >
+            {!minimal ? (
+              <p className={isDark ? "text-sm text-white/55" : "text-sm text-muted-foreground"}>
+                {parentId
+                  ? "Replies appear publicly right away, so keep them kind and thoughtful."
+                  : "Comments appear publicly right away, so keep them kind and thoughtful."}
+              </p>
+            ) : null}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Sending..." : parentId ? "Post reply" : "Post comment"}
+            </Button>
+          </div>
+        </>
+      )}
+      {status ? (
+        <p
           className={
-            minimal
-              ? "sr-only"
+            isSheet
+              ? "text-[11px] text-white/46"
               : isDark
-                ? "text-white/80"
-                : undefined
+                ? "text-sm text-white/60"
+                : "text-sm text-muted-foreground"
           }
         >
-          Comment
-        </Label>
-        <Textarea
-          id={`${formId}-comment-message`}
-          value={values.message}
-          onChange={(event) => updateValue("message", event.target.value)}
-          placeholder={parentId ? "Write your reply..." : "Write your comment..."}
-          className={
-            isDark
-              ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
-              : undefined
-          }
-          required
-        />
-      </div>
-      <div
-        className={
-          minimal
-            ? "flex justify-end"
-            : "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-        }
-      >
-        {!minimal ? (
-          <p className={isDark ? "text-sm text-white/55" : "text-sm text-muted-foreground"}>
-            {parentId
-              ? "Replies appear publicly right away, so keep them kind and thoughtful."
-              : "Comments appear publicly right away, so keep them kind and thoughtful."}
-          </p>
-        ) : null}
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Sending..." : parentId ? "Post reply" : "Post comment"}
-        </Button>
-      </div>
-      {status ? (
-        <p className={isDark ? "text-sm text-white/60" : "text-sm text-muted-foreground"}>
           {status}
         </p>
       ) : null}

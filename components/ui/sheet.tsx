@@ -25,19 +25,31 @@ const SheetContent = React.forwardRef<
   React.ElementRef<typeof Dialog.Content>,
   React.ComponentPropsWithoutRef<typeof Dialog.Content> & {
     overlayClassName?: string;
+    closeClassName?: string;
+    side?: "right" | "bottom";
   }
->(({ className, overlayClassName, children, ...props }, ref) => (
+>(({ className, overlayClassName, closeClassName, side = "right", children, ...props }, ref) => (
   <SheetPortal>
     <SheetOverlay className={overlayClassName} />
     <Dialog.Content
       ref={ref}
       className={cn(
-        "fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-[#d7eadf] bg-white p-6 shadow-sm",
+        side === "bottom"
+          ? "fixed bottom-0 left-1/2 z-50 flex h-[82vh] max-h-[82vh] w-full -translate-x-1/2 flex-col overflow-hidden rounded-t-[1.75rem] border border-white/10 bg-[#1f1f20] p-0 shadow-[0_-24px_80px_rgba(0,0,0,0.28)] sm:bottom-4 sm:max-w-[34rem] sm:rounded-[1.75rem]"
+          : "fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-sm flex-col border-l border-[#d7eadf] bg-white p-6 shadow-sm",
         className,
       )}
       {...props}
     >
-      <Dialog.Close className="absolute right-5 top-5 rounded-full p-2 text-muted-foreground transition hover:bg-secondary hover:text-primary">
+      <Dialog.Close
+        className={cn(
+          "absolute right-5 top-5 rounded-full p-2 transition",
+          side === "bottom"
+            ? "text-white/50 hover:bg-white/10 hover:text-white"
+            : "text-muted-foreground hover:bg-secondary hover:text-primary",
+          closeClassName,
+        )}
+      >
         <X className="h-5 w-5" />
         <span className="sr-only">Close</span>
       </Dialog.Close>
