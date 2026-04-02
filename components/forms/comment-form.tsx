@@ -35,6 +35,8 @@ export function CommentForm({
   parentId,
   replyToName,
   rememberedIdentity,
+  tone = "light",
+  minimal = false,
   compact = false,
 }: {
   postId: ContentId;
@@ -45,6 +47,8 @@ export function CommentForm({
     email: string;
     source: "subscriber" | "commenter";
   } | null;
+  tone?: "light" | "dark";
+  minimal?: boolean;
   compact?: boolean;
 }) {
   const router = useRouter();
@@ -53,6 +57,7 @@ export function CommentForm({
   const [isPending, startTransition] = useTransition();
   const startedAt = useMemo(() => String(Date.now()), []);
   const formId = useId();
+  const isDark = tone === "dark";
 
   function updateValue(key: keyof typeof initialValues, value: string) {
     setValues((current) => ({
@@ -92,40 +97,62 @@ export function CommentForm({
   return (
     <form
       onSubmit={onSubmit}
-      className={`editorial-panel space-y-4 ${compact ? "p-4 md:p-5" : "p-5 md:p-6"}`}
+      className={
+        isDark
+          ? `space-y-4 rounded-[1.5rem] border border-white/10 bg-white/[0.04] ${
+              compact ? "p-4 md:p-5" : "p-5 md:p-6"
+            }`
+          : `editorial-panel space-y-4 ${compact ? "p-4 md:p-5" : "p-5 md:p-6"}`
+      }
     >
       {replyToName ? (
-        <p className="text-sm text-muted-foreground">
+        <p className={isDark ? "text-sm text-white/60" : "text-sm text-muted-foreground"}>
           Replying to {replyToName}.
         </p>
       ) : null}
-      {rememberedIdentity ? (
-        <p className="text-sm text-muted-foreground">
-          Commenting as {rememberedIdentity.name}.
-        </p>
-      ) : (
+      {!rememberedIdentity ? (
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor={`${formId}-comment-name`}>Name</Label>
+            <Label
+              htmlFor={`${formId}-comment-name`}
+              className={isDark ? "text-white/80" : undefined}
+            >
+              Name
+            </Label>
             <Input
               id={`${formId}-comment-name`}
               value={values.name}
               onChange={(event) => updateValue("name", event.target.value)}
+              className={
+                isDark
+                  ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
+                  : undefined
+              }
               required
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`${formId}-comment-email`}>Email</Label>
+            <Label
+              htmlFor={`${formId}-comment-email`}
+              className={isDark ? "text-white/80" : undefined}
+            >
+              Email
+            </Label>
             <Input
               id={`${formId}-comment-email`}
               type="email"
               value={values.email}
               onChange={(event) => updateValue("email", event.target.value)}
+              className={
+                isDark
+                  ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
+                  : undefined
+              }
               required
             />
           </div>
         </div>
-      )}
+      ) : null}
       <div className="hidden">
         <Label htmlFor={`${formId}-comment-website`}>Website</Label>
         <Input
@@ -137,25 +164,54 @@ export function CommentForm({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor={`${formId}-comment-message`}>Comment</Label>
+        <Label
+          htmlFor={`${formId}-comment-message`}
+          className={
+            minimal
+              ? "sr-only"
+              : isDark
+                ? "text-white/80"
+                : undefined
+          }
+        >
+          Comment
+        </Label>
         <Textarea
           id={`${formId}-comment-message`}
           value={values.message}
           onChange={(event) => updateValue("message", event.target.value)}
+          placeholder={parentId ? "Write your reply..." : "Write your comment..."}
+          className={
+            isDark
+              ? "border-white/10 bg-black/20 text-white placeholder:text-white/35"
+              : undefined
+          }
           required
         />
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">
-          {parentId
-            ? "Replies appear publicly right away, so keep them kind and thoughtful."
-            : "Comments appear publicly right away, so keep them kind and thoughtful."}
-        </p>
+      <div
+        className={
+          minimal
+            ? "flex justify-end"
+            : "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+        }
+      >
+        {!minimal ? (
+          <p className={isDark ? "text-sm text-white/55" : "text-sm text-muted-foreground"}>
+            {parentId
+              ? "Replies appear publicly right away, so keep them kind and thoughtful."
+              : "Comments appear publicly right away, so keep them kind and thoughtful."}
+          </p>
+        ) : null}
         <Button type="submit" disabled={isPending}>
           {isPending ? "Sending..." : parentId ? "Post reply" : "Post comment"}
         </Button>
       </div>
-      {status ? <p className="text-sm text-muted-foreground">{status}</p> : null}
+      {status ? (
+        <p className={isDark ? "text-sm text-white/60" : "text-sm text-muted-foreground"}>
+          {status}
+        </p>
+      ) : null}
     </form>
   );
 }

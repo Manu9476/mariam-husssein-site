@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { CommentForm } from "@/components/forms/comment-form";
+import { CommentsDrawer } from "@/components/content/comments-drawer";
 import { PostLikeButton } from "@/components/content/post-like-button";
 import { PostCard } from "@/components/content/post-card";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
@@ -19,128 +19,10 @@ import {
 import { getLetterCollectionByCategorySlug } from "@/lib/letters";
 import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
 import { deriveDisplayNameFromEmail, formatDate } from "@/lib/utils";
-import type { CommentEntry, ContentId } from "@/types/content";
+import type { ContentId } from "@/types/content";
 
 function getCategoryLabels(ids: ContentId[], categoryMap: Map<ContentId, string>) {
   return ids.map((id) => categoryMap.get(id)).filter(Boolean) as string[];
-}
-
-function countComments(entries: CommentEntry[]): number {
-  return entries.reduce(
-    (total, entry) => total + 1 + countComments(entry.replies ?? []),
-    0,
-  );
-}
-
-function CommentThread({
-  comments,
-  postId,
-  rememberedIdentity,
-  depth = 0,
-}: {
-  comments: CommentEntry[];
-  postId: ContentId;
-  rememberedIdentity?: {
-    name: string;
-    email: string;
-    source: "subscriber" | "commenter";
-  } | null;
-  depth?: number;
-}) {
-  return (
-    <div className="space-y-4">
-      {comments.map((comment) => (
-        <article key={comment.id} className="editorial-panel space-y-3 p-5">
-          <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            <span>{comment.name}</span>
-            {comment.date ? <span>{formatDate(comment.date)}</span> : null}
-            {depth ? <span>Reply</span> : null}
-          </div>
-          <p className="text-[1rem] leading-8 text-foreground/90">{comment.message}</p>
-          <details className="pt-1">
-            <summary className="soft-link cursor-pointer list-none">
-              Reply thoughtfully
-            </summary>
-            <div className="mt-4">
-              <CommentForm
-                postId={postId}
-                parentId={comment.id}
-                replyToName={comment.name}
-                rememberedIdentity={rememberedIdentity}
-                compact
-              />
-            </div>
-          </details>
-          {comment.replies?.length ? (
-            <div className="space-y-4 border-l border-border/70 pl-4 sm:pl-6">
-              <CommentThread
-                comments={comment.replies}
-                postId={postId}
-                rememberedIdentity={rememberedIdentity}
-                depth={depth + 1}
-              />
-            </div>
-          ) : null}
-        </article>
-      ))}
-    </div>
-  );
-}
-
-function CommentsSection({
-  comments,
-  postId,
-  rememberedIdentity,
-}: {
-  comments: CommentEntry[];
-  postId: ContentId;
-  rememberedIdentity?: {
-    name: string;
-    email: string;
-    source: "subscriber" | "commenter";
-  } | null;
-}) {
-  const totalComments = countComments(comments);
-
-  return (
-    <section className="section-space pt-0">
-      <div className="container grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="space-y-6">
-          <SectionHeading
-            eyebrow="Conversation"
-            title="Leave a thoughtful comment."
-            description={
-              rememberedIdentity
-                ? "Your identity is remembered on this browser, so you can jump straight into the conversation."
-                : "Comments and replies appear publicly right away, so the conversation can unfold in real time."
-            }
-            animate={false}
-          />
-          <CommentForm postId={postId} rememberedIdentity={rememberedIdentity} />
-        </div>
-
-        <div className="space-y-4">
-          <SectionHeading
-            eyebrow="Latest comments"
-            title={totalComments ? `What readers are saying (${totalComments}).` : "No comments yet."}
-            description={
-              totalComments
-                ? "Public comments and replies from the conversation around this post."
-                : "Be the first to share a kind, thoughtful response."
-            }
-            animate={false}
-          />
-          {comments.length ? (
-            <CommentThread
-              comments={comments}
-              postId={postId}
-              rememberedIdentity={rememberedIdentity}
-            />
-          ) : null}
-        </div>
-      </div>
-    </section>
-  );
 }
 
 export async function generateMetadata({
@@ -270,7 +152,7 @@ export default async function BlogPostPage({
         </div>
       </article>
 
-      <CommentsSection
+      <CommentsDrawer
         comments={comments}
         postId={post.id}
         rememberedIdentity={rememberedIdentity}
