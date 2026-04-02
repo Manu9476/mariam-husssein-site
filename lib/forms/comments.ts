@@ -32,8 +32,7 @@ export async function handleCommentSubmission(payload: CommentInput) {
     return {
       ok: false,
       status: 500,
-      message:
-        "Comments are ready, but SANITY_API_WRITE_TOKEN is not configured yet.",
+      message: "Comments are not available right now. Please try again shortly.",
     };
   }
 
@@ -136,8 +135,8 @@ export async function handleCommentSubmission(payload: CommentInput) {
     commenterName: parsed.data.name,
     commenterEmail: parsed.data.email,
     message: notification.ok
-      ? "Thank you. Your comment is now live, saved in Sanity Studio, and an email notification has been sent."
-      : "Thank you. Your comment is now live and saved in Sanity Studio.",
+      ? "Thank you. Your comment is now live."
+      : "Thank you. Your comment is now live.",
     pathsToRevalidate: getPostRevalidationPaths(targetPost),
   };
 }

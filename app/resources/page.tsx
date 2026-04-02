@@ -62,7 +62,7 @@ export default async function ResourcesPage() {
           ) : (
             <EmptyState
               title={copy.emptyTitle || "No resources published yet"}
-              description={copy.emptyDescription || "Add resources in Studio and they will appear here."}
+              description={copy.emptyDescription || "Resources will appear here as they are added."}
             />
           )}
         </div>

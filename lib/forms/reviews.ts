@@ -89,7 +89,7 @@ export async function forwardReviewSubmission(formData: FormData) {
       ok: true,
       status: 200,
       message:
-        "Thank you. Your testimonial has been received and is waiting for approval in Sanity Studio.",
+        "Thank you. Your testimonial has been received and is waiting for approval.",
     };
   }
 
@@ -98,7 +98,7 @@ export async function forwardReviewSubmission(formData: FormData) {
       ok: false,
       status: 500,
       message:
-        "The review form UI is ready. Add SANITY_API_WRITE_TOKEN later to store submissions in Sanity automatically.",
+        "The review form is not available right now. Please try again shortly.",
     };
   }
 

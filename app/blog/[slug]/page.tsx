@@ -171,7 +171,7 @@ export default async function BlogPostPage({
             <SectionHeading
               eyebrow="Continue reading"
               title="More from the journal."
-              description="Related posts are pulled dynamically from shared Sanity categories."
+              description="Related posts selected from the same themes and subjects."
             />
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {relatedPosts.map((relatedPost) => (

@@ -104,10 +104,7 @@ export function ContactForm() {
           required
         />
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">
-          Thoughtful messages are always welcome and will be saved in your Studio inbox.
-        </p>
+      <div className="flex justify-end">
         <Button type="submit" disabled={isPending}>
           {isPending ? "Sending..." : "Send message"}
         </Button>

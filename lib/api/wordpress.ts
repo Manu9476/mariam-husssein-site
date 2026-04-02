@@ -485,7 +485,7 @@ function fallbackSettings(): SiteSettings {
         eyebrow: "Resume and profile",
         title: "Open Mariam's CV or connect on LinkedIn.",
         description:
-          "Upload your latest CV in Studio so readers can read it online, download it, or continue the conversation on LinkedIn.",
+          "Share your CV with readers and make it easy for them to continue the conversation on LinkedIn.",
         fileButtonLabel: "Read CV",
         downloadButtonLabel: "Download CV",
         linkedInLabel: "Visit LinkedIn",
@@ -513,7 +513,7 @@ function fallbackSettings(): SiteSettings {
       eyebrow: "Editorial notes",
       title: "A calm digital home for stories, lessons, and generous living.",
       subtitle:
-        "Now connected to a free Sanity content studio, so you can manage sections, pages, stories, and letters without touching code.",
+        "A thoughtful space for stories, letters, notes, and generous living.",
       primaryCtaLabel: "Read the journal",
       primaryCtaUrl: "/blog",
       secondaryCtaLabel: "About Mariam",
@@ -567,7 +567,7 @@ function fallbackSettings(): SiteSettings {
         description:
           "An archive of essays, reflections, and thoughtful updates distinct from the letters.",
         emptyTitle: "No notes published yet",
-        emptyDescription: "Publish notes in Sanity Studio and they will appear here automatically.",
+        emptyDescription: "New notes will appear here as they are published.",
       },
       about: {
         eyebrow: "About",
@@ -585,7 +585,7 @@ function fallbackSettings(): SiteSettings {
         description:
           "A flexible space for offers, services, recommendations, and editorial resources.",
         emptyTitle: "No resources published yet",
-        emptyDescription: "Create resource entries in Studio to populate this page.",
+        emptyDescription: "Helpful resources will appear here as they are added.",
       },
       contact: {
         eyebrow: "Contact",
@@ -633,7 +633,7 @@ function fallbackSettings(): SiteSettings {
       eyebrow: "Stay close",
       title: "Letters worth slowing down for.",
       description:
-        "Use Sanity Studio to tailor this invitation, then connect Beehiiv, ConvertKit, or Mailchimp when you are ready.",
+        "A quiet place for thoughtful updates, reflections, and new essays.",
       placeholder: "Enter your email address",
       buttonLabel: "Subscribe",
       disclaimer: "No spam. Just thoughtful updates, occasional recommendations, and new essays.",

@@ -103,16 +103,15 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
       return {
         ok: true,
         message: notification.ok
-          ? "Thanks. Your email is saved in Sanity Studio and a notification email has been sent."
-          : "Thanks. Your email is now saved in Sanity Studio.",
+          ? "Thanks. You're on the list."
+          : "Thanks. You're on the list.",
         subscriberEmail: normalizedEmail,
       };
     }
 
     return {
       ok: false,
-      message:
-        "Add SANITY_API_WRITE_TOKEN to save subscribers in Sanity Studio, or connect a newsletter provider.",
+      message: "Subscriptions are not available right now. Please try again shortly.",
       subscriberEmail: undefined,
     };
   }
@@ -166,8 +165,8 @@ export async function handleNewsletterSignup(payload: NewsletterInput) {
     ok: true,
     message: sanityWriteClient
       ? notification.ok
-        ? "Thanks. Your email is saved in Sanity Studio and a notification email has been sent."
-        : "Thanks. Your email is saved in Sanity Studio too."
+        ? "Thanks. You're on the list."
+        : "Thanks. You're on the list."
       : "Thanks. You're on the list.",
     subscriberEmail: normalizedEmail,
   };

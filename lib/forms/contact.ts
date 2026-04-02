@@ -42,8 +42,7 @@ export async function handleContactSubmission(payload: ContactInput) {
     return {
       ok: false,
       status: 500,
-      message:
-        "The contact form is ready, but SANITY_API_WRITE_TOKEN is not configured yet.",
+      message: "The contact form is not available right now. Please try again shortly.",
     };
   }
 
@@ -89,7 +88,7 @@ export async function handleContactSubmission(payload: ContactInput) {
     ok: true,
     status: 200,
     message: notification.ok
-      ? "Your note has been sent. It is saved in Sanity Studio and an email notification has been sent too."
-      : "Your note has been sent. It is now saved in Sanity Studio for review.",
+      ? "Your note has been sent successfully."
+      : "Your note has been sent.",
   };
 }
