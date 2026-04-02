@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+import { NavLinkItem } from "@/components/layout/nav-link-item";
 import { SocialIconLink } from "@/components/shared/social-icon-link";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,23 +54,17 @@ export function MobileNav({
           {description ? <SheetDescription>{description}</SheetDescription> : null}
         </SheetHeader>
         <nav className="mt-12 flex flex-col gap-5">
-          {items.map((item) => {
-            const external = item.url.startsWith("http");
-
-            return (
-              <SheetClose asChild key={item.id}>
-                <Link
-                  href={item.url}
-                  target={item.target || (external ? "_blank" : undefined)}
-                  rel={external ? "noreferrer" : undefined}
-                  className="nav-link text-base"
-                  onClick={() => setOpen(false)}
-                >
-                  {item.title}
-                </Link>
-              </SheetClose>
-            );
-          })}
+          {items.map((item) => (
+            <SheetClose asChild key={item.id}>
+              <span>
+                <NavLinkItem
+                  item={item}
+                  className="nav-link inline-flex rounded-full px-3 py-2 text-base"
+                  activeClassName="nav-link-active bg-accent/80 text-primary shadow-sm"
+                />
+              </span>
+            </SheetClose>
+          ))}
         </nav>
 
         {socialLinks.length ? (

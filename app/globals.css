@@ -161,12 +161,18 @@
   }
 
   .nav-link {
-    @apply font-serif font-bold text-[12px] uppercase tracking-[0.2em] transition;
+    @apply relative font-serif font-bold text-[12px] uppercase tracking-[0.2em] transition;
     color: var(--nav-color);
   }
 
   .nav-link:hover {
     color: var(--accent-color);
+  }
+
+  .nav-link-active {
+    color: var(--accent-color);
+    text-shadow: 0 0 0.01px currentColor;
+    box-shadow: inset 0 -2px 0 rgba(75, 43, 112, 0.34);
   }
 
   .header-shell {

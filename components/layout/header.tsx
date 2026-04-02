@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { NavLinkItem } from "@/components/layout/nav-link-item";
 import { SocialIconLink } from "@/components/shared/social-icon-link";
 import type { SiteSettings } from "@/types/wordpress";
 
@@ -44,21 +45,14 @@ export function Header({
             </Link>
 
             <nav className="flex items-center justify-center gap-7 xl:gap-8">
-              {settings.primaryMenu.map((item) => {
-                const external = item.url.startsWith("http");
-
-                return (
-                  <Link
-                    key={item.id}
-                    href={item.url}
-                    target={item.target || (external ? "_blank" : undefined)}
-                    rel={external ? "noreferrer" : undefined}
-                    className="nav-link"
-                  >
-                    {item.title}
-                  </Link>
-                );
-              })}
+              {settings.primaryMenu.map((item) => (
+                <NavLinkItem
+                  key={item.id}
+                  item={item}
+                  className="nav-link"
+                  activeClassName="nav-link-active"
+                />
+              ))}
             </nav>
 
             <div className="ml-auto flex items-center gap-3">
