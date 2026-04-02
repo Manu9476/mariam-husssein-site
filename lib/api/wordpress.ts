@@ -1108,6 +1108,40 @@ function mergeSettingsWithFallback(settings?: SanitySiteSettingsDocument | SiteS
   };
 }
 
+function appendResumeNavigationItem(settings: SiteSettings): SiteSettings {
+  const hasResumeDestination = Boolean(
+    settings.profile.resume.cvFile?.url || settings.profile.resume.linkedInUrl?.trim(),
+  );
+
+  if (!hasResumeDestination) {
+    return settings;
+  }
+
+  const resumeItem = {
+    id: "cv-linkedin",
+    title: "CV & LinkedIn",
+    url: "/cv-linkedin",
+  };
+
+  const primaryMenu = settings.primaryMenu.some(
+    (item) => item.url === resumeItem.url || item.title.toLowerCase() === resumeItem.title.toLowerCase(),
+  )
+    ? settings.primaryMenu
+    : [...settings.primaryMenu, resumeItem];
+
+  const footerMenu = settings.footerMenu.some(
+    (item) => item.url === resumeItem.url || item.title.toLowerCase() === resumeItem.title.toLowerCase(),
+  )
+    ? settings.footerMenu
+    : [...settings.footerMenu, resumeItem];
+
+  return {
+    ...settings,
+    primaryMenu,
+    footerMenu,
+  };
+}
+
 const getSiteSettingsCached = cache(async (): Promise<SiteSettings> => {
   if (isSanityConfigured() && sanityClient) {
     try {
@@ -1115,14 +1149,14 @@ const getSiteSettingsCached = cache(async (): Promise<SiteSettings> => {
         siteSettingsQuery,
       );
 
-      return mergeSettingsWithFallback(settings);
+      return appendResumeNavigationItem(mergeSettingsWithFallback(settings));
     } catch {
-      return fallbackSettings();
+      return appendResumeNavigationItem(fallbackSettings());
     }
   }
 
   if (!wordpressBaseUrl) {
-    return fallbackSettings();
+    return appendResumeNavigationItem(fallbackSettings());
   }
 
   try {
@@ -1130,12 +1164,12 @@ const getSiteSettingsCached = cache(async (): Promise<SiteSettings> => {
       tags: ["site-settings"],
     });
 
-    return {
+    return appendResumeNavigationItem({
       ...fallbackSettings(),
       ...data,
-    };
+    });
   } catch {
-    return fallbackSettings();
+    return appendResumeNavigationItem(fallbackSettings());
   }
 });
 
