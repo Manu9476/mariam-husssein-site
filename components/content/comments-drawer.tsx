@@ -280,8 +280,7 @@ function CommentThread({
                 <div className="mt-2 flex flex-wrap items-center gap-4 text-[11px] font-medium text-white/62">
                   <details className="group">
                     <summary className="cursor-pointer list-none transition hover:text-white">
-                      <span className="group-open:hidden">Reply to comment</span>
-                      <span className="hidden group-open:inline">Hide reply box</span>
+                      Reply to comment
                     </summary>
                     <div className="mt-3">
                       <CommentForm
@@ -364,7 +363,7 @@ export function CommentsDrawer({
 
       <SheetContent
         side="bottom"
-        overlayClassName="bg-black/16"
+        overlayClassName="bg-black/10 backdrop-blur-none"
         className="border-white/12 bg-[#222222] text-white"
       >
         <div className="flex h-full flex-col">
