@@ -43,10 +43,10 @@ export function PostLikeButton({
     setLiked(window.localStorage.getItem(getStorageKey(normalizedPostId)) === "1");
 
     function onPostLiked(event: Event) {
-      const detail = (event as CustomEvent<{ postId: string; count: number }>).detail;
+      const detail = (event as CustomEvent<{ postId: string; count: number; liked: boolean }>).detail;
 
       if (detail?.postId === normalizedPostId) {
-        setLiked(true);
+        setLiked(Boolean(detail.liked));
         setCount(detail.count);
       }
     }
@@ -59,32 +59,45 @@ export function PostLikeButton({
   }, [normalizedPostId]);
 
   function onLike() {
-    if (liked || isPending) {
+    if (isPending) {
       return;
     }
 
     startTransition(async () => {
+      const nextAction = liked ? "unlike" : "like";
       const response = await fetch(`/api/posts/${encodeURIComponent(normalizedPostId)}/like`, {
-        method: "POST",
+        method: liked ? "DELETE" : "POST",
       });
 
       if (!response.ok) {
         return;
       }
 
-      const data = (await response.json()) as { likeCount?: number };
-      const nextCount = typeof data.likeCount === "number" ? data.likeCount : count + 1;
+      const data = (await response.json()) as { likeCount?: number; liked?: boolean };
+      const nextCount =
+        typeof data.likeCount === "number"
+          ? data.likeCount
+          : liked
+            ? Math.max(0, count - 1)
+            : count + 1;
+      const nextLiked = typeof data.liked === "boolean" ? data.liked : nextAction === "like";
 
-      setLiked(true);
+      setLiked(nextLiked);
       setCount(nextCount);
 
       if (typeof window !== "undefined") {
-        window.localStorage.setItem(getStorageKey(normalizedPostId), "1");
+        if (nextLiked) {
+          window.localStorage.setItem(getStorageKey(normalizedPostId), "1");
+        } else {
+          window.localStorage.removeItem(getStorageKey(normalizedPostId));
+        }
+
         window.dispatchEvent(
           new CustomEvent(POST_LIKED_EVENT, {
             detail: {
               postId: normalizedPostId,
               count: nextCount,
+              liked: nextLiked,
             },
           }),
         );
@@ -98,7 +111,7 @@ export function PostLikeButton({
       variant={prominent ? "outline" : "ghost"}
       size={compact ? "sm" : "default"}
       onClick={onLike}
-      disabled={liked || isPending}
+      disabled={isPending}
       className={cn(
         prominent
           ? "group h-12 rounded-full border border-border/80 bg-white px-5 text-[12px] font-semibold uppercase tracking-[0.16em] text-foreground shadow-sm hover:border-red-400 hover:bg-white hover:text-red-500"
@@ -111,7 +124,7 @@ export function PostLikeButton({
           : "",
         className,
       )}
-      aria-label={liked ? "Post liked" : "Like this post"}
+      aria-label={liked ? "Unlike this post" : "Like this post"}
     >
       <Heart
         className={cn(

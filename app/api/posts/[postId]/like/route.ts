@@ -11,7 +11,7 @@ function getPostIdFromRequest(request: Request) {
   return match?.[1] ? decodeURIComponent(match[1]) : null;
 }
 
-export async function POST(request: Request) {
+async function handleLikeRequest(request: Request, action: "like" | "unlike") {
   if (!sanityWriteClient) {
     return NextResponse.json(
       {
@@ -60,11 +60,10 @@ export async function POST(request: Request) {
     );
   }
 
-  await sanityWriteClient
-    .patch(postId)
-    .setIfMissing({ likeCount: 0 })
-    .inc({ likeCount: 1 })
-    .commit();
+  const nextLikeCount =
+    action === "like" ? (post.likeCount || 0) + 1 : Math.max(0, (post.likeCount || 0) - 1);
+
+  await sanityWriteClient.patch(postId).set({ likeCount: nextLikeCount }).commit();
 
   const updated = await sanityWriteClient.fetch<{ likeCount?: number } | null>(
     `*[_type == "post" && _id == $postId][0]{
@@ -78,6 +77,15 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({
-    likeCount: updated?.likeCount ?? (post.likeCount || 0) + 1,
+    likeCount: updated?.likeCount ?? nextLikeCount,
+    liked: action === "like",
   });
+}
+
+export async function POST(request: Request) {
+  return handleLikeRequest(request, "like");
+}
+
+export async function DELETE(request: Request) {
+  return handleLikeRequest(request, "unlike");
 }
