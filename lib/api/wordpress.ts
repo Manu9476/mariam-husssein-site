@@ -1152,7 +1152,7 @@ const getPostsCached = cache(
         defined(slug.current) &&
         (!defined($searchPattern) || title match $searchPattern || excerpt match $searchPattern || pt::text(body) match $searchPattern) &&
         (!defined($categoryId) || references($categoryId)) &&
-        (count(categories[@._ref in $excludeCategoryIds]) == 0)
+        (count(coalesce(categories, [])[@._ref in $excludeCategoryIds]) == 0)
       `;
 
       try {
@@ -1274,7 +1274,7 @@ export async function getStickyFeaturedPost(options?: {
 
     try {
       const post = await sanityFetch<SanityPostDocument | null>(
-        `*[_type == "post" && defined(slug.current) && featuredOnHome == true && count(categories[@._ref in $excludeCategoryIds]) == 0]
+        `*[_type == "post" && defined(slug.current) && featuredOnHome == true && count(coalesce(categories, [])[@._ref in $excludeCategoryIds]) == 0]
           | order(coalesce(publishedAt, _createdAt) desc)[0]{
             ${postProjection}
           }`,
