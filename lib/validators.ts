@@ -29,7 +29,7 @@ export const commentSchema = z.object({
   parentId: z.string().optional(),
   name: z.string().min(2, "Please enter your name."),
   email: z.string().email("Please enter a valid email address."),
-  message: z.string().min(8, "Please write a little more before posting."),
+  message: z.string().trim().min(1, "Write a comment first."),
   website: z.string().optional().default(""),
   startedAt: z.string().optional().default(""),
 });

@@ -7,8 +7,6 @@ import { getPostRevalidationPaths } from "@/lib/post-revalidation";
 import { sanityWriteClient } from "@/lib/sanity/client";
 import { commentSchema, type CommentInput } from "@/lib/validators";
 
-const MIN_FORM_FILL_TIME_MS = 1500;
-
 export async function handleCommentSubmission(payload: CommentInput) {
   const parsed = commentSchema.safeParse(payload);
 
@@ -27,15 +25,6 @@ export async function handleCommentSubmission(payload: CommentInput) {
       ok: true,
       status: 200,
       message: "Thank you. Your comment has been received.",
-    };
-  }
-
-  const startedAtNumber = Number(parsed.data.startedAt || 0);
-  if (startedAtNumber && Date.now() - startedAtNumber < MIN_FORM_FILL_TIME_MS) {
-    return {
-      ok: false,
-      status: 400,
-      message: "Please take a little more time before submitting your comment.",
     };
   }
 

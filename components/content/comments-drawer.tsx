@@ -92,18 +92,12 @@ function CommentThread({
   depth?: number;
 }) {
   return (
-    <div className={cn("space-y-4", depth > 0 && "space-y-3")}>
+    <div className={cn("space-y-4", depth > 0 && "space-y-3 pl-6")}>
       {comments.map((comment) => {
         const replyCount = comment.replies?.length ?? 0;
 
         return (
-          <article
-            key={comment.id}
-            className={cn(
-              "border-b border-white/8 pb-4",
-              depth > 0 && "border-b-white/6 pb-3",
-            )}
-          >
+          <article key={comment.id} className={cn("pb-1", depth > 0 && "pb-0")}>
             <div className="flex items-start gap-3">
               <div
                 className={cn(
@@ -121,20 +115,21 @@ function CommentThread({
                     {comment.name}
                   </p>
                   {comment.date ? (
-                    <span className="text-[11px] font-medium text-white/36">
+                    <span className="text-[11px] font-medium text-white/58">
                       {formatRelativeTime(comment.date)}
                     </span>
                   ) : null}
                 </div>
 
-                <p className="mt-0.5 whitespace-pre-line text-[13px] leading-[1.45] text-white/92">
+                <p className="mt-0.5 whitespace-pre-line text-[13px] leading-[1.5] text-white">
                   {comment.message}
                 </p>
 
-                <div className="mt-2 flex flex-wrap items-center gap-4 text-[11px] font-medium text-white/42">
-                  <details>
+                <div className="mt-2 flex flex-wrap items-center gap-4 text-[11px] font-medium text-white/62">
+                  <details className="group">
                     <summary className="cursor-pointer list-none transition hover:text-white">
-                      Reply
+                      <span className="group-open:hidden">Reply</span>
+                      <span className="hidden group-open:inline">Hide reply</span>
                     </summary>
                     <div className="mt-3">
                       <CommentForm
@@ -151,12 +146,16 @@ function CommentThread({
                 </div>
 
                 {replyCount ? (
-                  <details className="mt-3">
-                    <summary className="list-none cursor-pointer text-[11px] font-medium text-white/38 transition hover:text-white">
-                      <span className="mr-2 inline-block h-px w-7 align-middle bg-white/16" />
-                      View {replyCount} more {replyCount === 1 ? "reply" : "replies"}
+                  <details className="group mt-3">
+                    <summary className="list-none cursor-pointer text-[11px] font-medium text-white/62 transition hover:text-white">
+                      <span className="group-open:hidden">
+                        View {replyCount} {replyCount === 1 ? "reply" : "replies"}
+                      </span>
+                      <span className="hidden group-open:inline">
+                        Hide {replyCount === 1 ? "reply" : "replies"}
+                      </span>
                     </summary>
-                    <div className="mt-3 border-l border-white/8 pl-4">
+                    <div className="mt-3">
                       <CommentThread
                         comments={comment.replies ?? []}
                         postId={postId}
@@ -171,7 +170,7 @@ function CommentThread({
               <button
                 type="button"
                 aria-label="Like comment"
-                className="mt-0.5 shrink-0 text-white/24 transition hover:text-white/55"
+                className="mt-0.5 shrink-0 text-white/34 transition hover:text-white/68"
               >
                 <Heart className="h-4 w-4" />
               </button>
@@ -242,7 +241,7 @@ export function CommentsDrawer({
                 rememberedIdentity={rememberedIdentity}
               />
             ) : (
-              <div className="py-10 text-center text-[13px] leading-6 text-white/45">
+              <div className="py-10 text-center text-[13px] leading-6 text-white/58">
                 No comments yet.
               </div>
             )}
