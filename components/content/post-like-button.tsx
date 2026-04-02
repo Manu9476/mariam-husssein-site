@@ -101,10 +101,14 @@ export function PostLikeButton({
       disabled={liked || isPending}
       className={cn(
         prominent
-          ? "group h-12 rounded-full border border-border/80 bg-white px-5 text-[12px] font-semibold uppercase tracking-[0.16em] text-foreground shadow-sm hover:border-primary hover:bg-white hover:text-primary"
+          ? "group h-12 rounded-full border border-border/80 bg-white px-5 text-[12px] font-semibold uppercase tracking-[0.16em] text-foreground shadow-sm hover:border-red-400 hover:bg-white hover:text-red-500"
           : "group h-auto rounded-full px-0 py-0 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground hover:bg-transparent hover:text-primary",
         compact ? "gap-1.5 text-[10px] tracking-[0.18em]" : prominent ? "gap-2.5" : "gap-2 text-[11px]",
-        liked ? "text-primary" : "",
+        liked
+          ? prominent
+            ? "border-red-200 bg-red-50 text-red-500"
+            : "text-red-500"
+          : "",
         className,
       )}
       aria-label={liked ? "Post liked" : "Like this post"}

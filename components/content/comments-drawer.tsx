@@ -41,14 +41,14 @@ function CommentThread({
       {comments.map((comment) => (
         <article
           key={comment.id}
-          className="space-y-3 rounded-[1.4rem] border border-white/10 bg-white/[0.05] p-4"
+          className="space-y-3 rounded-[1.4rem] border border-white/12 bg-[#171c25] p-4 shadow-[0_14px_30px_rgba(0,0,0,0.16)]"
         >
-          <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/45">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/55">
             <span>{comment.name}</span>
             {comment.date ? <span>{formatDate(comment.date)}</span> : null}
             {depth ? <span>Reply</span> : null}
           </div>
-          <p className="text-[0.98rem] leading-7 text-white/88">{comment.message}</p>
+          <p className="text-[0.98rem] leading-7 text-white">{comment.message}</p>
           <details className="pt-1">
             <summary className="cursor-pointer list-none text-sm font-semibold text-[#d8c4ff] transition hover:text-white">
               Reply
@@ -103,16 +103,19 @@ export function CommentsDrawer({
           <button
             type="button"
             aria-label={`Open comments${totalComments ? ` (${totalComments})` : ""}`}
-            className="group inline-flex h-12 items-center gap-2.5 rounded-full border border-border/80 bg-white px-5 text-[12px] font-semibold uppercase tracking-[0.16em] text-foreground shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+            className="group inline-flex h-12 items-center gap-2.5 rounded-full border border-[#10131a] bg-[#10131a] px-5 text-[12px] font-semibold uppercase tracking-[0.16em] text-white shadow-[0_14px_30px_rgba(6,9,15,0.16)] transition hover:-translate-y-0.5 hover:bg-[#171c25]"
           >
             <MessageCircleMore className="h-4.5 w-4.5 transition group-hover:scale-105" />
             <span>Comments</span>
-            <span className="inline-flex min-h-6 min-w-6 items-center justify-center rounded-full bg-primary/10 px-1.5 text-[11px] font-semibold text-primary">
+            <span className="inline-flex min-h-6 min-w-6 items-center justify-center rounded-full bg-white/10 px-1.5 text-[11px] font-semibold text-white">
               {totalComments}
             </span>
           </button>
         </SheetTrigger>
-        <SheetContent className="max-w-[28rem] border-l border-white/10 bg-[#0d1118] p-0 text-white sm:max-w-md">
+        <SheetContent
+          overlayClassName="bg-black/8"
+          className="max-w-[28rem] border-l border-white/10 bg-[#0d1118] p-0 text-white sm:max-w-md"
+        >
           <div className="flex h-full flex-col">
             <SheetHeader className="border-b border-white/10 px-6 py-5 pr-16">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">
@@ -144,7 +147,7 @@ export function CommentsDrawer({
                     rememberedIdentity={rememberedIdentity}
                   />
                 ) : (
-                  <div className="rounded-[1.4rem] border border-dashed border-white/10 bg-white/[0.03] px-5 py-6 text-sm leading-7 text-white/58">
+                  <div className="rounded-[1.4rem] border border-dashed border-white/10 bg-[#171c25] px-5 py-6 text-sm leading-7 text-white/68">
                     There are no public comments on this post yet.
                   </div>
                 )}

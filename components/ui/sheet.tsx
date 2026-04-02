@@ -23,10 +23,12 @@ SheetOverlay.displayName = Dialog.Overlay.displayName;
 
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof Dialog.Content>,
-  React.ComponentPropsWithoutRef<typeof Dialog.Content>
->(({ className, children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof Dialog.Content> & {
+    overlayClassName?: string;
+  }
+>(({ className, overlayClassName, children, ...props }, ref) => (
   <SheetPortal>
-    <SheetOverlay />
+    <SheetOverlay className={overlayClassName} />
     <Dialog.Content
       ref={ref}
       className={cn(
