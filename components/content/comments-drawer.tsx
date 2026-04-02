@@ -93,14 +93,14 @@ function CommentMessage({ message }: { message: string }) {
 
   return (
     <div className="space-y-2">
-      <p className="whitespace-pre-line text-[13px] leading-[1.52] text-white/92">
+      <p className="whitespace-pre-line text-[13px] leading-[1.52] text-white">
         {visibleMessage}
       </p>
       {shouldTruncate ? (
         <button
           type="button"
           onClick={() => setExpanded((current) => !current)}
-          className="text-[11px] font-medium text-white/62 transition hover:text-white"
+          className="text-[11px] font-medium text-white transition hover:text-white/85"
         >
           {expanded ? "Show less" : "Show more"}
         </button>
@@ -267,7 +267,7 @@ function CommentThread({
                     {comment.name}
                   </p>
                   {comment.date ? (
-                    <span className="text-[11px] font-medium text-white/58">
+                    <span className="text-[11px] font-medium text-white/80">
                       {formatRelativeTime(comment.date)}
                     </span>
                   ) : null}
@@ -277,9 +277,9 @@ function CommentThread({
                   <CommentMessage message={comment.message} />
                 </div>
 
-                <div className="mt-2 flex flex-wrap items-center gap-4 text-[11px] font-medium text-white/62">
+                <div className="mt-2 flex flex-wrap items-center gap-4 text-[11px] font-medium text-white">
                   <details className="group">
-                    <summary className="cursor-pointer list-none transition hover:text-white">
+                    <summary className="cursor-pointer list-none transition hover:text-white/85">
                       Reply to comment
                     </summary>
                     <div className="mt-3">
@@ -303,7 +303,7 @@ function CommentThread({
 
                 {replyCount ? (
                   <details className="group mt-3">
-                    <summary className="list-none cursor-pointer text-[11px] font-medium text-white/62 transition hover:text-white">
+                    <summary className="list-none cursor-pointer text-[11px] font-medium text-white transition hover:text-white/85">
                       <span className="group-open:hidden">
                         View replies ({replyCount})
                       </span>
@@ -389,7 +389,7 @@ export function CommentsDrawer({
                 rememberedIdentity={rememberedIdentity}
               />
             ) : (
-              <div className="py-10 text-center text-[13px] leading-6 text-white/58">
+              <div className="py-10 text-center text-[13px] leading-6 text-white">
                 No comments yet.
               </div>
             )}
