@@ -7,7 +7,6 @@ import { PostCard } from "@/components/content/post-card";
 import { SearchInput } from "@/components/content/search-input";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SectionHeading } from "@/components/shared/section-heading";
-import { NewsletterSection } from "@/components/sections/newsletter-section";
 import {
   getCategories,
   getCategoryBySlug,
@@ -121,8 +120,6 @@ export default async function BlogPage({
           )}
         </div>
       </section>
-
-      <NewsletterSection settings={settings} />
     </>
   );
 }

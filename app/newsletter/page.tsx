@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 
 import { FeaturedPostCard } from "@/components/content/featured-post-card";
-import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { PostCard } from "@/components/content/post-card";
 import { SectionHeading } from "@/components/shared/section-heading";
 import {
@@ -71,12 +70,6 @@ export default async function NewsletterPage() {
             <p className="max-w-xl text-sm text-muted-foreground">
               {settings.newsletter.disclaimer}
             </p>
-            <div className="editorial-panel max-w-xl p-6 md:p-7">
-              <NewsletterForm
-                placeholder={settings.newsletter.placeholder}
-                buttonLabel={settings.newsletter.buttonLabel}
-              />
-            </div>
           </div>
 
           {featuredPost ? (

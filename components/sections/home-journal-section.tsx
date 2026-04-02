@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { EditorialListItem } from "@/components/content/editorial-list-item";
-import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
 import { SocialIconLink } from "@/components/shared/social-icon-link";
 import { stripHtml } from "@/lib/utils";
@@ -36,6 +35,8 @@ export function HomeJournalSection({
       ? { url: settings.logoUrl, alt: settings.logoAlt || settings.siteTitle }
       : null);
   const highlights = settings.profile.highlights.slice(0, 2);
+  const newsletterLabel =
+    settings.primaryMenu.find((item) => item.url === "/newsletter")?.title || "Newsletter";
 
   return (
     <section className="section-space pt-0">
@@ -122,16 +123,17 @@ export function HomeJournalSection({
 
           <div className="editorial-panel space-y-4 p-6">
             <div className="space-y-2">
-              <p className="eyebrow">{settings.newsletter.eyebrow || "Stay close"}</p>
+              <p className="eyebrow">{settings.pageCopy.newsletterPage.eyebrow || settings.newsletter.eyebrow}</p>
               <h3 className="text-[2.25rem] leading-[0.98] tracking-[-0.035em]">
-                {settings.newsletter.title}
+                {settings.pageCopy.newsletterPage.title || newsletterLabel}
               </h3>
-              <p>{settings.newsletter.description}</p>
+              <p>
+                {settings.pageCopy.newsletterPage.description || settings.newsletter.description}
+              </p>
             </div>
-            <NewsletterForm
-              placeholder={settings.newsletter.placeholder}
-              buttonLabel={settings.newsletter.buttonLabel}
-            />
+            <Link href="/newsletter" className="soft-link">
+              {newsletterLabel}
+            </Link>
           </div>
 
           <div className="editorial-panel space-y-5 p-6">

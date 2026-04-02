@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import { SocialIconLink } from "@/components/shared/social-icon-link";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import type { SiteSettings } from "@/types/wordpress";
 
@@ -70,13 +69,6 @@ export function Footer({
                 {settings.contact.location ? <p>{settings.contact.location}</p> : null}
                 {settings.contact.availability ? <p>{settings.contact.availability}</p> : null}
               </div>
-              {settings.footer.newsletterCtaLabel && settings.footer.newsletterCtaUrl ? (
-                <Button asChild variant="outline" size="sm">
-                  <Link href={settings.footer.newsletterCtaUrl}>
-                    {settings.footer.newsletterCtaLabel}
-                  </Link>
-                </Button>
-              ) : null}
             </div>
           </div>
         </div>

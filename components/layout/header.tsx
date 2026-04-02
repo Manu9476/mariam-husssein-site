@@ -3,7 +3,6 @@ import { Search } from "lucide-react";
 
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { SocialIconLink } from "@/components/shared/social-icon-link";
-import { Button } from "@/components/ui/button";
 import type { SiteSettings } from "@/types/wordpress";
 
 export function Header({
@@ -12,7 +11,6 @@ export function Header({
   settings: SiteSettings;
 }) {
   const headerSocialLinks = settings.socialLinks.slice(0, 3);
-  const subscribeLabel = settings.header.subscribeLabel || settings.footer.newsletterCtaLabel || "Subscribe";
   const monogram = settings.header.monogram || settings.siteTitle.charAt(0);
 
   return (
@@ -74,9 +72,6 @@ export function Header({
               >
                 <Search className="h-4 w-4" />
               </Link>
-              <Button asChild size="sm">
-                <Link href="/newsletter">{subscribeLabel}</Link>
-              </Button>
             </div>
           </div>
 

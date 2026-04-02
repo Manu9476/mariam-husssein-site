@@ -3,7 +3,6 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { Hero } from "@/components/sections/hero";
 import { HomeJournalSection } from "@/components/sections/home-journal-section";
 import { HomeLettersSection } from "@/components/sections/home-letters-section";
-import { NewsletterSection } from "@/components/sections/newsletter-section";
 import { SocialLinksSection } from "@/components/sections/social-links-section";
 import { TestimonialsPreview } from "@/components/sections/testimonials-preview";
 import {
@@ -106,7 +105,6 @@ export default async function HomePage() {
 
       {testimonials.length ? <TestimonialsPreview testimonials={testimonials} settings={settings} /> : null}
 
-      <NewsletterSection settings={settings} />
       <SocialLinksSection settings={settings} />
     </>
   );

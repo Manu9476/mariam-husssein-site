@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { EditorialListItem } from "@/components/content/editorial-list-item";
 import { FeaturedPostCard } from "@/components/content/featured-post-card";
-import { NewsletterForm } from "@/components/forms/newsletter-form";
 import { LettersNav } from "@/components/letters/letters-nav";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
@@ -66,6 +65,8 @@ export function LetterCollectionPage({
   const relatedCollections = LETTER_COLLECTIONS.filter(
     (entry) => entry.slug !== collection.slug,
   );
+  const newsletterLabel =
+    settings.primaryMenu.find((item) => item.url === "/newsletter")?.title || "Newsletter";
 
   return (
     <>
@@ -174,7 +175,7 @@ export function LetterCollectionPage({
               <p className="text-[0.98rem] leading-8">{introCopy}</p>
 
               <Link href="/newsletter" className="soft-link">
-                {settings.footer.newsletterCtaLabel || "Subscribe for new letters"}
+                {newsletterLabel}
               </Link>
             </div>
 
@@ -182,14 +183,13 @@ export function LetterCollectionPage({
               <div className="space-y-2">
                 <p className="eyebrow">{copy.newsletterEyebrow || settings.newsletter.eyebrow}</p>
                 <h3 className="text-[1.95rem] leading-[1] tracking-[-0.03em]">
-                  {settings.newsletter.title}
+                  {settings.pageCopy.newsletterPage.title || newsletterLabel}
                 </h3>
-                <p>{settings.newsletter.description}</p>
+                <p>{settings.pageCopy.newsletterPage.description || settings.newsletter.description}</p>
               </div>
-              <NewsletterForm
-                placeholder={settings.newsletter.placeholder}
-                buttonLabel={settings.newsletter.buttonLabel}
-              />
+              <Link href="/newsletter" className="soft-link">
+                {newsletterLabel}
+              </Link>
             </div>
 
             <div className="editorial-panel space-y-5 p-5">
