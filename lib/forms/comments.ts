@@ -93,6 +93,8 @@ export async function handleCommentSubmission(payload: CommentInput) {
     email: parsed.data.email,
     message: parsed.data.message,
     approved: true,
+    flagged: false,
+    likeCount: 0,
     createdAt: new Date().toISOString(),
   });
 

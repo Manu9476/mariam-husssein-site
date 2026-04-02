@@ -354,6 +354,21 @@ const comment = defineType({
       description: "Turn this off if you want to hide a comment from the public site.",
     }),
     defineField({
+      name: "flagged",
+      title: "Flag and hide from public view",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Turn this on to remove the comment from the public site without deleting it from Studio.",
+    }),
+    defineField({
+      name: "likeCount",
+      title: "Like count",
+      type: "number",
+      initialValue: 0,
+      validation: (rule) => rule.min(0),
+    }),
+    defineField({
       name: "createdAt",
       title: "Submitted at",
       type: "datetime",
@@ -365,15 +380,23 @@ const comment = defineType({
       title: "name",
       subtitle: "post.title",
       replyTo: "parentComment.name",
+      flagged: "flagged",
+      approved: "approved",
     },
-    prepare({ title, subtitle, replyTo }) {
+    prepare({ title, subtitle, replyTo, flagged, approved }) {
+      const status = flagged
+        ? "Flagged"
+        : approved === false
+          ? "Hidden"
+          : "Live";
+
       return {
         title,
         subtitle: replyTo
-          ? `Reply to ${replyTo}${subtitle ? ` on ${subtitle}` : ""}`
+          ? `${status} · Reply to ${replyTo}${subtitle ? ` on ${subtitle}` : ""}`
           : subtitle
-            ? `On ${subtitle}`
-            : "Pending post reference",
+            ? `${status} · On ${subtitle}`
+            : `${status} · Pending post reference`,
       };
     },
   },

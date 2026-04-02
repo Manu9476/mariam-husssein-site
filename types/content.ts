@@ -94,5 +94,6 @@ export interface CommentEntry {
   message: string;
   date: string;
   approved: boolean;
+  likeCount?: number;
   replies?: CommentEntry[];
 }

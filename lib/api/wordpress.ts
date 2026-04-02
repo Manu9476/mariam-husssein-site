@@ -445,6 +445,7 @@ function mapSanityComment(entry: SanityCommentDocument): CommentEntry {
     message: entry.message || "",
     date: entry.createdAt || "",
     approved: Boolean(entry.approved),
+    likeCount: Number(entry.likeCount || 0),
     replies: [],
   };
 }
@@ -1689,13 +1690,15 @@ const getCommentsForPostCached = cache(
     if (isSanityConfigured() && sanityClient && postId) {
       try {
         const comments = await sanityFetch<SanityCommentDocument[]>(
-          `*[_type == "comment" && approved == true && post._ref == $postId]
+          `*[_type == "comment" && approved == true && coalesce(flagged, false) != true && post._ref == $postId]
             | order(coalesce(createdAt, _createdAt) asc){
               _id,
               name,
               email,
               message,
               approved,
+              flagged,
+              "likeCount": coalesce(likeCount, 0),
               "createdAt": coalesce(createdAt, _createdAt),
               post->{
                 _id

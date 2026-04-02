@@ -116,6 +116,8 @@ export interface SanityCommentDocument {
   email?: string;
   message?: string;
   approved?: boolean;
+  flagged?: boolean;
+  likeCount?: number;
   createdAt?: string;
   post?: {
     _id: string;

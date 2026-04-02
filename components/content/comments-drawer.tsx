@@ -1,6 +1,7 @@
 "use client";
 
 import { Heart, MessageCircleMore } from "lucide-react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 import { CommentForm } from "@/components/forms/comment-form";
 import {
@@ -13,11 +14,17 @@ import {
 import { cn } from "@/lib/utils";
 import type { CommentEntry, ContentId } from "@/types/content";
 
+const COMMENT_LIKED_EVENT = "mh:comment-liked";
+
 function countComments(entries: CommentEntry[]): number {
   return entries.reduce(
     (total, entry) => total + 1 + countComments(entry.replies ?? []),
     0,
   );
+}
+
+function getCommentStorageKey(commentId: string) {
+  return `mh-comment-liked:${commentId}`;
 }
 
 function hashNameToTone(name: string) {
@@ -76,6 +83,151 @@ function formatRelativeTime(date: string) {
   return rtf.format(Math.round(diff / week), "week");
 }
 
+function CommentMessage({ message }: { message: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const shouldTruncate = message.length > 220;
+  const visibleMessage =
+    !shouldTruncate || expanded
+      ? message
+      : `${message.slice(0, 220).trimEnd()}...`;
+
+  return (
+    <div className="space-y-2">
+      <p className="whitespace-pre-line text-[13px] leading-[1.52] text-white/92">
+        {visibleMessage}
+      </p>
+      {shouldTruncate ? (
+        <button
+          type="button"
+          onClick={() => setExpanded((current) => !current)}
+          className="text-[11px] font-medium text-white/62 transition hover:text-white"
+        >
+          {expanded ? "Show less" : "Show more"}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function CommentLikeButton({
+  commentId,
+  initialCount = 0,
+}: {
+  commentId: ContentId;
+  initialCount?: number;
+}) {
+  const normalizedCommentId = useMemo(() => String(commentId), [commentId]);
+  const [liked, setLiked] = useState(false);
+  const [count, setCount] = useState(initialCount);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setCount(initialCount);
+  }, [initialCount]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    setLiked(
+      window.localStorage.getItem(getCommentStorageKey(normalizedCommentId)) === "1",
+    );
+
+    function onCommentLiked(
+      event: Event,
+    ) {
+      const detail = (
+        event as CustomEvent<{
+          commentId: string;
+          count: number;
+          liked: boolean;
+        }>
+      ).detail;
+
+      if (detail?.commentId === normalizedCommentId) {
+        setLiked(Boolean(detail.liked));
+        setCount(detail.count);
+      }
+    }
+
+    window.addEventListener(COMMENT_LIKED_EVENT, onCommentLiked as EventListener);
+
+    return () => {
+      window.removeEventListener(COMMENT_LIKED_EVENT, onCommentLiked as EventListener);
+    };
+  }, [normalizedCommentId]);
+
+  function onToggleLike() {
+    if (isPending) {
+      return;
+    }
+
+    startTransition(async () => {
+      const action = liked ? "unlike" : "like";
+      const response = await fetch(
+        `/api/comments/${encodeURIComponent(normalizedCommentId)}/like`,
+        {
+          method: liked ? "DELETE" : "POST",
+        },
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const data = (await response.json()) as {
+        likeCount?: number;
+        liked?: boolean;
+      };
+      const nextCount =
+        typeof data.likeCount === "number"
+          ? data.likeCount
+          : liked
+            ? Math.max(0, count - 1)
+            : count + 1;
+      const nextLiked = typeof data.liked === "boolean" ? data.liked : action === "like";
+
+      setLiked(nextLiked);
+      setCount(nextCount);
+
+      if (typeof window !== "undefined") {
+        if (nextLiked) {
+          window.localStorage.setItem(getCommentStorageKey(normalizedCommentId), "1");
+        } else {
+          window.localStorage.removeItem(getCommentStorageKey(normalizedCommentId));
+        }
+
+        window.dispatchEvent(
+          new CustomEvent(COMMENT_LIKED_EVENT, {
+            detail: {
+              commentId: normalizedCommentId,
+              count: nextCount,
+              liked: nextLiked,
+            },
+          }),
+        );
+      }
+    });
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onToggleLike}
+      disabled={isPending}
+      aria-label={liked ? "Unlike comment" : "Like comment"}
+      className={cn(
+        "inline-flex items-center gap-1.5 text-[11px] font-medium transition",
+        liked ? "text-red-500" : "text-white/42 hover:text-white/75",
+      )}
+    >
+      <Heart className={cn("h-4 w-4", liked ? "fill-current" : "fill-transparent")} />
+      <span>{count}</span>
+    </button>
+  );
+}
+
 function CommentThread({
   comments,
   postId,
@@ -97,7 +249,7 @@ function CommentThread({
         const replyCount = comment.replies?.length ?? 0;
 
         return (
-          <article key={comment.id} className={cn("pb-1", depth > 0 && "pb-0")}>
+          <article key={comment.id} className="pb-1">
             <div className="flex items-start gap-3">
               <div
                 className={cn(
@@ -121,15 +273,15 @@ function CommentThread({
                   ) : null}
                 </div>
 
-                <p className="mt-0.5 whitespace-pre-line text-[13px] leading-[1.5] text-white">
-                  {comment.message}
-                </p>
+                <div className="mt-0.5">
+                  <CommentMessage message={comment.message} />
+                </div>
 
                 <div className="mt-2 flex flex-wrap items-center gap-4 text-[11px] font-medium text-white/62">
                   <details className="group">
                     <summary className="cursor-pointer list-none transition hover:text-white">
-                      <span className="group-open:hidden">Reply</span>
-                      <span className="hidden group-open:inline">Hide reply</span>
+                      <span className="group-open:hidden">Reply to comment</span>
+                      <span className="hidden group-open:inline">Hide reply box</span>
                     </summary>
                     <div className="mt-3">
                       <CommentForm
@@ -143,16 +295,21 @@ function CommentThread({
                       />
                     </div>
                   </details>
+
+                  <CommentLikeButton
+                    commentId={comment.id}
+                    initialCount={comment.likeCount}
+                  />
                 </div>
 
                 {replyCount ? (
                   <details className="group mt-3">
                     <summary className="list-none cursor-pointer text-[11px] font-medium text-white/62 transition hover:text-white">
                       <span className="group-open:hidden">
-                        View {replyCount} {replyCount === 1 ? "reply" : "replies"}
+                        View replies ({replyCount})
                       </span>
                       <span className="hidden group-open:inline">
-                        Hide {replyCount === 1 ? "reply" : "replies"}
+                        Hide replies
                       </span>
                     </summary>
                     <div className="mt-3">
@@ -166,14 +323,6 @@ function CommentThread({
                   </details>
                 ) : null}
               </div>
-
-              <button
-                type="button"
-                aria-label="Like comment"
-                className="mt-0.5 shrink-0 text-white/34 transition hover:text-white/68"
-              >
-                <Heart className="h-4 w-4" />
-              </button>
             </div>
           </article>
         );
