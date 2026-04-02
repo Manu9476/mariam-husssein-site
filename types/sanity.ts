@@ -11,6 +11,14 @@ export interface SanityImageField {
   };
 }
 
+export interface SanityFileField {
+  asset?: {
+    url?: string;
+    originalFilename?: string;
+    mimeType?: string;
+  };
+}
+
 export interface SanityMarkDefinition {
   _key: string;
   _type: string;
@@ -181,6 +189,16 @@ export interface SanitySiteSettingsDocument {
     quickLinks?: SanityMenuItem[];
     primaryLinkLabel?: string;
     primaryLinkUrl?: string;
+    resume?: {
+      eyebrow?: string;
+      title?: string;
+      description?: string;
+      fileButtonLabel?: string;
+      downloadButtonLabel?: string;
+      linkedInLabel?: string;
+      linkedInUrl?: string;
+      cvFile?: SanityFileField | null;
+    };
   };
   primaryMenu?: SanityMenuItem[];
   footerMenu?: SanityMenuItem[];

@@ -3,6 +3,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { Hero } from "@/components/sections/hero";
 import { HomeJournalSection } from "@/components/sections/home-journal-section";
 import { HomeLettersSection } from "@/components/sections/home-letters-section";
+import { ResumeHighlightSection } from "@/components/sections/resume-highlight-section";
 import { SocialLinksSection } from "@/components/sections/social-links-section";
 import { TestimonialsPreview } from "@/components/sections/testimonials-preview";
 import {
@@ -74,6 +75,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero settings={settings} aboutPreview={aboutPage} />
+      <ResumeHighlightSection settings={settings} />
 
       {featuredNote ? (
         <section className="section-space pt-0">

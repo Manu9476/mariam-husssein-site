@@ -89,6 +89,12 @@ export interface EditableLink {
   target?: string;
 }
 
+export interface EditableDocument {
+  url: string;
+  filename?: string;
+  mimeType?: string;
+}
+
 export interface HeaderSettings {
   eyebrow?: string;
   monogram?: string;
@@ -104,6 +110,16 @@ export interface ProfileSettings {
   quickLinks: EditableLink[];
   primaryLinkLabel?: string;
   primaryLinkUrl?: string;
+  resume: {
+    eyebrow?: string;
+    title?: string;
+    description?: string;
+    fileButtonLabel?: string;
+    downloadButtonLabel?: string;
+    linkedInLabel?: string;
+    linkedInUrl?: string;
+    cvFile?: EditableDocument | null;
+  };
 }
 
 export interface HomeSectionCopy {

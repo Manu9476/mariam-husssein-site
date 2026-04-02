@@ -4,6 +4,7 @@ import { RichTextRenderer } from "@/components/shared/rich-text-renderer";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { ImageWrapper } from "@/components/shared/image-wrapper";
 import { buildMetadata, resolveSeoCopy } from "@/lib/seo";
+import { ResumeHighlightSection } from "@/components/sections/resume-highlight-section";
 import { getFaqs, getPageBySlug, getSiteSettings, getTestimonials } from "@/lib/api/wordpress";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -63,6 +64,8 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+
+      <ResumeHighlightSection settings={settings} compact />
 
       {faqs.length ? (
         <section className="section-space pt-0">

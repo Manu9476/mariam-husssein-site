@@ -207,6 +207,24 @@ function resolveSanityImage(image?: {
   };
 }
 
+function resolveSanityFile(file?: {
+  asset?: {
+    url?: string;
+    originalFilename?: string;
+    mimeType?: string;
+  };
+} | null) {
+  if (!file?.asset?.url) {
+    return null;
+  }
+
+  return {
+    url: file.asset.url,
+    filename: file.asset.originalFilename,
+    mimeType: file.asset.mimeType,
+  };
+}
+
 function resolveSeo(meta?: SeoMetaFields): {
   title?: string;
   description?: string;
@@ -462,6 +480,17 @@ function fallbackSettings(): SiteSettings {
       ],
       primaryLinkLabel: "Read Mariam's story",
       primaryLinkUrl: "/about",
+      resume: {
+        eyebrow: "Resume and profile",
+        title: "Open Mariam's CV or connect on LinkedIn.",
+        description:
+          "Upload your latest CV in Studio so readers can read it online, download it, or continue the conversation on LinkedIn.",
+        fileButtonLabel: "Read CV",
+        downloadButtonLabel: "Download CV",
+        linkedInLabel: "Visit LinkedIn",
+        linkedInUrl: "",
+        cvFile: null,
+      },
     },
     primaryMenu: [
       { id: 1, title: "Home", url: "/" },
@@ -772,7 +801,23 @@ const siteSettingsQuery = `
         target
       },
       primaryLinkLabel,
-      primaryLinkUrl
+      primaryLinkUrl,
+      resume{
+        eyebrow,
+        title,
+        description,
+        fileButtonLabel,
+        downloadButtonLabel,
+        linkedInLabel,
+        linkedInUrl,
+        cvFile{
+          asset->{
+            url,
+            originalFilename,
+            mimeType
+          }
+        }
+      }
     },
     logo{
       alt,
@@ -944,6 +989,9 @@ function mergeSettingsWithFallback(settings?: SanitySiteSettingsDocument | SiteS
 
   const sanitySettings = settings as SanitySiteSettingsDocument;
   const logo = resolveSanityImage(sanitySettings.logo);
+  const linkedInFromSocials = sanitySettings.socialLinks?.find((item) =>
+    item?.label?.toLowerCase().includes("linkedin"),
+  )?.url;
 
   return {
     ...fallback,
@@ -965,6 +1013,17 @@ function mergeSettingsWithFallback(settings?: SanitySiteSettingsDocument | SiteS
         sanitySettings.profile?.quickLinks?.length
           ? mapSanityMenu(sanitySettings.profile.quickLinks)
           : fallback.profile.quickLinks,
+      resume: {
+        ...fallback.profile.resume,
+        ...(sanitySettings.profile?.resume ?? {}),
+        linkedInUrl:
+          sanitySettings.profile?.resume?.linkedInUrl ||
+          linkedInFromSocials ||
+          fallback.profile.resume.linkedInUrl,
+        cvFile:
+          resolveSanityFile(sanitySettings.profile?.resume?.cvFile) ||
+          fallback.profile.resume.cvFile,
+      },
     },
     primaryMenu:
       sanitySettings.primaryMenu?.length

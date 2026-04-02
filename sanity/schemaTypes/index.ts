@@ -552,6 +552,28 @@ const siteSettings = defineType({
         }),
         defineField({ name: "primaryLinkLabel", title: "Profile CTA label", type: "string" }),
         defineField({ name: "primaryLinkUrl", title: "Profile CTA URL", type: "string" }),
+        defineField({
+          name: "resume",
+          title: "CV and LinkedIn section",
+          type: "object",
+          fields: [
+            defineField({ name: "eyebrow", title: "Eyebrow", type: "string" }),
+            defineField({ name: "title", title: "Title", type: "string" }),
+            defineField({ name: "description", title: "Description", type: "text", rows: 3 }),
+            defineField({
+              name: "cvFile",
+              title: "CV file",
+              type: "file",
+              options: {
+                accept: ".pdf,.doc,.docx",
+              },
+            }),
+            defineField({ name: "fileButtonLabel", title: "Read CV button label", type: "string" }),
+            defineField({ name: "downloadButtonLabel", title: "Download CV button label", type: "string" }),
+            defineField({ name: "linkedInLabel", title: "LinkedIn button label", type: "string" }),
+            defineField({ name: "linkedInUrl", title: "LinkedIn URL", type: "url" }),
+          ],
+        }),
       ],
     }),
     defineField({
