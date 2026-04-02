@@ -121,7 +121,6 @@ export default async function BlogPostPage({
                     {post.commentCount} {post.commentCount === 1 ? "comment" : "comments"}
                   </span>
                 ) : null}
-                <PostLikeButton postId={post.id} initialCount={post.likeCount} />
               </div>
               <h1 className="text-[3.35rem] leading-[0.94] tracking-[-0.045em] md:text-[4.75rem]">
                 {post.title}
@@ -148,15 +147,23 @@ export default async function BlogPostPage({
 
           <div className="mx-auto max-w-[42rem]">
             <RichTextRenderer content={post.content} />
+            <div className="mt-10 border-t border-border/70 pt-6">
+              <div className="flex flex-wrap items-center gap-3">
+                <CommentsDrawer
+                  comments={comments}
+                  postId={post.id}
+                  rememberedIdentity={rememberedIdentity}
+                />
+                <PostLikeButton
+                  postId={post.id}
+                  initialCount={post.likeCount}
+                  prominent
+                />
+              </div>
+            </div>
           </div>
         </div>
       </article>
-
-      <CommentsDrawer
-        comments={comments}
-        postId={post.id}
-        rememberedIdentity={rememberedIdentity}
-      />
 
       {relatedPosts.length ? (
         <section className="section-space pt-0">

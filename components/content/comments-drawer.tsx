@@ -97,20 +97,19 @@ export function CommentsDrawer({
   const totalComments = countComments(comments);
 
   return (
-    <div className="fixed bottom-5 right-5 z-40 sm:bottom-6 sm:right-6">
+    <div>
       <Sheet>
         <SheetTrigger asChild>
           <button
             type="button"
             aria-label={`Open comments${totalComments ? ` (${totalComments})` : ""}`}
-            className="group relative inline-flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-[#10131a] text-white shadow-[0_18px_50px_rgba(7,10,17,0.32)] transition hover:-translate-y-0.5 hover:bg-[#151a24]"
+            className="group inline-flex h-12 items-center gap-2.5 rounded-full border border-border/80 bg-white px-5 text-[12px] font-semibold uppercase tracking-[0.16em] text-foreground shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:text-primary"
           >
-            <MessageCircleMore className="h-5 w-5 transition group-hover:scale-105" />
-            {totalComments ? (
-              <span className="absolute -right-1 -top-1 inline-flex min-h-6 min-w-6 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-semibold text-primary-foreground shadow-sm">
-                {totalComments}
-              </span>
-            ) : null}
+            <MessageCircleMore className="h-4.5 w-4.5 transition group-hover:scale-105" />
+            <span>Comments</span>
+            <span className="inline-flex min-h-6 min-w-6 items-center justify-center rounded-full bg-primary/10 px-1.5 text-[11px] font-semibold text-primary">
+              {totalComments}
+            </span>
           </button>
         </SheetTrigger>
         <SheetContent className="max-w-[28rem] border-l border-white/10 bg-[#0d1118] p-0 text-white sm:max-w-md">
