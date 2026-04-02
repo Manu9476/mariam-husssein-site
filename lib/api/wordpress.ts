@@ -779,7 +779,7 @@ const resourceProjection = `
 `;
 
 const siteSettingsQuery = `
-  *[_type == "siteSettings"][0]{
+  *[_type == "siteSettings"] | order(_updatedAt desc)[0]{
     siteTitle,
     siteDescription,
     siteUrl,
