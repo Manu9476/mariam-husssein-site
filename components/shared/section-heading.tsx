@@ -7,17 +7,19 @@ export function SectionHeading({
   description,
   align = "left",
   animate = true,
+  size = "default",
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   align?: "left" | "center";
   animate?: boolean;
+  size?: "compact" | "default";
 }) {
   const content = (
     <div
       className={cn(
-        "max-w-[44rem] space-y-5",
+        "max-w-[44rem] space-y-4",
         align === "center" && "mx-auto text-center",
       )}
     >
@@ -33,7 +35,14 @@ export function SectionHeading({
           <span className="h-px w-10 bg-border" />
         </div>
       ) : null}
-      <h2 className="text-[2.65rem] leading-[0.94] tracking-[-0.045em] md:text-[4.25rem]">
+      <h2
+        className={cn(
+          "leading-[0.94] tracking-[-0.045em]",
+          size === "compact"
+            ? "text-[2rem] md:text-[2.85rem]"
+            : "text-[2.25rem] md:text-[3.4rem]",
+        )}
+      >
         {title}
       </h2>
       {description ? (

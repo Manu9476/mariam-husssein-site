@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Download, ExternalLink, FileText, Linkedin } from "lucide-react";
 
 import { ResumeHighlightSection } from "@/components/sections/resume-highlight-section";
-import { SectionHeading } from "@/components/shared/section-heading";
 import { buildMetadata } from "@/lib/seo";
 import { getSiteSettings } from "@/lib/api/wordpress";
 
@@ -28,23 +27,10 @@ export default async function CvLinkedInPage() {
 
   return (
     <>
-      <section className="section-space">
-        <div className="container">
-          <SectionHeading
-            eyebrow={resume.eyebrow || "CV & LinkedIn"}
-            title={resume.title || "Professional profile, CV, and the best place to connect."}
-            description={
-              resume.description ||
-              "Use this page to open Mariam's latest CV, download a copy, or continue the conversation on LinkedIn."
-            }
-          />
-        </div>
-      </section>
-
-      <ResumeHighlightSection settings={settings} compact />
+      <ResumeHighlightSection settings={settings} />
 
       {hasResumeContent ? (
-        <section className="section-space pt-0">
+        <section className="section-space pt-2">
           <div className="container">
             <div className="grid gap-6 lg:grid-cols-2">
               {cvFile?.url ? (

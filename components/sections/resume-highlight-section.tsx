@@ -26,12 +26,12 @@ export function ResumeHighlightSection({
   }
 
   return (
-    <section className={compact ? "section-space pt-0" : "section-space pb-10 pt-0"}>
+    <section className={compact ? "section-space pt-0" : "section-space pb-8 pt-0"}>
       <div className="container">
         <FadeIn>
           <div className="editorial-panel overflow-hidden">
-            <div className="grid gap-8 px-6 py-7 md:px-8 md:py-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-              <div className="space-y-5">
+            <div className="grid gap-6 px-6 py-6 md:px-8 md:py-7 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+              <div className="space-y-4">
                 <SectionHeading
                   eyebrow={resume.eyebrow}
                   title={resume.title || "View Mariam's CV and professional profile."}
@@ -40,6 +40,7 @@ export function ResumeHighlightSection({
                     "Open the latest resume online, download a copy, or continue the conversation on LinkedIn."
                   }
                   animate={false}
+                  size={compact ? "compact" : "default"}
                 />
               </div>
 
