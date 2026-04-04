@@ -8,24 +8,24 @@
     --foreground: 0 0% 20%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 20%;
-    --primary: 269 44% 30%;
+    --primary: 25 54% 35%;
     --primary-foreground: 0 0% 100%;
     --secondary: 146 29% 93%;
     --secondary-foreground: 148 43% 18%;
     --muted: 48 28% 96%;
     --muted-foreground: 0 0% 35%;
-    --accent: 266 58% 95%;
-    --accent-foreground: 269 44% 30%;
+    --accent: 30 42% 94%;
+    --accent-foreground: 25 54% 35%;
     --border: 144 20% 84%;
     --input: 144 20% 84%;
-    --ring: 269 44% 30%;
+    --ring: 25 54% 35%;
     --radius: 1.35rem;
     --page-bg: #fbfaf6;
     --header-bg: rgba(222, 240, 228, 0.88);
-    --heading-color: #4b2b70;
+    --heading-color: #895129;
     --body-color: #3b3633;
     --nav-color: #1b4332;
-    --accent-color: #4b2b70;
+    --accent-color: #895129;
     --font-sans: var(--font-nunito), "Nunito", sans-serif;
     --font-serif: var(--font-fraunces), "Fraunces", serif;
   }
@@ -42,7 +42,7 @@
     @apply bg-background font-sans text-foreground antialiased;
     background:
       radial-gradient(circle at top left, rgba(200, 226, 208, 0.55), transparent 28%),
-      radial-gradient(circle at top right, rgba(205, 180, 219, 0.18), transparent 24%),
+      radial-gradient(circle at top right, rgba(137, 81, 41, 0.1), transparent 24%),
       linear-gradient(180deg, #fbfaf6 0%, #ffffff 22%, #f8fbf9 100%);
     min-height: 100vh;
     color: var(--body-color);
@@ -73,7 +73,7 @@
   }
 
   ::selection {
-    background: rgba(75, 43, 112, 0.16);
+    background: rgba(137, 81, 41, 0.16);
     color: var(--heading-color);
   }
 }
@@ -130,7 +130,7 @@
 
   .rich-text blockquote {
     @apply rounded-2xl border-l-4 px-6 py-5 text-lg italic;
-    border-color: rgba(75, 43, 112, 0.2);
+    border-color: rgba(137, 81, 41, 0.22);
     background: rgba(200, 226, 208, 0.3);
     color: var(--heading-color);
   }
@@ -172,7 +172,7 @@
   .nav-link-active {
     color: var(--accent-color);
     text-shadow: 0 0 0.01px currentColor;
-    box-shadow: inset 0 -2px 0 rgba(75, 43, 112, 0.34);
+    box-shadow: inset 0 -2px 0 rgba(137, 81, 41, 0.34);
   }
 
   .header-shell {
