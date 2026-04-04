@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart, MessageCircleMore } from "lucide-react";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { CommentForm } from "@/components/forms/comment-form";
 import {
@@ -116,14 +116,24 @@ function CommentLikeButton({
   commentId: ContentId;
   initialCount?: number;
 }) {
-  const normalizedCommentId = useMemo(() => String(commentId), [commentId]);
+  const normalizedCommentId = String(commentId);
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(initialCount);
   const [isPending, startTransition] = useTransition();
+  const likedRef = useRef(liked);
+  const countRef = useRef(count);
 
   useEffect(() => {
     setCount(initialCount);
   }, [initialCount]);
+
+  useEffect(() => {
+    likedRef.current = liked;
+  }, [liked]);
+
+  useEffect(() => {
+    countRef.current = count;
+  }, [count]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -164,11 +174,13 @@ function CommentLikeButton({
     }
 
     startTransition(async () => {
-      const action = liked ? "unlike" : "like";
+      const currentlyLiked = likedRef.current;
+      const currentCount = countRef.current;
+      const action = currentlyLiked ? "unlike" : "like";
       const response = await fetch(
         `/api/comments/${encodeURIComponent(normalizedCommentId)}/like`,
         {
-          method: liked ? "DELETE" : "POST",
+          method: currentlyLiked ? "DELETE" : "POST",
         },
       );
 
@@ -183,9 +195,9 @@ function CommentLikeButton({
       const nextCount =
         typeof data.likeCount === "number"
           ? data.likeCount
-          : liked
-            ? Math.max(0, count - 1)
-            : count + 1;
+          : currentlyLiked
+            ? Math.max(0, currentCount - 1)
+            : currentCount + 1;
       const nextLiked = typeof data.liked === "boolean" ? data.liked : action === "like";
 
       setLiked(nextLiked);

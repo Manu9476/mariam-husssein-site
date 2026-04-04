@@ -1,7 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,14 +26,24 @@ export function PostLikeButton({
   prominent?: boolean;
   className?: string;
 }) {
-  const normalizedPostId = useMemo(() => String(postId), [postId]);
+  const normalizedPostId = String(postId);
   const [liked, setLiked] = useState(false);
   const [count, setCount] = useState(initialCount);
   const [isPending, startTransition] = useTransition();
+  const likedRef = useRef(liked);
+  const countRef = useRef(count);
 
   useEffect(() => {
     setCount(initialCount);
   }, [initialCount]);
+
+  useEffect(() => {
+    likedRef.current = liked;
+  }, [liked]);
+
+  useEffect(() => {
+    countRef.current = count;
+  }, [count]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -64,9 +74,11 @@ export function PostLikeButton({
     }
 
     startTransition(async () => {
-      const nextAction = liked ? "unlike" : "like";
+      const currentlyLiked = likedRef.current;
+      const currentCount = countRef.current;
+      const nextAction = currentlyLiked ? "unlike" : "like";
       const response = await fetch(`/api/posts/${encodeURIComponent(normalizedPostId)}/like`, {
-        method: liked ? "DELETE" : "POST",
+        method: currentlyLiked ? "DELETE" : "POST",
       });
 
       if (!response.ok) {
@@ -77,9 +89,9 @@ export function PostLikeButton({
       const nextCount =
         typeof data.likeCount === "number"
           ? data.likeCount
-          : liked
-            ? Math.max(0, count - 1)
-            : count + 1;
+          : currentlyLiked
+            ? Math.max(0, currentCount - 1)
+            : currentCount + 1;
       const nextLiked = typeof data.liked === "boolean" ? data.liked : nextAction === "like";
 
       setLiked(nextLiked);

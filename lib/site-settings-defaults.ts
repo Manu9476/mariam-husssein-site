@@ -57,13 +57,13 @@ export function getSiteSettingsDocumentDefaults(): SanitySiteSettingsDocument {
       primaryLinkLabel: "Read Mariam's story",
       primaryLinkUrl: "/about",
       resume: {
-        eyebrow: "Resume and profile",
-        title: "Open Mariam's CV or connect on LinkedIn.",
+        eyebrow: "CV & LinkedIn",
+        title: "Open Mariam's CV or continue the conversation on LinkedIn.",
         description:
-          "Share your CV with readers and make it easy for them to continue the conversation on LinkedIn.",
+          "Upload a readable CV and a professional LinkedIn destination readers can open from the site.",
         fileButtonLabel: "Read CV",
         downloadButtonLabel: "Download CV",
-        linkedInLabel: "Visit LinkedIn",
+        linkedInLabel: "Open LinkedIn",
         linkedInUrl: "",
       },
     },
@@ -73,10 +73,8 @@ export function getSiteSettingsDocumentDefaults(): SanitySiteSettingsDocument {
       keyedLink("Notes", "/blog"),
       keyedLink("Newsletter", "/newsletter"),
       keyedLink("Resources", "/resources"),
-      keyedLink("Archive", "/blog"),
       keyedLink("About", "/about"),
       keyedLink("Contact", "/contact"),
-      keyedLink("Studio", "/studio"),
     ],
     footerMenu: [
       keyedLink("Newsletter", "/newsletter"),

@@ -37,7 +37,9 @@ import type {
 } from "@/types/sanity";
 import type {
   PaginatedResponse,
+  NavigationItem,
   SeoMetaFields,
+  SocialLink,
   SiteSettings,
   WordPressCategory,
   WordPressFaq,
@@ -349,6 +351,120 @@ function mapSanityMenu(
       url: item.url,
       target: item.target,
     }));
+}
+
+const PLACEHOLDER_SOCIAL_HOSTS = new Set(["example.com", "www.example.com"]);
+const ROOT_ONLY_SOCIAL_HOSTS = new Set([
+  "youtube.com",
+  "www.youtube.com",
+  "instagram.com",
+  "www.instagram.com",
+  "linkedin.com",
+  "www.linkedin.com",
+]);
+
+function parsePublicUrl(url?: string | null) {
+  if (!url) {
+    return null;
+  }
+
+  try {
+    return new URL(url);
+  } catch {
+    try {
+      return new URL(`https://${url}`);
+    } catch {
+      return null;
+    }
+  }
+}
+
+function isPlaceholderSocialUrl(url?: string | null) {
+  const parsed = parsePublicUrl(url);
+
+  if (!parsed) {
+    return true;
+  }
+
+  const host = parsed.hostname.toLowerCase();
+  const pathname = parsed.pathname.replace(/\/+$/, "") || "/";
+
+  if (PLACEHOLDER_SOCIAL_HOSTS.has(host)) {
+    return true;
+  }
+
+  if (ROOT_ONLY_SOCIAL_HOSTS.has(host) && pathname === "/") {
+    return true;
+  }
+
+  return false;
+}
+
+function filterVisibleSocialLinks(links: SocialLink[] = []) {
+  return links.filter((item) => item?.label && item?.url && !isPlaceholderSocialUrl(item.url));
+}
+
+function normalizeNavigationItem(item: NavigationItem): NavigationItem {
+  if (item.url === "/cv-linkedin") {
+    return {
+      ...item,
+      title: "CV & LinkedIn",
+    };
+  }
+
+  return item;
+}
+
+function dedupeNavigation(items: NavigationItem[]) {
+  const seen = new Set<string>();
+
+  return items.filter((item) => {
+    const key = `${item.url}|${item.title.toLowerCase()}`;
+
+    if (seen.has(key)) {
+      return false;
+    }
+
+    seen.add(key);
+    return true;
+  });
+}
+
+function filterPublicPrimaryMenu(items: NavigationItem[]) {
+  return dedupeNavigation(
+    items
+      .filter((item) => {
+        const title = item.title.trim().toLowerCase();
+
+        if (item.url === "/studio" || title === "studio") {
+          return false;
+        }
+
+        if (item.url === "/blog" && title === "archive") {
+          return false;
+        }
+
+        return true;
+      })
+      .map(normalizeNavigationItem),
+  );
+}
+
+function filterPublicFooterMenu(items: NavigationItem[]) {
+  return dedupeNavigation(
+    items
+      .filter((item) => item.url !== "/studio" && item.title.trim().toLowerCase() !== "studio")
+      .map(normalizeNavigationItem),
+  );
+}
+
+function sanitizePublicSettings(settings: SiteSettings): SiteSettings {
+  return {
+    ...settings,
+    primaryMenu: filterPublicPrimaryMenu(settings.primaryMenu),
+    footerMenu: filterPublicFooterMenu(settings.footerMenu),
+    socialLinks: filterVisibleSocialLinks(settings.socialLinks),
+  };
 }
 
 function mapSanityPage(page: SanityPageDocument): PageContent {
@@ -902,8 +1018,10 @@ function mergeSettingsWithFallback(settings?: SanitySiteSettingsDocument | SiteS
 
   const sanitySettings = settings as SanitySiteSettingsDocument;
   const logo = resolveSanityImage(sanitySettings.logo);
-  const linkedInFromSocials = sanitySettings.socialLinks?.find((item) =>
-    item?.label?.toLowerCase().includes("linkedin"),
+  const linkedInFromSocials = sanitySettings.socialLinks?.find(
+    (item) =>
+      item?.label?.toLowerCase().includes("linkedin") &&
+      !isPlaceholderSocialUrl(item.url),
   )?.url;
 
   return {
@@ -1006,17 +1124,15 @@ function mergeSettingsWithFallback(settings?: SanitySiteSettingsDocument | SiteS
       ...fallback.newsletter,
       ...(sanitySettings.newsletter ?? {}),
     },
-    contact: {
-      ...fallback.contact,
-      ...(sanitySettings.contact ?? {}),
-    },
-    socialLinks:
-      sanitySettings.socialLinks?.filter((item) => item?.label && item?.url) ||
-      fallback.socialLinks,
-    footer: {
-      ...fallback.footer,
-      ...(sanitySettings.footer ?? {}),
-    },
+      contact: {
+        ...fallback.contact,
+        ...(sanitySettings.contact ?? {}),
+      },
+      socialLinks: sanitySettings.socialLinks?.filter((item) => item?.label && item?.url) || fallback.socialLinks,
+      footer: {
+        ...fallback.footer,
+        ...(sanitySettings.footer ?? {}),
+      },
   };
 }
 
@@ -1061,14 +1177,16 @@ const getSiteSettingsCached = cache(async (): Promise<SiteSettings> => {
         siteSettingsQuery,
       );
 
-      return appendResumeNavigationItem(mergeSettingsWithFallback(settings));
+      return sanitizePublicSettings(
+        appendResumeNavigationItem(mergeSettingsWithFallback(settings)),
+      );
     } catch {
-      return appendResumeNavigationItem(fallbackSettings());
+      return sanitizePublicSettings(appendResumeNavigationItem(fallbackSettings()));
     }
   }
 
   if (!wordpressBaseUrl) {
-    return appendResumeNavigationItem(fallbackSettings());
+    return sanitizePublicSettings(appendResumeNavigationItem(fallbackSettings()));
   }
 
   try {
@@ -1076,12 +1194,14 @@ const getSiteSettingsCached = cache(async (): Promise<SiteSettings> => {
       tags: ["site-settings"],
     });
 
-    return appendResumeNavigationItem({
-      ...fallbackSettings(),
-      ...data,
-    });
+    return sanitizePublicSettings(
+      appendResumeNavigationItem({
+        ...fallbackSettings(),
+        ...data,
+      }),
+    );
   } catch {
-    return appendResumeNavigationItem(fallbackSettings());
+    return sanitizePublicSettings(appendResumeNavigationItem(fallbackSettings()));
   }
 });
 

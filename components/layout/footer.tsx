@@ -82,7 +82,7 @@ export function Footer({
           <div className="editorial-panel px-6 py-6 md:px-7">
             <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
               <div className="space-y-3">
-                <p className="eyebrow">{resume.eyebrow || "CV / LinkedIn"}</p>
+                <p className="eyebrow">{resume.eyebrow || "CV & LinkedIn"}</p>
                 <h3 className="text-[2rem] leading-[0.96] tracking-[-0.04em] md:text-[2.6rem]">
                   {resume.title || "View Mariam's CV and professional profile."}
                 </h3>
