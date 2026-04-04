@@ -1,6 +1,31 @@
 import { DEFAULT_CONTACT_EMAIL } from "@/lib/constants";
 import type { SanitySiteSettingsDocument } from "@/types/sanity";
 
+function slugKey(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+}
+
+function keyedLink(title: string, url: string, target?: string) {
+  return {
+    _key: `${slugKey(title)}-${slugKey(url) || "link"}`,
+    title,
+    url,
+    ...(target ? { target } : {}),
+  };
+}
+
+function keyedSocial(label: string, url: string) {
+  return {
+    _key: `${slugKey(label)}-${slugKey(url) || "social"}`,
+    label,
+    url,
+  };
+}
+
 export function getSiteSettingsDocumentDefaults(): SanitySiteSettingsDocument {
   return {
     siteTitle: "Mariam Husssein",
@@ -25,9 +50,9 @@ export function getSiteSettingsDocumentDefaults(): SanitySiteSettingsDocument {
         "Thoughtful collaborations, conversations, and editorial projects are always welcome.",
       ],
       quickLinks: [
-        { title: "Letters", url: "/letters/younger-me" },
-        { title: "Notes", url: "/blog" },
-        { title: "Newsletter", url: "/newsletter" },
+        keyedLink("Letters", "/letters/younger-me"),
+        keyedLink("Notes", "/blog"),
+        keyedLink("Newsletter", "/newsletter"),
       ],
       primaryLinkLabel: "Read Mariam's story",
       primaryLinkUrl: "/about",
@@ -43,20 +68,20 @@ export function getSiteSettingsDocumentDefaults(): SanitySiteSettingsDocument {
       },
     },
     primaryMenu: [
-      { title: "Home", url: "/" },
-      { title: "Letters", url: "/letters/younger-me" },
-      { title: "Notes", url: "/blog" },
-      { title: "Newsletter", url: "/newsletter" },
-      { title: "Resources", url: "/resources" },
-      { title: "Archive", url: "/blog" },
-      { title: "About", url: "/about" },
-      { title: "Contact", url: "/contact" },
-      { title: "Studio", url: "/studio" },
+      keyedLink("Home", "/"),
+      keyedLink("Letters", "/letters/younger-me"),
+      keyedLink("Notes", "/blog"),
+      keyedLink("Newsletter", "/newsletter"),
+      keyedLink("Resources", "/resources"),
+      keyedLink("Archive", "/blog"),
+      keyedLink("About", "/about"),
+      keyedLink("Contact", "/contact"),
+      keyedLink("Studio", "/studio"),
     ],
     footerMenu: [
-      { title: "Newsletter", url: "/newsletter" },
-      { title: "Privacy Policy", url: "/privacy-policy" },
-      { title: "Terms", url: "/terms" },
+      keyedLink("Newsletter", "/newsletter"),
+      keyedLink("Privacy Policy", "/privacy-policy"),
+      keyedLink("Terms", "/terms"),
     ],
     hero: {
       eyebrow: "Editorial notes",
@@ -195,9 +220,9 @@ export function getSiteSettingsDocumentDefaults(): SanitySiteSettingsDocument {
       availability: "Open to speaking, partnerships, and thoughtful collaborations.",
     },
     socialLinks: [
-      { label: "Website", url: "https://example.com" },
-      { label: "YouTube", url: "https://youtube.com" },
-      { label: "Instagram", url: "https://instagram.com" },
+      keyedSocial("Website", "https://example.com"),
+      keyedSocial("YouTube", "https://youtube.com"),
+      keyedSocial("Instagram", "https://instagram.com"),
     ],
     footer: {
       blurb:
