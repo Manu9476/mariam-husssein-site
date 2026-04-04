@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+import { getSiteSettingsDocumentDefaults } from "@/lib/site-settings-defaults";
+
 const richTextField = defineField({
   name: "body",
   title: "Body content",
@@ -521,6 +523,7 @@ const siteSettings = defineType({
   name: "siteSettings",
   title: "Site Settings",
   type: "document",
+  initialValue: () => getSiteSettingsDocumentDefaults() as Record<string, unknown>,
   fields: [
     defineField({ name: "siteTitle", title: "Site title", type: "string" }),
     defineField({ name: "siteDescription", title: "Site description", type: "text", rows: 3 }),

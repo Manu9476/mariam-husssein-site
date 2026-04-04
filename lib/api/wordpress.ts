@@ -11,6 +11,7 @@ import {
   portableTextToHtml,
   portableTextToPlainText,
 } from "@/lib/sanity/portable-text";
+import { getSiteSettingsDocumentDefaults } from "@/lib/site-settings-defaults";
 import { decodeHtml, stripHtml } from "@/lib/utils";
 import type {
   CategorySummary,
@@ -451,211 +452,122 @@ function mapSanityComment(entry: SanityCommentDocument): CommentEntry {
 }
 
 function fallbackSettings(): SiteSettings {
+  const defaults = getSiteSettingsDocumentDefaults();
+
   return {
-    siteTitle: "Mariam Husssein",
+    siteTitle: defaults.siteTitle || "Mariam Husssein",
     siteDescription:
+      defaults.siteDescription ||
       "A soft editorial home for thoughtful writing, personal reflections, and resources.",
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+    siteUrl: defaults.siteUrl || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
     logoUrl: null,
-    logoAlt: "Mariam Husssein",
-    header: {
-      eyebrow: "Personal brand",
-      monogram: "M",
-      subscribeLabel: "Subscribe",
-      mobileLabel: "Editorial brand site",
-    },
+    logoAlt: defaults.logoAlt || "Mariam Husssein",
+    header: defaults.header || {},
     profile: {
-      eyebrow: "Profile",
-      title: "A thoughtful digital home shaped around letters, notes, and generous living.",
-      summary:
-        "Mariam shares quiet reflections, elegant storytelling, and the kind of guidance that invites readers to linger.",
-      highlights: [
-        "Writer, curator, and personal brand storyteller.",
-        "Building a refined home for letters, notes, and meaningful resources.",
-        "Thoughtful collaborations, conversations, and editorial projects are always welcome.",
-      ],
-      quickLinks: [
-        { title: "Letters", url: "/letters/younger-me" },
-        { title: "Notes", url: "/blog" },
-        { title: "Newsletter", url: "/newsletter" },
-      ],
-      primaryLinkLabel: "Read Mariam's story",
-      primaryLinkUrl: "/about",
+      eyebrow: defaults.profile?.eyebrow,
+      title: defaults.profile?.title,
+      summary: defaults.profile?.summary,
+      highlights: defaults.profile?.highlights || [],
+      quickLinks: defaults.profile?.quickLinks || [],
+      primaryLinkLabel: defaults.profile?.primaryLinkLabel,
+      primaryLinkUrl: defaults.profile?.primaryLinkUrl,
       resume: {
-        eyebrow: "Resume and profile",
-        title: "Open Mariam's CV or connect on LinkedIn.",
-        description:
-          "Share your CV with readers and make it easy for them to continue the conversation on LinkedIn.",
-        fileButtonLabel: "Read CV",
-        downloadButtonLabel: "Download CV",
-        linkedInLabel: "Visit LinkedIn",
-        linkedInUrl: "",
+        eyebrow: defaults.profile?.resume?.eyebrow,
+        title: defaults.profile?.resume?.title,
+        description: defaults.profile?.resume?.description,
+        fileButtonLabel: defaults.profile?.resume?.fileButtonLabel,
+        downloadButtonLabel: defaults.profile?.resume?.downloadButtonLabel,
+        linkedInLabel: defaults.profile?.resume?.linkedInLabel,
+        linkedInUrl: defaults.profile?.resume?.linkedInUrl,
         cvFile: null,
       },
     },
-    primaryMenu: [
-      { id: 1, title: "Home", url: "/" },
-      { id: 2, title: "Letters", url: "/letters/younger-me" },
-      { id: 3, title: "Notes", url: "/blog" },
-      { id: 4, title: "Newsletter", url: "/newsletter" },
-      { id: 5, title: "Resources", url: "/resources" },
-      { id: 6, title: "Archive", url: "/blog" },
-      { id: 7, title: "About", url: "/about" },
-      { id: 8, title: "Contact", url: "/contact" },
-      { id: 9, title: "Studio", url: "/studio" },
-    ],
-    footerMenu: [
-      { id: 1, title: "Newsletter", url: "/newsletter" },
-      { id: 2, title: "Privacy Policy", url: "/privacy-policy" },
-      { id: 3, title: "Terms", url: "/terms" },
-    ],
+    primaryMenu: (defaults.primaryMenu ?? []).map((item, index) => ({
+      id: index + 1,
+      title: item.title,
+      url: item.url,
+      target: item.target,
+    })),
+    footerMenu: (defaults.footerMenu ?? []).map((item, index) => ({
+      id: index + 1,
+      title: item.title,
+      url: item.url,
+      target: item.target,
+    })),
     hero: {
-      eyebrow: "Editorial notes",
-      title: "A calm digital home for stories, lessons, and generous living.",
-      subtitle:
-        "A thoughtful space for stories, letters, notes, and generous living.",
-      primaryCtaLabel: "Read the journal",
-      primaryCtaUrl: "/blog",
-      secondaryCtaLabel: "About Mariam",
-      secondaryCtaUrl: "/about",
+      eyebrow: defaults.hero?.eyebrow,
+      title: defaults.hero?.title || "",
+      subtitle: defaults.hero?.subtitle || "",
+      primaryCtaLabel: defaults.hero?.primaryCtaLabel || "",
+      primaryCtaUrl: defaults.hero?.primaryCtaUrl || "",
+      secondaryCtaLabel: defaults.hero?.secondaryCtaLabel || "",
+      secondaryCtaUrl: defaults.hero?.secondaryCtaUrl || "",
     },
     home: {
       featured: {
-        eyebrow: "Featured article",
-        title: "One story to begin with.",
-        description: "A lead note that sets the tone for the rest of the visit.",
-        label: "Featured note",
+        eyebrow: defaults.home?.featured?.eyebrow,
+        title: defaults.home?.featured?.title || "",
+        description: defaults.home?.featured?.description,
+        label: defaults.home?.featured?.label,
       },
       letters: {
-        eyebrow: "Letters to Myself",
-        title: "Enter the letters, one season at a time.",
-        description:
-          "Choose the chapter that meets you where you are, then follow the thread deeper.",
-        latestLabel: "Start here",
-        primaryCtaLabel: "Open the letters",
-        secondaryCtaLabel: "Read one now",
+        eyebrow: defaults.home?.letters?.eyebrow,
+        title: defaults.home?.letters?.title || "",
+        description: defaults.home?.letters?.description,
+        latestLabel: defaults.home?.letters?.latestLabel,
+        primaryCtaLabel: defaults.home?.letters?.primaryCtaLabel,
+        secondaryCtaLabel: defaults.home?.letters?.secondaryCtaLabel,
       },
       notes: {
-        eyebrow: "Latest notes",
-        title: "Notes, reflections, and thoughtful updates.",
-        description:
-          "A curated stream of essays and smaller pieces that keep the site alive between the longer letters.",
-        archiveLabel: "View all",
-        profileCardEyebrow: "Profile",
-        profileCtaLabel: "Read more about Mariam",
-        browseEyebrow: "Browse",
+        eyebrow: defaults.home?.notes?.eyebrow,
+        title: defaults.home?.notes?.title || "",
+        description: defaults.home?.notes?.description,
+        archiveLabel: defaults.home?.notes?.archiveLabel,
+        profileCardEyebrow: defaults.home?.notes?.profileCardEyebrow,
+        profileCtaLabel: defaults.home?.notes?.profileCtaLabel,
+        browseEyebrow: defaults.home?.notes?.browseEyebrow,
       },
       testimonials: {
-        eyebrow: "Kind words",
-        title: "Warm reflections from readers, collaborators, and clients.",
-        description:
-          "A few approved notes that add social proof without disrupting the editorial mood.",
-        ctaLabel: "View all reviews",
+        eyebrow: defaults.home?.testimonials?.eyebrow,
+        title: defaults.home?.testimonials?.title || "",
+        description: defaults.home?.testimonials?.description,
+        ctaLabel: defaults.home?.testimonials?.ctaLabel,
       },
       social: {
-        eyebrow: "Elsewhere",
-        title: "Keep up with Mariam online.",
-        description:
-          "Follow along for thoughtful updates, new writing, resources, and everyday inspiration.",
-        emailLabel: "Email",
+        eyebrow: defaults.home?.social?.eyebrow,
+        title: defaults.home?.social?.title || "",
+        description: defaults.home?.social?.description,
+        emailLabel: defaults.home?.social?.emailLabel,
       },
     },
     pageCopy: {
       blog: {
-        eyebrow: "Notes",
-        title: "Stories, lessons, and notes with an editorial rhythm.",
-        description:
-          "An archive of essays, reflections, and thoughtful updates distinct from the letters.",
-        emptyTitle: "No notes published yet",
-        emptyDescription: "New notes will appear here as they are published.",
+        eyebrow: defaults.pageCopy?.blog?.eyebrow,
+        title: defaults.pageCopy?.blog?.title || "",
+        description: defaults.pageCopy?.blog?.description,
+        emptyTitle: defaults.pageCopy?.blog?.emptyTitle,
+        emptyDescription: defaults.pageCopy?.blog?.emptyDescription,
       },
-      about: {
-        eyebrow: "About",
-        faqEyebrow: "FAQ",
-        faqTitle: "A few helpful answers.",
-        faqDescription:
-          "A tidy place for practical questions, collaborations, and the details people often want to know.",
-        testimonialsEyebrow: "In good company",
-        testimonialsTitle: "A few kind words.",
-        testimonialsDescription: "Approved reflections from readers, collaborators, and clients.",
-      },
-      resources: {
-        eyebrow: "Resources",
-        title: "Curated offers, resources, and thoughtful tools.",
-        description:
-          "A flexible space for offers, services, recommendations, and editorial resources.",
-        emptyTitle: "No resources published yet",
-        emptyDescription: "Helpful resources will appear here as they are added.",
-      },
-      contact: {
-        eyebrow: "Contact",
-        title: "Start a thoughtful conversation.",
-        description:
-          "Use this page for collaborations, speaking requests, media, and meaningful enquiries.",
-        emailLabel: "Email",
-        locationLabel: "Location",
-        availabilityLabel: "Availability",
-      },
-      reviews: {
-        eyebrow: "Reviews",
-        title: "Kind words and thoughtful feedback.",
-        description: "A place for public testimonials and private review submissions.",
-        emptyTitle: "No public reviews yet",
-        emptyDescription: "Approved testimonials will appear here automatically.",
-      },
-      letters: {
-        featuredLabel: "Featured letter",
-        popularTitle: "A Few to Begin With",
-        popularArchiveLabel: "Return to collection",
-        recentEyebrow: "Recent letters",
-        recentTitle: "Notes, reflections, and quieter truths.",
-        recentArchiveLabel: "This collection",
-        profileEyebrow: "Collection note",
-        newsletterEyebrow: "Stay close",
-        readNextEyebrow: "Read next",
-        socialEyebrow: "Elsewhere",
-      },
-      newsletterPage: {
-        eyebrow: "Newsletter",
-        title: "Letters worth slowing down for.",
-        description: "A quiet room for subscribers, new readers, and published notes.",
-        subscribedEyebrow: "Published now",
-        subscribedTitle: "Published notes for subscribers.",
-        subscribedDescription:
-          "Your browser remembers that you subscribed, so this page becomes a reading room.",
-        previewEyebrow: "Recent reading",
-        previewTitle: "A small sample from the notes.",
-        previewDescription:
-          "Use this page to preview the kind of thoughtful notes subscribers can expect.",
-      },
+      about: defaults.pageCopy?.about || {},
+      resources: defaults.pageCopy?.resources || {},
+      contact: defaults.pageCopy?.contact || {},
+      reviews: defaults.pageCopy?.reviews || {},
+      letters: defaults.pageCopy?.letters || {},
+      newsletterPage: defaults.pageCopy?.newsletterPage || {},
     },
     newsletter: {
-      eyebrow: "Stay close",
-      title: "Letters worth slowing down for.",
-      description:
-        "A quiet place for thoughtful updates, reflections, and new essays.",
-      placeholder: "Enter your email address",
-      buttonLabel: "Subscribe",
-      disclaimer: "No spam. Just thoughtful updates, occasional recommendations, and new essays.",
+      eyebrow: defaults.newsletter?.eyebrow,
+      title: defaults.newsletter?.title || "",
+      description: defaults.newsletter?.description || "",
+      placeholder: defaults.newsletter?.placeholder || "",
+      buttonLabel: defaults.newsletter?.buttonLabel || "",
+      disclaimer: defaults.newsletter?.disclaimer,
     },
-    contact: {
+    contact: defaults.contact || {
       email: DEFAULT_CONTACT_EMAIL,
-      phone: "+254 700 000 000",
-      location: "Nairobi, Kenya",
-      availability: "Open to speaking, partnerships, and thoughtful collaborations.",
     },
-    socialLinks: [
-      { label: "Website", url: "https://example.com" },
-      { label: "YouTube", url: "https://youtube.com" },
-      { label: "Instagram", url: "https://instagram.com" },
-    ],
-    footer: {
-      blurb:
-        "An editorial space for personal essays, resources, and warm modern storytelling.",
-      copyright: `© ${new Date().getFullYear()} Mariam Husssein. All rights reserved.`,
-      newsletterCtaLabel: "Join the newsletter",
-      newsletterCtaUrl: "/newsletter",
-    },
+    socialLinks: defaults.socialLinks || [],
+    footer: defaults.footer || {},
   };
 }
 
