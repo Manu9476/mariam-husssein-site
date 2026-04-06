@@ -319,6 +319,7 @@ const comment = defineType({
       title: "Post",
       type: "reference",
       to: [{ type: "post" }],
+      weak: true,
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -346,6 +347,7 @@ const comment = defineType({
       title: "Reply to",
       type: "reference",
       to: [{ type: "comment" }],
+      weak: true,
       description: "Leave empty for a top-level comment.",
     }),
     defineField({

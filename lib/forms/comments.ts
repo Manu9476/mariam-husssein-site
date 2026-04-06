@@ -79,12 +79,14 @@ export async function handleCommentSubmission(payload: CommentInput) {
     post: {
       _type: "reference",
       _ref: parsed.data.postId,
+      _weak: true,
     },
     ...(parsed.data.parentId
       ? {
           parentComment: {
             _type: "reference",
             _ref: parsed.data.parentId,
+            _weak: true,
           },
         }
       : {}),
