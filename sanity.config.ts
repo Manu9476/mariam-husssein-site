@@ -16,7 +16,18 @@ export default defineConfig({
   basePath: "/studio",
   projectId: sanityProjectId || "demo-project",
   dataset: sanityDataset,
-  plugins: [structureTool()],
+  plugins: [
+    structureTool({
+      structure: (S) =>
+        S.list()
+          .title("Content")
+          .items(
+            S.documentTypeListItems().filter(
+              (item) => item.getId() !== "siteVisit",
+            ),
+          ),
+    }),
+  ],
   tools: (prev) => [...prev, reportsTool],
   document: {
     actions: (prev, context) => {

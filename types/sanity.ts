@@ -110,6 +110,15 @@ export interface SanityNewsletterSubscriberDocument {
   source?: string;
 }
 
+export interface SanitySiteVisitDocument {
+  _id: string;
+  visitorId?: string;
+  path?: string;
+  referrer?: string;
+  userAgent?: string;
+  visitedAt?: string;
+}
+
 export interface SanityCommentDocument {
   _id: string;
   name: string;

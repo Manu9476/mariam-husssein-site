@@ -309,6 +309,58 @@ const newsletterSubscriber = defineType({
   },
 });
 
+const siteVisit = defineType({
+  name: "siteVisit",
+  title: "Site Visits",
+  type: "document",
+  fields: [
+    defineField({
+      name: "visitorId",
+      title: "Visitor ID",
+      type: "string",
+      readOnly: true,
+    }),
+    defineField({
+      name: "path",
+      title: "Path",
+      type: "string",
+      readOnly: true,
+    }),
+    defineField({
+      name: "referrer",
+      title: "Referrer",
+      type: "string",
+      readOnly: true,
+    }),
+    defineField({
+      name: "userAgent",
+      title: "User agent",
+      type: "text",
+      rows: 3,
+      readOnly: true,
+    }),
+    defineField({
+      name: "visitedAt",
+      title: "Visited at",
+      type: "datetime",
+      readOnly: true,
+      initialValue: () => new Date().toISOString(),
+    }),
+  ],
+  preview: {
+    select: {
+      title: "path",
+      subtitle: "visitedAt",
+    },
+    prepare({ title, subtitle }) {
+      return {
+        title: title || "Visit",
+        subtitle: subtitle || "No timestamp",
+      };
+    },
+  },
+});
+
 const comment = defineType({
   name: "comment",
   title: "Comments",
@@ -893,6 +945,7 @@ export const schemaTypes = [
   post,
   testimonial,
   newsletterSubscriber,
+  siteVisit,
   comment,
   contactMessage,
   faq,
